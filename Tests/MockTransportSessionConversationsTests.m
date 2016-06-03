@@ -1028,6 +1028,79 @@
     }
 }
 
+- (void)testThatItReturnsAValidResponseWenUploadingAFile
+{
+    // given
+    __block MockConversation *conversation;
+    __block MockUser *selfUser;
+    __block MockUserClient *selfClient;
+    __block MockUser *otherUser;
+    __block MockUserClient *otherUserClient;
+    
+    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        selfUser = [session insertSelfUserWithName:@"foo"];
+        otherUser = [session insertUserWithName:@"bar"];
+        conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
+        selfClient = [session registerClientForUser:selfUser label:@"self1" type:@"permanent"];
+        otherUserClient = [session registerClientForUser:otherUser label:@"other1" type:@"permanent"];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // when
+    NSData *fileData = [NSData secureRandomDataOfLength:256];
+    ZMOtrAssetMeta *metaData = [self OTRAssetMetaWithSender:selfClient recipients:@[otherUser] text:[NSData secureRandomDataOfLength:16]];
+    NSUInteger previousNotificationsCount = self.sut.generatedPushEvents.count;
+    NSString *requestPath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"assets"]];
+    ZMTransportResponse *response = [self responseForFileData:fileData path:requestPath metadata:metaData.data contentType:@"multipart/mixed"];
+    
+    // then
+    XCTAssertNotNil(response);
+    XCTAssertNil(response.transportSessionError);
+    
+    if (response != nil) {
+        XCTAssertEqual(response.HTTPStatus, 201);
+        AssertEqualDictionaries(@{}, response.payload.asDictionary[@"missing"]);
+        AssertEqualDictionaries(@{}, response.payload.asDictionary[@"redundant"]);
+    }
+    
+    XCTAssertEqual(self.sut.generatedPushEvents.count, previousNotificationsCount + 1u);
+}
+
+- (ZMOtrAssetMeta *)OTRAssetMetaWithSender:(MockUserClient *)sender recipients:(NSArray <MockUser *>*)recipients text:(NSData *)text
+{
+    ZMOtrAssetMetaBuilder *builder = ZMOtrAssetMeta.builder;
+    ZMClientIdBuilder *senderIDBuilder = ZMClientId.builder;
+    
+    NSArray <ZMUserEntry *>* userEntries = [recipients mapWithBlock:^ZMUserEntry *(MockUser *user) {
+        ZMUserEntryBuilder *entryBuilder = ZMUserEntry.builder;
+        ZMUserIdBuilder *userIDBuilder = ZMUserId.builder;
+        [userIDBuilder setUuid:[NSUUID uuidWithTransportString:user.identifier].data];
+        entryBuilder.user = userIDBuilder.build;
+        [entryBuilder setClientsArray:[user.clients.allObjects mapWithBlock:^ZMClientEntry *(MockUserClient *client) {
+            ZMClientEntryBuilder *clientBuilder = ZMClientEntry.builder;
+            ZMClientIdBuilder *clientIDBuilder = ZMClientId.builder;
+            unsigned long long hexID;
+            [[NSScanner scannerWithString:client.identifier] scanHexLongLong:&hexID];
+            [clientIDBuilder setClient:hexID];
+            [clientBuilder setClient:clientIDBuilder.build];
+            [clientBuilder setText:text];
+            return clientBuilder.build;
+        }]];
+        
+        return entryBuilder.build;
+    }];
+    
+    [builder setRecipientsArray:userEntries];
+    builder.isInline = NO;
+    builder.nativePush = YES;
+
+    unsigned long long hexID;
+    [[NSScanner scannerWithString:sender.identifier] scanHexLongLong:&hexID];
+    [senderIDBuilder setClient:hexID];
+    builder.sender = senderIDBuilder.build;
+    return builder.build;
+}
+
 - (void)testThatItCreatesPushEventsWhenReceivingOTRAssetWithoutMissedClients_Protobuf
 {
     // given

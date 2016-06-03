@@ -34,10 +34,7 @@
 
 typedef ZMTransportResponse *(^ZMCustomResponseGeneratorBlock)(ZMTransportRequest *request);
 
-extern id const ZMCustomResponseGeneratorReturnResponseNotCompleted;
-
-
-@interface MockTransportSession : NSObject
+@interface MockTransportSession : NSObject <ZMRequestCancellation>
 
 - (instancetype)initWithDispatchGroup:(ZMSDispatchGroup *)group NS_DESIGNATED_INITIALIZER;
 
@@ -101,7 +98,7 @@ extern id const ZMCustomResponseGeneratorReturnResponseNotCompleted;
 
 
 
-@protocol MockTransportSessionObjectCreation <NSObject>
+@protocol MockTransportSessionObjectCreation <NSObject, ZMRequestCancellation>
 
 - (MockUser *)insertSelfUserWithName:(NSString *)name;
 - (MockUser *)insertUserWithName:(NSString *)name;

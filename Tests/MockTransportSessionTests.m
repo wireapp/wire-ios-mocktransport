@@ -281,6 +281,50 @@ static int32_t eventIdCounter;
     return response;
 }
 
+- (ZMTransportResponse *)responseForFileData:(NSData *)fileData path:(NSString *)path metadata:(NSData *)metadata contentType:(NSString *)contentType;
+{
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Got a file upload response"];
+    __block ZMTransportResponse *response;
+    
+    ZMTransportRequestGenerator generator = ^ZMTransportRequest *{
+        if (![path containsString:@"conversations"]) {
+            return nil;
+        }
+        
+        NSError *error;
+        NSFileManager *fm = NSFileManager.defaultManager;
+        NSURL *directory = [fm URLForDirectory:NSCachesDirectory
+                                      inDomain:NSUserDomainMask
+                             appropriateForURL:nil
+                                        create:YES
+                                         error:&error];
+        XCTAssertNil(error);
+        NSDictionary *headers = @{@"Content-MD5": [fileData.zmMD5Digest base64EncodedStringWithOptions:0]};
+        NSArray <ZMMultipartBodyItem *> *items =
+        @[
+          [[ZMMultipartBodyItem alloc] initWithData:metadata contentType:@"application/x-protobuf" headers:nil],
+          [[ZMMultipartBodyItem alloc] initWithData:fileData contentType:@"application/octet-stream" headers:headers]
+          ];
+        
+        NSURL *fileURL = [directory URLByAppendingPathComponent:NSUUID.createUUID.transportString].filePathURL;
+        NSData *multipartData = [NSData multipartDataWithItems:items boundary:@"frontier"];
+        XCTAssertTrue([multipartData writeToFile:fileURL.path atomically:YES]);
+        ZMTransportRequest *request = [ZMTransportRequest uploadRequestWithFileURL:fileURL path:path contentType:contentType];
+        [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTransportResponse *r) {
+            response = r;
+            [expectation fulfill];
+        }]];
+        
+        return request;
+    };
+    
+    ZMTransportEnqueueResult *postResult = [self.sut.mockedTransportSession attemptToEnqueueSyncRequestWithGenerator:generator];
+    XCTAssertTrue(postResult.didHaveLessRequestThanMax);
+    XCTAssertTrue(postResult.didGenerateNonNullRequest);
+    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
+    return response;
+}
+
 - (ZMTransportResponse *)responseForImageData:(NSData *)imageData metaData:(NSData *)metaData imageMediaType:(NSString *)imageMediaType path:(NSString *)path;
 {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Got an image response"];

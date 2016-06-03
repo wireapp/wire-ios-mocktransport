@@ -31,6 +31,7 @@
 #import "MockPushEvent.h"
 #import "MockUserClient.h"
 #import "MockPreKey.h"
+#import "ZMCMockTransport/ZMCMockTransport-Swift.h"
 
 NSString * const ZMPushChannelStateChangeNotificationName = @"ZMPushChannelStateChangeNotification";
 NSString * const ZMPushChannelIsOpenKey = @"pushChannelIsOpen";
@@ -42,8 +43,6 @@ NSString * const ZMPushChannelResponseStatusKey = @"responseStatus";
 #else
 @import CoreServices;
 #endif
-
-id const ZMCustomResponseGeneratorReturnResponseNotCompleted = @"This will prevent the response from being completed. The completion handler won't be called at all.";
 
 
 #define ENABLE_LOG_ALL_REQUESTS 0
@@ -79,11 +78,18 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 @property (nonatomic) NSMutableSet *phoneNumbersWaitingForVerificationForLogin;
 @property (nonatomic) NSMutableSet *phoneNumbersWaitingForVerificationForProfile;
 
+/// The mapping between the taskIdentifiers on ZMTransportRequest, can be used to cancel the request
+@property (nonatomic) NSMutableDictionary <NSNumber *, ZMTransportRequest *> *taskIdentifierMapping;
+
 @property (nonatomic) NSMutableArray *pushTokens;
 @property (nonatomic) MockFlowManager *flowManager;
 @property (nonatomic) id <ZMNetworkStateDelegate> networkStateDelegate;
 
 - (ZMTransportResponse *)errorResponseWithCode:(NSInteger)code reason:(NSString *)reason;
+
+/// Completes a request and removes from all pending requests lists
+- (void)completeRequestAndRemoveFromLists:(ZMTransportRequest *)request response:(ZMTransportResponse *)response;
+
 
 @end
 
@@ -126,6 +132,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         _generatedTransportRequests = [NSMutableArray array];
         _requestGroup = group;
         _generatedPushEvents = [NSMutableArray array];
+        self.taskIdentifierMapping = [NSMutableDictionary new];
         self.whitelistedEmails = [NSMutableSet set];
         self.phoneNumbersWaitingForVerificationForRegistration = [NSMutableSet set];
         self.phoneNumbersWaitingForVerificationForLogin = [NSMutableSet set];
@@ -174,8 +181,9 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 - (void)expireAllBlockedRequests;
 {
     ZMTransportResponse *emptyResponse = [ZMTransportResponse responseWithTransportSessionError:[NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeRequestExpired userInfo:nil]];
-    for(ZMTransportRequest *request in self.nonCompletedRequests) {
-        [request completeWithResponse:emptyResponse];
+    NSArray *nonCompleted = [self.nonCompletedRequests copy];
+    for(ZMTransportRequest *request in nonCompleted) {
+        [self completeRequestAndRemoveFromLists:request response:emptyResponse];
     }
     [self.nonCompletedRequests removeAllObjects];
 }
@@ -279,16 +287,38 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 
 - (void)completePreviouslySuspendendRequest:(ZMTransportRequest *)request;
 {
-    [self.generatedTransportRequests addObject:request];
     [self completeRequest:request completionHandler:^(ZMTransportResponse *response){
-        [request completeWithResponse:response];
+        [self completeRequestAndRemoveFromLists:request response:response];
     }];
 }
-
 
 - (void)logoutSelfUser;
 {
     self.selfUser = nil;
+}
+
+- (void)cancelTaskWithIdentifier:(ZMTaskIdentifier *)taskIdentifier
+{
+    ZMTransportRequest *request = self.taskIdentifierMapping[@(taskIdentifier.identifier)];
+    if (nil != request) {
+        ZMTransportResponse *response = [ZMTransportResponse responseWithTransportSessionError:NSError.tryAgainLaterError];
+        [self completeRequestAndRemoveFromLists:request response:response];
+    }
+}
+
+- (void)completeRequestAndRemoveFromLists:(ZMTransportRequest *)request response:(ZMTransportResponse *)response {
+    [self.nonCompletedRequests removeObject:request];
+    __block NSNumber *foundKey = nil;
+    [self.taskIdentifierMapping enumerateKeysAndObjectsUsingBlock:^(NSNumber * _Nonnull key, ZMTransportRequest * _Nonnull obj, BOOL * _Nonnull stop) {
+        if(obj == request) {
+            foundKey = key;
+            *stop = YES;
+        }
+    }];
+    if(foundKey != nil) {
+        [self.taskIdentifierMapping removeObjectForKey:foundKey];
+    }
+    [request completeWithResponse:response];
 }
 
 @end
@@ -312,6 +342,10 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
     }
     ZMTransportRequest *request = generator();
     
+    static NSUInteger taskCounter = 0;
+    taskCounter++;
+    self.taskIdentifierMapping[@(taskCounter)] = request;
+    [request callTaskCreationHandlersWithIdentifier:taskCounter sessionIdentifier:@"mock-session-identifier"];
     
     if (request && request.expirationDate != nil && self.doNotRespondToRequests == YES) {
         
@@ -323,7 +357,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
             [self.managedObjectContext performGroupedBlock:^{
                 ZMTransportResponse *response = [ZMTransportResponse responseWithTransportSessionError:[NSError errorWithDomain:ZMTransportSessionErrorDomain code:ZMTransportSessionErrorCodeRequestExpired userInfo:nil]];
                 response.dispatchGroup = self.requestGroup;
-                [request completeWithResponse:response];
+                [self completeRequestAndRemoveFromLists:request response:response];
                 [self.requestGroup leave];
             }];
         });
@@ -335,7 +369,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
             [self processRequest:request completionHandler:^(ZMTransportResponse *response) {
                 if(response != nil) {
                     response.dispatchGroup = self.requestGroup;
-                    [request completeWithResponse:response];
+                    [self completeRequestAndRemoveFromLists:request response:response];
                 }
                 [self.requestGroup leave];
             }];
@@ -439,7 +473,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
     
     if(self.responseGeneratorBlock) {
         response = self.responseGeneratorBlock(originalRequest);
-        if (response == ZMCustomResponseGeneratorReturnResponseNotCompleted) {
+        if (response == ResponseGenerator.ResponseNotCompleted) {
             // do not complete this request
             [self.nonCompletedRequests addObject:originalRequest];
             if(completionHandler) {

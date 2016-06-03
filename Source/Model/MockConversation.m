@@ -370,7 +370,7 @@ static NSString * const IdleString = @"idle";
 
 - (void)insertPreviewImageEventFromUser:(MockUser *)fromUser correlationID:(NSUUID *)correlationID none:(NSUUID *)nonce
 {
-    NSData *previewImageData = [ZMTBaseTest dataForResource:@"verySmallJPEGs/tiny" extension:@"jpg"];
+    NSData *previewImageData = [NSData dataWithContentsOfURL:[[NSBundle bundleForClass:self.class] URLForResource:@"tiny"withExtension:@"jpg"]];
     Require(previewImageData);
     Require(correlationID);
     Require(nonce);
@@ -394,7 +394,7 @@ static NSString * const IdleString = @"idle";
 
 - (void)insertMediumImageEventFromUser:(MockUser *)fromUser correlationID:(NSUUID *)correlationID none:(NSUUID *)nonce
 {
-    NSData *mediumImageData = [ZMTBaseTest dataForResource:@"verySmallJPEGs/medium" extension:@"jpg"];
+    NSData *mediumImageData = [NSData dataWithContentsOfURL:[[NSBundle bundleForClass:self.class] URLForResource:@"medium"withExtension:@"jpg"]];
     Require(mediumImageData);
     Require(correlationID);
     Require(nonce);
