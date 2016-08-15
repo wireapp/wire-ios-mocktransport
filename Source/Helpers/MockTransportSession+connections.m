@@ -53,7 +53,7 @@
 - (ZMTransportResponse *)processPutConnection:(TestTransportSessionRequest *)sessionRequest
 {
     NSString *remoteID = sessionRequest.pathComponents[0];
-    MockConnection *connection = [self connectionFromIdentifier:self.selfUser.identifier toIdentifier:remoteID];
+    MockConnection *connection = [self connectionFromUserIdentifier:self.selfUser.identifier toUserIdentifier:remoteID];
     if (connection == nil) {
         return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
     }
@@ -100,7 +100,7 @@
 - (ZMTransportResponse *)processGetSpecifiedConnection:(TestTransportSessionRequest *)sessionRequest
 {
     NSString *remoteID = sessionRequest.pathComponents[0];
-    MockConnection *connection = [self connectionFromIdentifier:self.selfUser.identifier toIdentifier:remoteID];
+    MockConnection *connection = [self connectionFromUserIdentifier:self.selfUser.identifier toUserIdentifier:remoteID];
     if (connection == nil) {
         return [ZMTransportResponse responseWithPayload:nil HTTPstatus:404 transportSessionError:nil];
     }

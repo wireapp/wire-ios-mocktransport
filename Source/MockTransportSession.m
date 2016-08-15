@@ -322,10 +322,10 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
     [request completeWithResponse:response];
 }
 
-- (MockConnection *)connectionFromIdentifier:(NSString *)fromIdentifier toIdentifier:(NSString *)toIdentifier;
+- (MockConnection *)connectionFromUserIdentifier:(NSString *)fromUserIdentifier toUserIdentifier:(NSString *)toUserIdentifier;
 {
     NSFetchRequest *request = [MockConnection sortedFetchRequest];
-    request.predicate = [NSPredicate predicateWithFormat:@"from.identifier == %@ AND to.identifier == %@", fromIdentifier, toIdentifier];
+    request.predicate = [NSPredicate predicateWithFormat:@"from.identifier == %@ AND to.identifier == %@", fromUserIdentifier, toUserIdentifier];
     
     NSArray *connections = [self.managedObjectContext executeFetchRequestOrAssert:request];
     RequireString(connections.count <= 1, "Too many connections with one identifier");
@@ -1053,7 +1053,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         }
     }
     
-    MockConnection *connection = [self connectionFromIdentifier:fromUser.identifier toIdentifier:toUser.identifier];
+    MockConnection *connection = [self connectionFromUserIdentifier:fromUser.identifier toUserIdentifier:toUser.identifier];
     if (nil == connection) {
         connection = [MockConnection connectionInMOC:self.managedObjectContext from:fromUser to:toUser message:message];
     } else {
