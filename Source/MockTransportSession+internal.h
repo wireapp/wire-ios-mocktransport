@@ -49,6 +49,7 @@
 - (void)addPushToken:(NSDictionary *)pushToken;
 - (ZMTransportResponse *)errorResponseWithCode:(NSInteger)code reason:(NSString *)reason;
 - (MockEvent *)eventIfNeededByUser:(MockUser *)byUser type:(ZMTUpdateEventType)type data:(id<ZMTransportData>)data;
+- (MockConnection *)connectionFromIdentifier:(NSString *)fromIdentifier toIdentifier:(NSString *)identifier;
 
 @property (nonatomic, readonly) NSMutableSet *whitelistedEmails;
 @property (nonatomic, readonly) NSMutableSet *phoneNumbersWaitingForVerificationForRegistration;
