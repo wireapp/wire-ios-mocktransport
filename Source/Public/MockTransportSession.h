@@ -33,7 +33,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef ZMTransportResponse * _Nonnull (^ZMCustomResponseGeneratorBlock)(ZMTransportRequest * _Nullable request);
+typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTransportRequest * _Nonnull request);
 
 @interface MockTransportSession : NSObject <ZMRequestCancellation>
 
