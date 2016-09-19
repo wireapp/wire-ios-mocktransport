@@ -71,7 +71,7 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 - (BOOL)waitForAllRequestsToCompleteWithTimeout:(NSTimeInterval)timeout;
 
 /// A list on transport requests received by client
-- (NSArray *)receivedRequests;
+- (NSArray<ZMTransportRequest *> *)receivedRequests;
 /// Resets the list of received requests
 - (void)resetReceivedRequests;
 
