@@ -53,7 +53,7 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 @property (nonatomic, readonly) MockUser* selfUser;
 @property (nonatomic, readonly) BOOL isPushChannelActive;
-@property (nonatomic, copy) ZMCustomResponseGeneratorBlock responseGeneratorBlock;
+@property (nonatomic, copy, nullable) ZMCustomResponseGeneratorBlock responseGeneratorBlock;
 @property (nonatomic, readonly) NSArray *pushTokens;
 @property (nonatomic) BOOL disableEnqueueRequests;
 
@@ -112,7 +112,7 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 - (MockConversation *)insertSelfConversationWithSelfUser:(MockUser *)selfUser;
 - (MockConversation *)insertOneOnOneConversationWithSelfUser:(MockUser *)selfUser otherUser:(MockUser *)otherUser;
 - (MockConversation *)insertGroupConversationWithSelfUser:(MockUser *)selfUser otherUsers:(NSArray *)otherUsers;
-- (MockConversation *)insertConversationWithSelfUser:(MockUser *)selfUser creator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)conversationType;
+- (MockConversation *)insertConversationWithSelfUser:(MockUser *)selfUser creator:(MockUser *)creator otherUsers:(nullable NSArray *)otherUsers type:(ZMTConversationType)conversationType;
 - (MockConversation *)insertConversationWithCreator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)conversationType;
 
 - (MockPersonalInvitation *)insertInvitationForSelfUser:(MockUser *)selfUser inviteeName:(NSString *)name mail:(NSString *)mail;

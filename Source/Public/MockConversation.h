@@ -92,7 +92,7 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
 - (nonnull MockEvent *)insertOTRAssetFromClient:(nonnull MockUserClient *)fromClient
                                        toClient:(nonnull MockUserClient *)toClient
                                        metaData:(nonnull NSData *)metaData
-                                      imageData:(nonnull NSData *)imageData
+                                      imageData:(nullable NSData *)imageData
                                         assetId:(nonnull NSUUID *)assetId
                                        isInline:(BOOL)isInline;
 
