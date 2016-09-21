@@ -108,7 +108,7 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
 - (void)insertMediumImageEventFromUser:(nonnull MockUser *)fromUser correlationID:(nonnull NSUUID *)correlationID none:(nonnull NSUUID *)nonce;
 
 - (void)dropCall;
-- (nonnull MockEvent *)addUsersByUser:(nonnull MockUser *)byUser addedUsers:(nonnull NSArray *)addedUsers;
+- (nullable MockEvent *)addUsersByUser:(nonnull MockUser *)byUser addedUsers:(nonnull NSArray *)addedUsers;
 - (nonnull MockEvent *)removeUsersByUser:(nonnull MockUser *)byUser removedUser:(nonnull MockUser *)removedUser;
 - (nonnull MockEvent *)changeNameByUser:(nonnull MockUser *)user name:(nullable NSString *)name;
 - (nonnull MockEvent *)insertAssetUploadEventForUser:(nonnull MockUser *)user data:(nonnull NSData *)data disposition:(nonnull NSDictionary *)disposition dataTypeAsMIME:(nonnull NSString *)dataTypeAsMIME assetID:(nonnull NSString *)assetID;
