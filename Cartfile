@@ -1,1 +1,1 @@
-github "wireapp/wire-ios-data-model" ~> 26.0
+github "wireapp/wire-ios-data-model" "migrate-sessions_28"
