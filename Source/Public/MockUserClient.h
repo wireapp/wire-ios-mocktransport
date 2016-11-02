@@ -59,6 +59,9 @@
 @property (nonatomic, nonnull) NSString *mackey;
 @property (nonatomic, nonnull) NSString *enckey;
 
+// Identifier for the session in Cryptobox
+@property (nonatomic, readonly, nullable) NSString *sessionIdentifier;
+
 /// Returns a fetch request to fetch MockUserClients with the given predicate
 + (nonnull NSFetchRequest *)fetchRequestWithPredicate:(nullable NSPredicate *)predicate;
 

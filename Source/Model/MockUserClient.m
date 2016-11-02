@@ -19,6 +19,7 @@
 
 #import "MockUserClient+Internal.h"
 #import "MockPreKey.h"
+#import "MockUser.h"
 
 
 @implementation MockUserClient
@@ -164,10 +165,10 @@
     __block NSData *encryptedData;
     EncryptionContext *encryptionContext = fromClient.encryptionContext;
     [encryptionContext perform:^(EncryptionSessionsDirectory * _Nonnull sessionsDirectory) {
-        if (![sessionsDirectory hasSessionForID:toClient.identifier]) {
-            [sessionsDirectory createClientSession:toClient.identifier base64PreKeyString:toClient.lastPrekey.value error:&error];
+        if (![sessionsDirectory hasSessionForID:toClient.sessionIdentifier]) {
+            [sessionsDirectory createClientSession:toClient.sessionIdentifier base64PreKeyString:toClient.lastPrekey.value error:&error];
         }
-        encryptedData = [sessionsDirectory encrypt:data recipientClientId:toClient.identifier error:&error];
+        encryptedData = [sessionsDirectory encrypt:data recipientIdentifier:toClient.sessionIdentifier error:&error];
     }];
     return encryptedData;
 }
@@ -179,7 +180,7 @@
     __block NSData *decryptedData;
     [encryptionContext perform:^(EncryptionSessionsDirectory * _Nonnull sessionsDirectory) {
         NSError *error;
-        decryptedData = [sessionsDirectory createClientSessionAndReturnPlaintext:fromClient.identifier prekeyMessage:data error:&error];
+        decryptedData = [sessionsDirectory createClientSessionAndReturnPlaintext:fromClient.sessionIdentifier prekeyMessage:data error:&error];
     }];
     return decryptedData;
 }
@@ -189,12 +190,19 @@
     __block NSError *error = nil;
     __block BOOL hasSession = NO;
     [self.encryptionContext perform:^(EncryptionSessionsDirectory * _Nonnull sessionsDirectory) {
-        if (! [sessionsDirectory hasSessionForID:client.identifier]) {
-            [sessionsDirectory createClientSession:client.identifier base64PreKeyString:client.lastPrekey.value error:&error];
+        if (! [sessionsDirectory hasSessionForID:client.sessionIdentifier]) {
+            [sessionsDirectory createClientSession:client.sessionIdentifier base64PreKeyString:client.lastPrekey.value error:&error];
         }
-        hasSession = [sessionsDirectory hasSessionForID:client.identifier];
+        hasSession = [sessionsDirectory hasSessionForID:client.sessionIdentifier];
     }];
     return hasSession;
+}
+
+- (NSString *)sessionIdentifier {
+    if (self.user == nil || self.identifier == nil) {
+        return nil;
+    }
+    return [NSString stringWithFormat:@"%@_%@", self.user.identifier, self.identifier];
 }
 
 - (void)dealloc
