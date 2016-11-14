@@ -23,6 +23,5 @@
 
 @interface MockUserClient ()
 
-@property (nonatomic) EncryptionContext *encryptionContext;
 
 @end

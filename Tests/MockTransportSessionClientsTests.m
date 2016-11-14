@@ -687,15 +687,15 @@
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         
         MockUser *selfUser = [session insertSelfUserWithName:@"Brigite Sorço"];
-        selfClient = [selfUser.clients anyObject];
-        
-        destClient = [session registerClientForUser:selfUser label:@"l'autre" type:@"permanent"];
+        selfClient = [session registerClientForUser:selfUser label:@"moi" type:@"permanent"];
+        destClient = [session registerClientForUser:selfUser label:@"autre" type:@"permanent"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
     NSData *clearData = [@"Please, encrypt me!" dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *encryptedData = [MockUserClient encryptedDataFromClient:selfClient toClient:destClient data:clearData];
+    NSData *encryptedData = [MockUserClient encryptedDataFromClient:destClient toClient:selfClient data:clearData];
     
+    XCTAssertNotNil(encryptedData);
     XCTAssertNotEqualObjects(clearData, encryptedData);
 }
 

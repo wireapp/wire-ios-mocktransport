@@ -902,7 +902,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
     
     if (shouldIncludeClient) {
         
-        MockUserClient *client = [MockUserClient insertClientWithLabel:user.identifier type:@"permanent" atLocation:self.cryptoboxLocation inContext:self.managedObjectContext];
+        MockUserClient *client = [MockUserClient insertClientWithLabel:user.identifier type:@"permanent" inContext:self.managedObjectContext];
         client.user = user;
         
         NSMutableSet *clients = [NSMutableSet setWithObject:client];
@@ -1093,7 +1093,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 - (MockUserClient *)registerClientForUser:(MockUser *)user label:(NSString *)label type:(NSString *)type
 {
     
-    MockUserClient *client = [MockUserClient insertClientWithLabel:label type:type atLocation:self.cryptoboxLocation inContext:self.managedObjectContext];
+    MockUserClient *client = [MockUserClient insertClientWithLabel:label type:type inContext:self.managedObjectContext];
     client.user = user;
     [user.clients addObject:client];
     return client;

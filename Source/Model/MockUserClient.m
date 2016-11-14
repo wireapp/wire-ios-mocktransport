@@ -39,8 +39,6 @@
 @dynamic model;
 @dynamic time;
 
-@synthesize encryptionContext;
-
 + (NSFetchRequest *)fetchRequestWithPredicate:(NSPredicate *)predicate
 {
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"UserClient"];
@@ -97,7 +95,18 @@
     return newClient;
 }
 
-+ (instancetype)insertClientWithLabel:(NSString *)label type:(NSString *)type atLocation:(NSURL *)location inContext:(NSManagedObjectContext *)moc;
+- (EncryptionContext *)encryptionContext {
+    
+    NSURL *documentURL = [[NSFileManager defaultManager] URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
+    NSURL *otrDirectory = [documentURL URLByAppendingPathComponent:@"mocktransport-otrDirectory"];
+    NSURL *clientOtrLocation = [otrDirectory URLByAppendingPathComponent:[NSString stringWithFormat:@"mockclient_%@_%@", self.user.identifier ?: @"USER", self.identifier ?: @"IDENTIFIER"]];
+    [[NSFileManager defaultManager] createDirectoryAtURL:clientOtrLocation withIntermediateDirectories:YES attributes:nil error:nil];
+    EncryptionContext *encryptionContext = [[EncryptionContext alloc] initWithPath:clientOtrLocation];
+    VerifyReturnNil(encryptionContext != nil);
+    return encryptionContext;
+}
+    
++ (instancetype)insertClientWithLabel:(NSString *)label type:(NSString *)type inContext:(NSManagedObjectContext *)moc;
 {
     MockUserClient *newClient = [NSEntityDescription insertNewObjectForEntityForName:@"UserClient" inManagedObjectContext:moc];
 
@@ -106,17 +115,11 @@
     newClient.type = type;
     
     newClient.time = [NSDate date];
-
-    NSURL *clientOtrLocation = [location URLByAppendingPathComponent:[NSString stringWithFormat:@"%@_%@", newClient.identifier, newClient.label]];
-    [[NSFileManager defaultManager] createDirectoryAtURL:clientOtrLocation withIntermediateDirectories:YES attributes:nil error:nil];
-    EncryptionContext *encryptionContext = [[EncryptionContext alloc] initWithPath:clientOtrLocation];
-    VerifyReturnNil(encryptionContext != nil);
-    newClient.encryptionContext = encryptionContext;
     
     __block NSArray *prekeys;
     __block NSString *lastPrekey;
     __block NSError *error;
-    [encryptionContext perform:^(EncryptionSessionsDirectory * _Nonnull sessionsDirectory) {
+    [newClient.encryptionContext perform:^(EncryptionSessionsDirectory * _Nonnull sessionsDirectory) {
         prekeys = [sessionsDirectory generatePrekeys:NSMakeRange(0, 100) error:&error];
         lastPrekey = [sessionsDirectory generateLastPrekeyAndReturnError:&error];
     }];
@@ -165,6 +168,8 @@
     __block NSData *encryptedData;
     EncryptionContext *encryptionContext = fromClient.encryptionContext;
     Require(encryptionContext != nil);
+    Require(toClient.identifier != nil);
+    Require(fromClient.identifier != nil);
     [encryptionContext perform:^(EncryptionSessionsDirectory * _Nonnull sessionsDirectory) {
         if (![sessionsDirectory hasSessionForID:toClient.sessionIdentifier]) {
             [sessionsDirectory createClientSession:toClient.sessionIdentifier base64PreKeyString:toClient.lastPrekey.value error:&error];
@@ -205,11 +210,6 @@
         return nil;
     }
     return [NSString stringWithFormat:@"%@_%@", self.user.identifier, self.identifier];
-}
-
-- (void)dealloc
-{
-    self.encryptionContext = nil;
 }
 
 

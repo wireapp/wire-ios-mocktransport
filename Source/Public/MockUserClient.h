@@ -66,7 +66,7 @@
 + (nonnull NSFetchRequest *)fetchRequestWithPredicate:(nullable NSPredicate *)predicate;
 
 + (nullable instancetype)insertClientWithPayload:(nonnull NSDictionary *)paylod contenxt:(nonnull NSManagedObjectContext *)context;
-+ (nullable instancetype)insertClientWithLabel:(nonnull NSString *)label type:(nonnull NSString *)type atLocation:(nonnull NSURL *)location inContext:(nonnull NSManagedObjectContext *)moc;
++ (nullable instancetype)insertClientWithLabel:(nonnull NSString *)label type:(nonnull NSString *)type inContext:(nonnull NSManagedObjectContext *)moc;
 - (nonnull id<ZMTransportData>)transportData;
 
 + (nonnull NSData *)encryptedDataFromClient:(nonnull MockUserClient *)fromClient toClient:(nonnull MockUserClient *)toClient data:(nonnull NSData *)data;
