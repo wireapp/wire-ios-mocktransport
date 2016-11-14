@@ -280,9 +280,9 @@ static NSString * const IdleString = @"idle";
                                  toClient:(MockUserClient *)toClient
                                      data:(NSData *)data;
 {
-    VerifyReturnNil(fromClient.identifier != nil);
-    VerifyReturnNil(toClient.identifier != nil);
-    VerifyReturnNil(data != nil);
+    Require(fromClient.identifier != nil);
+    Require(toClient.identifier != nil);
+    Require(data != nil);
     NSDictionary *eventData = @{
                                 @"sender": fromClient.identifier,
                                 @"recipient": toClient.identifier,
@@ -295,19 +295,19 @@ static NSString * const IdleString = @"idle";
                                      toClient:(MockUserClient *)toClient
                                          data:(NSData *)data;
 {
-    VerifyReturnNil(fromClient.identifier != nil);
-    VerifyReturnNil(toClient.identifier != nil);
-    VerifyReturnNil(data != nil);
+    Require(fromClient.identifier != nil);
+    Require(toClient.identifier != nil);
+    Require(data != nil);
     NSData *encrypted = [MockUserClient encryptedDataFromClient:fromClient toClient:toClient data:data];
     return [self insertOTRMessageFromClient:fromClient toClient:toClient data:encrypted];
 }
 
 - (MockEvent *)insertOTRAssetFromClient:(MockUserClient *)fromClient toClient:(MockUserClient *)toClient metaData:(NSData *)metaData imageData:(NSData *)imageData assetId:(NSUUID *)assetId isInline:(BOOL)isInline
 {
-    VerifyReturnNil(fromClient.identifier != nil);
-    VerifyReturnNil(toClient.identifier != nil);
-    VerifyReturnNil(assetId != nil);
-    VerifyReturnNil(metaData != nil);
+    Require(fromClient.identifier != nil);
+    Require(toClient.identifier != nil);
+    Require(assetId != nil);
+    Require(metaData != nil);
     NSDictionary *eventData = @{
                                 @"sender": fromClient.identifier,
                                 @"recipient": toClient.identifier,
