@@ -164,6 +164,7 @@
     __block NSError *error;
     __block NSData *encryptedData;
     EncryptionContext *encryptionContext = fromClient.encryptionContext;
+    Require(encryptionContext != nil);
     [encryptionContext perform:^(EncryptionSessionsDirectory * _Nonnull sessionsDirectory) {
         if (![sessionsDirectory hasSessionForID:toClient.sessionIdentifier]) {
             [sessionsDirectory createClientSession:toClient.sessionIdentifier base64PreKeyString:toClient.lastPrekey.value error:&error];
@@ -177,6 +178,7 @@
 + (NSData *)sessionMessageDataForEncryptedDataFromClient:(MockUserClient *)fromClient toClient:(MockUserClient *)toClient data:(NSData *)data
 {
     EncryptionContext *encryptionContext = toClient.encryptionContext;
+    Require(encryptionContext != nil);
     __block NSData *decryptedData;
     [encryptionContext perform:^(EncryptionSessionsDirectory * _Nonnull sessionsDirectory) {
         NSError *error;
