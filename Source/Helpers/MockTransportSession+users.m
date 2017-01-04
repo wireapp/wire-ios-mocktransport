@@ -49,49 +49,9 @@
 - (ZMTransportResponse *)processUsersRequest:(TestTransportSessionRequest *)sessionRequest;
 {
     if ((sessionRequest.method == ZMMethodGET) && (sessionRequest.pathComponents.count == 1) && ![sessionRequest.pathComponents.lastObject isEqualToString:@"prekeys"]) {
-        NSString *userID = sessionRequest.pathComponents[0];
-        
-        NSFetchRequest *request = [MockUser sortedFetchRequest];
-        request.predicate = [NSPredicate predicateWithFormat: @"identifier == %@", userID];
-        
-        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:request];
-        
-        // check that I got all of them
-        if (users.count < 1) {
-            return [self errorResponseWithCode:404 reason:@"user not found"];
-        } else {
-            MockUser *user = users[0];
-            id<ZMTransportData> payload = [self isConnectedToUser:user] ? [user transportData] : [user transportDataWhenNotConnected];
-            return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
-        }
+        return [self processUserIDRequest:sessionRequest];
     } else if ((sessionRequest.method == ZMMethodGET) && (sessionRequest.pathComponents.count == 0)) {
-        NSString *justIDs = [sessionRequest.URL.query componentsSeparatedByString:@"="][1];
-        
-        // If we had a query like "ids=", justIDs would be "" and userIDs would become [""], i.e. contain
-        // one empty element. The assert makes sure that that doesn't happen, because it would be Very Bad™
-        RequireString(justIDs.length > 0, "Malformed query");
-        
-        NSArray *userIDs = [justIDs componentsSeparatedByString:@","];
-        userIDs = [self convertToLowercase:userIDs];
-        
-        NSFetchRequest *request = [MockUser sortedFetchRequest];
-        request.predicate = [NSPredicate predicateWithFormat:@"identifier IN %@", userIDs];
-        
-        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:request];
-        
-        // check that I got all of them
-        if (users.count != userIDs.count) {
-            return [self errorResponseWithCode:404 reason:@"user not found"];
-        }
-        
-        // output
-        NSMutableArray *resultArray = [NSMutableArray array];
-        for (MockUser *user in users) {
-            
-            id<ZMTransportData> payload = [self isConnectedToUser:user] ? [user transportData] : [user transportDataWhenNotConnected];
-            [resultArray addObject:payload];
-        }
-        return [ZMTransportResponse responseWithPayload:resultArray HTTPStatus:200 transportSessionError:nil];
+        return [self processUsersIDsRequest:sessionRequest];
     }
     else if (sessionRequest.method == ZMMethodPOST && sessionRequest.pathComponents.count == 1 && [sessionRequest.pathComponents.lastObject isEqualToString:@"prekeys"]) {
         return [self processUsersPreKeysRequest:sessionRequest];
@@ -115,6 +75,55 @@
         return [self errorResponseWithCode:400 reason:@"invalid-method"];
     }
 }
+
+- (ZMTransportResponse *)processUserIDRequest:(TestTransportSessionRequest *)sessionRequest {
+    NSString *userID = sessionRequest.pathComponents[0];
+    
+    NSFetchRequest *request = [MockUser sortedFetchRequest];
+    request.predicate = [NSPredicate predicateWithFormat: @"identifier == %@", userID];
+    
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:request];
+    
+    // check that I got all of them
+    if (users.count < 1) {
+        return [self errorResponseWithCode:404 reason:@"user not found"];
+    } else {
+        MockUser *user = users[0];
+        id<ZMTransportData> payload = [self isConnectedToUser:user] ? [user transportData] : [user transportDataWhenNotConnected];
+        return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
+    }
+}
+
+- (ZMTransportResponse *)processUsersIDsRequest:(TestTransportSessionRequest *)sessionRequest {
+    NSString *justIDs = [sessionRequest.URL.query componentsSeparatedByString:@"="][1];
+    
+    // If we had a query like "ids=", justIDs would be "" and userIDs would become [""], i.e. contain
+    // one empty element. The assert makes sure that that doesn't happen, because it would be Very Bad™
+    RequireString(justIDs.length > 0, "Malformed query");
+    
+    NSArray *userIDs = [justIDs componentsSeparatedByString:@","];
+    userIDs = [self convertToLowercase:userIDs];
+    
+    NSFetchRequest *request = [MockUser sortedFetchRequest];
+    request.predicate = [NSPredicate predicateWithFormat:@"identifier IN %@", userIDs];
+    
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:request];
+    
+    // check that I got all of them
+    if (users.count != userIDs.count) {
+        return [self errorResponseWithCode:404 reason:@"user not found"];
+    }
+    
+    // output
+    NSMutableArray *resultArray = [NSMutableArray array];
+    for (MockUser *user in users) {
+        
+        id<ZMTransportData> payload = [self isConnectedToUser:user] ? [user transportData] : [user transportDataWhenNotConnected];
+        [resultArray addObject:payload];
+    }
+    return [ZMTransportResponse responseWithPayload:resultArray HTTPStatus:200 transportSessionError:nil];
+}
+
 
 // MARK: - Self
 /// handles /self

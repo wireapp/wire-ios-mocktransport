@@ -443,6 +443,32 @@
     XCTAssertEqualObjects(clientPayload[@"address"], @"10.0.0.2");
 }
 
+- (void)testThatItCanGetClientsOfAUser {
+    
+    // n
+    __block MockUser *user1;
+    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        user1 = [session insertUserWithName:@"Foo"];
+        [session registerClientForUser:user1 label:@"foobar" type:@"temporary"];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // when
+    NSString *path = [NSString stringWithFormat:@"/users/%@/clients", user1.identifier];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    
+    // then
+    XCTAssertNotNil(response);
+    XCTAssertEqual(response.HTTPStatus, 200);
+    XCTAssertNil(response.transportSessionError);
+    
+    NSArray *expectedClients = @[
+                                 @{},
+                                 @{},
+                                 ];
+    XCTAssertEqualObjects(response.payload, expectedClients);
+}
+
 - (void)testThatItCanGetASpecificClient {
     // given
     
