@@ -462,11 +462,19 @@
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertNil(response.transportSessionError);
     
-    NSArray *expectedClients = @[
-                                 @{},
-                                 @{},
-                                 ];
-    XCTAssertEqualObjects(response.payload, expectedClients);
+    NSArray *clients = [response.payload asArray];
+    XCTAssertEqual(clients.count, 2u);
+    NSSet *allClientIds = [NSSet setWithArray:[clients mapWithBlock:^id(id<ZMTransportData> obj) {
+        NSDictionary *payload = [obj asDictionary];
+        if(payload) {
+            return payload[@"id"];
+        }
+        return @"";
+    }]];
+    NSSet *expectedClientIds = [user1.clients mapWithBlock:^id(MockUserClient *client) {
+        return client.identifier;
+    }];
+    XCTAssertEqualObjects(allClientIds, expectedClientIds);
 }
 
 - (void)testThatItCanGetASpecificClient {
@@ -522,12 +530,6 @@
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
         client = [session registerClientForUser:selfUser label:@"client" type:@"permanent"];
-        client.deviceClass = @"desktop";
-        client.time = [NSDate dateWithTimeIntervalSince1970:10000];
-        client.model = @"iPod Touch";
-        client.locationLatitude = 23;
-        client.locationLongitude = -10;
-        client.address = @"10.0.0.2";
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
