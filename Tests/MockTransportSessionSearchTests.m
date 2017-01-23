@@ -29,7 +29,7 @@
 
 - (void)testThatItRespondsWithSearchResults
 {
-    // given
+    // GIVEN
     __block MockUser *user1;
     __block MockUser *user2;
     NSString *user2email = @"foo@example.com";
@@ -58,12 +58,12 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     NSString *path = [NSString pathWithComponents:@[@"/", @"search", @"contacts?q=AA&l=200&d=1"]];
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
     
     
-    // then
+    // THEN
     NSDictionary *expectedPayload = @{
                                       @"documents": @[
                                               @{
@@ -73,6 +73,8 @@
                                                   @"id": user1.identifier,
                                                   @"level": @1,
                                                   @"name": user1.name,
+                                                  @"handle": user1.handle
+
                                                   },
                                               
                                               @{
@@ -84,6 +86,8 @@
                                                   @"level": @1,
                                                   @"name": user2.name,
                                                   @"phone": user2phone,
+                                                  @"handle": user2.handle
+
                                                   }
                                               ]
                                       };
@@ -96,7 +100,7 @@
 
 - (void)testThatItLimitsTheNumberOfSearchResults
 {
-    // given
+    // GIVEN
     __block MockUser *user1;
     __block MockUser *user2;
     __block MockUser *user3;
@@ -128,12 +132,12 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     NSString *path = [NSString pathWithComponents:@[@"/", @"search", @"contacts?q=aa&l=3&d=1"]];
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
     
     
-    // then
+    // THEN
     NSDictionary *expectedPayload = @{
                                       @"documents": @[
                                               @{
@@ -143,6 +147,8 @@
                                                   @"id": user1.identifier,
                                                   @"level": @1,
                                                   @"name": user1.name,
+                                                  @"handle": user1.handle
+
                                                   
                                                   },
                                               
@@ -154,7 +160,9 @@
                                                   @"id": user2.identifier,
                                                   @"level": @1,
                                                   @"name": user2.name,
-                                                  @"phone": [NSNull null]
+                                                  @"phone": [NSNull null],
+                                                  @"handle": user2.handle
+
                                                   
                                                   },
                                               
@@ -167,7 +175,9 @@
                                                   @"id": user3.identifier,
                                                   @"level": @1,
                                                   @"name": user3.name,
-                                                  @"phone": user3phone
+                                                  @"phone": user3phone,
+                                                  @"handle": user3.handle
+
                                                   
                                                   }
                                               ]
@@ -182,7 +192,7 @@
 
 - (void)testThatItDoesNotReturnSelfUser
 {
-    // given
+    // GIVEN
     __block MockUser *user1;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         MockUser *selfUser = [session insertSelfUserWithName:@"SelfUser"];
@@ -195,12 +205,12 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     NSString *path = [NSString pathWithComponents:@[@"/", @"search", @"contacts?q=User&l=200&d=1"]];
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
     
     
-    // then
+    // THEN
     NSDictionary *expectedPayload = @{
                                       @"documents": @[
                                               @{
@@ -211,7 +221,8 @@
                                                   @"id": user1.identifier,
                                                   @"level": @1,
                                                   @"name": user1.name,
-                                                  @"phone": [NSNull null]
+                                                  @"phone": [NSNull null],
+                                                  @"handle": user1.handle
                                                   
                                                   }
                                               ]
@@ -224,7 +235,7 @@
 
 - (void)testThatItReturnsAllConnectedUsersWhenAskingForCommonContacts
 {
-    // given
+    // GIVEN
     __block MockUser *user1;
     __block MockUser *user2;
     __block MockUser *user3;
@@ -246,11 +257,11 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     NSString *path = [NSString pathWithComponents:@[@"/", @"search", @"common", user3.identifier]];
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
     
-    // then
+    // THEN
     NSDictionary *expectedPayload = @{
                                       @"documents": @[
                                               @{

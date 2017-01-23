@@ -74,7 +74,7 @@
 @implementation MockTransportSessionClientsTests (REST_API)
 
 - (void)testThatItCanRegisterClient {
-    // given
+    // GIVEN
 
     __block MockUser *selfUser;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -86,10 +86,10 @@
     NSUInteger keysCount = 100;
     NSMutableDictionary *payload = [self payloadtoRegisterClient:keysCount password:selfUser.password];
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/clients" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     if (!response) {
         return;
@@ -141,7 +141,7 @@
 }
 
 - (void)testThatItCanRegisterSecondClientWithPassword {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
@@ -154,7 +154,7 @@
 
     (void)[self responseForPayload:payload path:@"/clients" method:ZMMethodPOST];
 
-    // when
+    // WHEN
     //uploading second client
     
     NSString *secondLabel = @"anotherClient";
@@ -163,7 +163,7 @@
     
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/clients" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     if (!response) {
         return;
@@ -204,7 +204,7 @@
 }
 
 - (void)testThatItCanNotRegisterSecondClientWithoutPassword {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
@@ -217,7 +217,7 @@
     
     (void)[self responseForPayload:payload path:@"/clients" method:ZMMethodPOST];
     
-    // when
+    // WHEN
     //uploading second client
     
     NSString *secondLabel = @"anotherClient";
@@ -225,7 +225,7 @@
     
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/clients" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     if (!response) {
         return;
@@ -237,7 +237,7 @@
 }
 
 - (void)testThatItCanNotRegisterSecondClientWithWrongPassword {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
@@ -250,7 +250,7 @@
     
     (void)[self responseForPayload:payload path:@"/clients" method:ZMMethodPOST];
     
-    // when
+    // WHEN
     //uploading second client
     
     NSString *secondLabel = @"anotherClient";
@@ -259,7 +259,7 @@
     
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/clients" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     if (!response) {
         return;
@@ -271,7 +271,7 @@
 }
 
 - (void)testThatItCanNotRegisterTooManyClients {
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
@@ -284,7 +284,7 @@
     
     (void)[self responseForPayload:payload path:@"/clients" method:ZMMethodPOST];
     
-    // when
+    // WHEN
     //uploading second client
     
     NSString *secondLabel = @"anotherClient";
@@ -373,7 +373,7 @@
 - (void)expectFailureResponseWithStatusCode:(NSInteger)statusCode label:(NSString *)label forPayload:(NSDictionary *)payload
 {
     
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
@@ -384,10 +384,10 @@
     NSMutableDictionary *final = [payload mutableCopy];
     final[@"password"] = selfUser.password;
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:[final copy] path:@"/clients" method:ZMMethodPOST];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     if (!response) {
         return;
@@ -401,7 +401,7 @@
 }
 
 - (void)testThatItCanGetClients {
-    // given
+    // GIVEN
     
     __block MockUser *selfUser;
     __block MockUserClient *client;
@@ -419,10 +419,10 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     ZMTransportResponse *response = [self responseForPayload:nil path:@"/clients" method:ZMMethodGET];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertNil(response.transportSessionError);
@@ -443,8 +443,42 @@
     XCTAssertEqualObjects(clientPayload[@"address"], @"10.0.0.2");
 }
 
+- (void)testThatItCanGetClientsOfAUser {
+    
+    // GIVEN
+    __block MockUser *user1;
+    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        user1 = [session insertUserWithName:@"Foo"];
+        [session registerClientForUser:user1 label:@"foobar" type:@"temporary"];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // WHEN
+    NSString *path = [NSString stringWithFormat:@"/users/%@/clients", user1.identifier];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    
+    // THEN
+    XCTAssertNotNil(response);
+    XCTAssertEqual(response.HTTPStatus, 200);
+    XCTAssertNil(response.transportSessionError);
+    
+    NSArray *clients = [response.payload asArray];
+    XCTAssertEqual(clients.count, 2u);
+    NSSet *allClientIds = [NSSet setWithArray:[clients mapWithBlock:^id(id<ZMTransportData> obj) {
+        NSDictionary *payload = [obj asDictionary];
+        if(payload) {
+            return payload[@"id"];
+        }
+        return @"";
+    }]];
+    NSSet *expectedClientIds = [user1.clients mapWithBlock:^id(MockUserClient *client) {
+        return client.identifier;
+    }];
+    XCTAssertEqualObjects(allClientIds, expectedClientIds);
+}
+
 - (void)testThatItCanGetASpecificClient {
-    // given
+    // GIVEN
     
     __block MockUser *selfUser;
     __block MockUserClient *client;
@@ -467,11 +501,11 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     NSString *path = [NSString stringWithFormat:@"/clients/%@", client.identifier];
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertNil(response.transportSessionError);
@@ -489,27 +523,21 @@
 }
 
 - (void)testThatItCanDeleteClients {
-    // given
+    // GIVEN
     
     __block MockUser *selfUser;
     __block MockUserClient *client;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
         client = [session registerClientForUser:selfUser label:@"client" type:@"permanent"];
-        client.deviceClass = @"desktop";
-        client.time = [NSDate dateWithTimeIntervalSince1970:10000];
-        client.model = @"iPod Touch";
-        client.locationLatitude = 23;
-        client.locationLongitude = -10;
-        client.address = @"10.0.0.2";
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     NSString *path = [NSString stringWithFormat:@"/clients/%@", client.identifier];
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodDELETE];
     
-    // then
+    // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertNil(response.transportSessionError);
@@ -517,7 +545,7 @@
     // and when
     ZMTransportResponse *response2 = [self responseForPayload:nil path:@"/clients" method:ZMMethodGET];
     
-    // then
+    // THEN
     XCTAssertNotNil(response2);
     XCTAssertEqual(response2.HTTPStatus, 200);
     XCTAssertNil(response2.transportSessionError);
@@ -531,7 +559,7 @@
 
 - (void)testThatItAddsAClient {
     
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUserClient *client;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -539,13 +567,13 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         client = [session registerClientForUser:selfUser label:@"client" type:@"permanent"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     XCTAssertEqual(selfUser.clients.count, 1u);
     XCTAssertTrue([selfUser.clients containsObject:client]);
     
@@ -553,7 +581,7 @@
 
 - (void)testThatItRemovesAClient {
     
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUserClient *client;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -562,19 +590,19 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         [session deleteUserClientWithIdentifier:client.identifier forUser:selfUser];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     XCTAssertEqual(selfUser.clients.count, 0u);
 }
 
 - (void)testThatItSendsANoficationWhenRemovingASelfClient {
  
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUserClient *client;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -586,7 +614,7 @@
     NSUInteger previousEventsCount = self.sut.generatedPushEvents.count;
     NSString *clientId = client.identifier;
     
-    // when
+    // WHEN
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         [session deleteUserClientWithIdentifier:client.identifier forUser:selfUser];
     }];
@@ -606,7 +634,7 @@
 
 - (void)testThatItSendsANoficationWhenAddingASelfClient {
     
-    // given
+    // GIVEN
     __block MockUser *selfUser;
     __block MockUserClient *client;
     NSString *clientLabel = @"client label";
@@ -616,13 +644,13 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         client = [session registerClientForUser:selfUser label:clientLabel type:clientType];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     XCTAssertEqual(self.sut.generatedPushEvents.count, 1u);
     MockPushEvent *lastEvent = self.sut.generatedPushEvents.lastObject;
     
@@ -643,25 +671,25 @@
 }
 
 - (void)testThatItDoesNotSendsANoficationWhenAddingAClientOfAnotherUser {
-    // given
+    // GIVEN
     __block MockUser *otherUser;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         otherUser = [session insertUserWithName:@"Foo"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         [session registerClientForUser:otherUser label:@"client" type:@"permanent"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     XCTAssertEqual(self.sut.generatedPushEvents.count, 0u);
 }
 
 - (void)testThatItDoesNotSendsANoficationWhenRemovingAClientOfAnotherUser {
-    // given
+    // GIVEN
     __block MockUser *otherUser;
     __block MockUserClient *client;
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
@@ -670,13 +698,13 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // when
+    // WHEN
     [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         [session deleteUserClientWithIdentifier:client.identifier forUser:otherUser];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // then
+    // THEN
     XCTAssertEqual(self.sut.generatedPushEvents.count, 0u);
 }
 
