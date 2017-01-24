@@ -27,7 +27,8 @@
 #import "MockEvent.h"
 #import "MockEvent.h"
 #import "MockAsset.h"
-#import "MockUserClient+Internal.h"
+#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
+
 
 static NSString * const JoinedString = @"joined";
 static NSString * const IdleString = @"idle";
@@ -298,7 +299,7 @@ static NSString * const IdleString = @"idle";
     Require(fromClient.identifier != nil);
     Require(toClient.identifier != nil);
     Require(data != nil);
-    NSData *encrypted = [MockUserClient encryptedDataFromClient:fromClient toClient:toClient data:data];
+    NSData *encrypted = [MockUserClient encryptedWithData:data from:fromClient to:toClient];
     return [self insertOTRMessageFromClient:fromClient toClient:toClient data:encrypted];
 }
 

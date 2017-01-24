@@ -18,9 +18,10 @@
 
 
 #import "MockTransportSessionTests.h"
-#import "MockUserClient.h"
 #import "MockUser.h"
 #import "MockPushEvent.h"
+#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
+
 
 @interface MockTransportSessionClientsTests : MockTransportSessionTests
 
@@ -721,7 +722,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     NSData *clearData = [@"Please, encrypt me!" dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *encryptedData = [MockUserClient encryptedDataFromClient:destClient toClient:selfClient data:clearData];
+    NSData *encryptedData = [MockUserClient encryptedWithData:clearData from:destClient to:selfClient];
     
     XCTAssertNotNil(encryptedData);
     XCTAssertNotEqualObjects(clearData, encryptedData);
