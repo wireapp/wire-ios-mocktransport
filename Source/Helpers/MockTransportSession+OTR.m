@@ -167,7 +167,8 @@
 }
 
 - (void)insertOTRMessageEventsToConversation:(MockConversation *)conversation
-                             requestRecipients:(NSArray *)recipients
+                           requestRecipients:(NSArray *)recipients
+                                senderClient:(MockUserClient *)senderClient
                             createEventBlock:(MockEvent *(^)(MockUserClient *recipient, NSData *messageData))createEventBlock;
 {
     NSArray *activeClients = [conversation.activeUsers.array flattenWithBlock:^NSArray *(MockUser *user) {
@@ -191,6 +192,7 @@
         }]] firstObject];
 
         if (client != nil) {
+            [MockUserClient decryptMessageWithData:clientEntry.text from:senderClient to:client];
             createEventBlock(client, clientEntry.text);
         }
     }

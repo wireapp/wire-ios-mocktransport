@@ -192,7 +192,7 @@ static NSString * const IdleString = @"idle";
     NSInteger statusCode = 412;
     if (missedClients.count == 0) {
         statusCode = 201;
-        [self insertOTRMessageEventsToConversation:conversation requestRecipients:otrMetaData.recipients createEventBlock:^MockEvent *(MockUserClient *recipient, NSData *messageData) {
+        [self insertOTRMessageEventsToConversation:conversation requestRecipients:otrMetaData.recipients senderClient:senderClient createEventBlock:^MockEvent *(MockUserClient *recipient, NSData *messageData) {
             return [conversation insertOTRMessageFromClient:senderClient toClient:recipient data:messageData];
         }];
     }

@@ -120,7 +120,19 @@ static NSString * const IdleString = @"idle";
 
 - (MockEvent *)eventIfNeededByUser:(MockUser *)byUser type:(ZMTUpdateEventType)type data:(id<ZMTransportData>)data
 {
-    NSArray *eventTypesWithPushOnInsert = @[@(ZMTUpdateEventConversationAssetAdd), @(ZMTUpdateEventConversationMessageAdd), @(ZMTUpdateEventConversationClientMessageAdd), @(ZMTUpdateEventConversationOTRMessageAdd), @(ZMTUpdateEventConversationOTRAssetAdd), @(ZMTUpdateEventConversationCreate), @(ZMTUpdateEventConversationMemberJoin), @(ZMTUpdateEventConversationConnectRequest), @(ZMTUpdateEventConversationVoiceChannelDeactivate), @(ZMTUpdateEventCallState), @(ZMTUpdateEventConversationKnock), @(ZMTUpdateEventConversationHotKnock), @(ZMTUpdateEventConversationMemberUpdate)];
+    NSArray *eventTypesWithPushOnInsert = @[@(ZMTUpdateEventConversationAssetAdd),
+                                            @(ZMTUpdateEventConversationMessageAdd),
+                                            @(ZMTUpdateEventConversationClientMessageAdd),
+                                            @(ZMTUpdateEventConversationOTRMessageAdd),
+                                            @(ZMTUpdateEventConversationOTRAssetAdd),
+                                            @(ZMTUpdateEventConversationCreate),
+                                            @(ZMTUpdateEventConversationMemberJoin),
+                                            @(ZMTUpdateEventConversationConnectRequest),
+                                            @(ZMTUpdateEventConversationVoiceChannelDeactivate),
+                                            @(ZMTUpdateEventCallState),
+                                            @(ZMTUpdateEventConversationKnock),
+                                            @(ZMTUpdateEventConversationHotKnock),
+                                            @(ZMTUpdateEventConversationMemberUpdate)];
     
 
     if(self.isInserted && ![eventTypesWithPushOnInsert containsObject:@(type)]) {

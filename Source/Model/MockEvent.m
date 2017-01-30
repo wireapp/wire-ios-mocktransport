@@ -102,7 +102,20 @@ static ZMLogLevel_t const ZMLogLevel ZM_UNUSED = ZMLogLevelWarn;
 
 + (NSArray *)persistentEvents;
 {
-   return @[@(ZMTUpdateEventConversationRename), @(ZMTUpdateEventConversationMemberJoin), @(ZMTUpdateEventConversationMemberLeave), @(ZMTUpdateEventConversationConnectRequest), @(ZMTUpdateEventConversationMessageAdd), @(ZMTUpdateEventConversationClientMessageAdd), @(ZMTUpdateEventConversationAssetAdd), @(ZMTUpdateEventConversationKnock), @(ZMTUpdateEventConversationHotKnock), @(ZMTUpdateEventConversationVoiceChannelActivate), @(ZMTUpdateEventConversationVoiceChannelDeactivate)];
+   return @[@(ZMTUpdateEventConversationRename),
+            @(ZMTUpdateEventConversationMemberJoin),
+            @(ZMTUpdateEventConversationMemberLeave),
+            @(ZMTUpdateEventConversationConnectRequest),
+            @(ZMTUpdateEventConversationMessageAdd),
+            @(ZMTUpdateEventConversationClientMessageAdd),
+            @(ZMTUpdateEventConversationAssetAdd),
+            @(ZMTUpdateEventConversationKnock),
+            @(ZMTUpdateEventConversationHotKnock),
+            @(ZMTUpdateEventConversationVoiceChannelActivate),
+            @(ZMTUpdateEventConversationVoiceChannelDeactivate),
+            @(ZMTUpdateEventConversationOTRMessageAdd),
+            @(ZMTUpdateEventConversationOTRAssetAdd)
+            ];
 }
 
 
