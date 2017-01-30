@@ -60,6 +60,6 @@
 - (void)insertOTRMessageEventsToConversation:(MockConversation *)conversation
                            requestRecipients:(NSArray *)recipients
                                 senderClient:(MockUserClient *)sender
-                            createEventBlock:(MockEvent *(^)(MockUserClient *recipient, NSData *messageData))createEventBlock;
+                            createEventBlock:(MockEvent *(^)(MockUserClient *recipient, NSData *messageData, NSData *decryptedData))createEventBlock;
 
 @end

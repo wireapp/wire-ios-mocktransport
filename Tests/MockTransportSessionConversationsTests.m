@@ -439,15 +439,14 @@
         [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
 
         otherUser = [session insertUserWithName:@"bar"];
-        conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
+        otherUserClient = [otherUser.clients anyObject];
+        secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent"];
+        redundantClient = [session registerClientForUser:otherUser label:@"Wire for OS/2" type:@"permanent"];
         
         selfClient = [selfUser.clients anyObject];
         secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent"];
         
-        otherUserClient = [otherUser.clients anyObject];
-        secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent"];
-        
-        redundantClient = [session registerClientForUser:otherUser label:@"Wire for OS/2" type:@"permanent"];
+        conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     NSUInteger previousNotificationsCount = self.sut.generatedPushEvents.count;

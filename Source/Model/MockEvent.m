@@ -35,6 +35,7 @@ static ZMLogLevel_t const ZMLogLevel ZM_UNUSED = ZMLogLevelWarn;
 @dynamic type;
 @dynamic data;
 @dynamic conversation;
+@dynamic decryptedOTRData;
 
 + (NSArray *)eventStringToEnumValueTuples
 {

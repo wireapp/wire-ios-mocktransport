@@ -315,7 +315,12 @@ static NSString * const IdleString = @"idle";
     return [self insertOTRMessageFromClient:fromClient toClient:toClient data:encrypted];
 }
 
-- (MockEvent *)insertOTRAssetFromClient:(MockUserClient *)fromClient toClient:(MockUserClient *)toClient metaData:(NSData *)metaData imageData:(NSData *)imageData assetId:(NSUUID *)assetId isInline:(BOOL)isInline
+- (MockEvent *)insertOTRAssetFromClient:(MockUserClient *)fromClient
+                               toClient:(MockUserClient *)toClient
+                               metaData:(NSData *)metaData
+                              imageData:(NSData *)imageData
+                                assetId:(NSUUID *)assetId
+                               isInline:(BOOL)isInline
 {
     Require(fromClient.identifier != nil);
     Require(toClient.identifier != nil);

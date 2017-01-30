@@ -99,6 +99,7 @@
 		54CE5E741B753570007F3065 /* ocmock.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 54CE5E691B7534C4007F3065 /* ocmock.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54CE5E751B753570007F3065 /* ZMCSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 54CE5E6A1B7534C4007F3065 /* ZMCSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54CE5E771B753570007F3065 /* ZMUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 54CE5E6C1B7534C4007F3065 /* ZMUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		54EBB20A1E3F99B300602A4B /* Cryptobox.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CED2BC911CECC63400E285B3 /* Cryptobox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54FAE6821E3A025500E6DE42 /* MockTransportSessionObjectCreationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FAE6801E3A01F000E6DE42 /* MockTransportSessionObjectCreationTests.swift */; };
 		CE471AF31C19AC670040802B /* MockTransportSessionInvitationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CE471AF21C19AC670040802B /* MockTransportSessionInvitationTests.m */; };
 		CE4750291C19F73500848CCB /* MockPersonalInvitation.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4750281C19F73500848CCB /* MockPersonalInvitation.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -139,6 +140,7 @@
 				09E393C61BAC3F8D00F3EA1B /* ZMProtos.framework in CopyFiles */,
 				09E393C91BAC3FA300F3EA1B /* ProtocolBuffers.framework in CopyFiles */,
 				09BCDB6C1BC7FC100020DCC7 /* zimages.framework in CopyFiles */,
+				54EBB20A1E3F99B300602A4B /* Cryptobox.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

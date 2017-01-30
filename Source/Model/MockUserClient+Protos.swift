@@ -77,6 +77,7 @@ extension MockUserClient {
         clients.forEach { client in
             var previous = mapped[client.user!] ?? [MockUserClient]()
             previous.append(client)
+            mapped[client.user!] = previous
         }
         return mapped
     }
