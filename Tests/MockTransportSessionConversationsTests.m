@@ -522,8 +522,12 @@
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 201);
-    XCTAssertTrue([otherUserClient hasSessionWith:selfClient]);
-    XCTAssertTrue([selfClient hasSessionWith:otherUserClient]);
+    MockEvent *lastEvent = conversation.events.lastObject;
+    XCTAssertNotNil(lastEvent);
+    XCTAssertEqual(lastEvent.eventType, ZMTUpdateEventConversationOTRMessageAdd);
+    XCTAssertNotNil(lastEvent.decryptedOTRData);
+    ZMGenericMessage *decryptedMessage = (ZMGenericMessage *)[[[[ZMGenericMessageBuilder alloc] init] mergeFromData:lastEvent.decryptedOTRData] build];
+    XCTAssertEqualObjects(decryptedMessage.textData.content, messageText);
 }
 
 - (void)testThatItReturnsMissingAndRedundantClientsWhenReceivingOTRAsset
