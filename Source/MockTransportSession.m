@@ -66,8 +66,8 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
 @property (nonatomic, readonly) NSMutableArray *nonCompletedRequests;
 
+@property (atomic) BOOL shouldKeepPushChannelOpen;
 @property (atomic) BOOL shouldSendPushChannelEvents;
-@property (atomic) BOOL clientRequestedPushChannel;
 @property (atomic) BOOL clientCompletedLogin;
 
 @property (nonatomic) NSMutableSet* whitelistedEmails;
@@ -98,13 +98,15 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 @end
 
 
-@interface MockTransportSession (PushEvents)
+@interface MockTransportSession (PushEvents) <ZMPushChannel>
+
+@property (nonatomic, readonly) id<ZMPushChannel> pushChannel;
 
 - (void)managedObjectContextPropagateChangesWithInsertedObjects:(NSSet *)inserted
                                                  updatedObjects:(NSSet *)updated
                                                  deletedObjects:(NSSet *)deleted
                                      shouldSendEventsToSelfUser:(BOOL)shouldSendSelfEvents;
-- (void)openPushChannelWithConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
+- (void)configurePushChannelWithConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
 
 @end
 
@@ -754,7 +756,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 - (void)simulatePushChannelOpened;
 {
     [self.pushChannelGroupQueue performGroupedBlock:^{
-        if(self.clientCompletedLogin && self.clientRequestedPushChannel) {
+        if(self.clientCompletedLogin && self.shouldKeepPushChannelOpen) {
             self.shouldSendPushChannelEvents = YES;
             [self.pushChannelConsumer pushChannelDidOpen:(ZMPushChannelConnection * _Nonnull) nil
                                             withResponse:(NSHTTPURLResponse * _Nonnull) nil];
@@ -866,11 +868,25 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
 @implementation MockTransportSession (PushEvents)
 
-- (void)openPushChannelWithConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
+ - (void)setKeepOpen:(BOOL)keepOpen
+{
+    self.shouldKeepPushChannelOpen = keepOpen;
+}
+
+- (BOOL)keepOpen
+{
+    return self.shouldKeepPushChannelOpen;
+}
+
+- (id<ZMPushChannel>)pushChannel
+{
+    return self;
+}
+
+- (void)configurePushChannelWithConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
 {
     LogNetwork(@"---> Request: (fake) /access");
     
-    self.clientRequestedPushChannel = YES;
     self.pushChannelConsumer = consumer;
     self.pushChannelGroupQueue = groupQueue;
 }
