@@ -122,7 +122,16 @@ extension MockUser {
             "name" : name,
             "id" : identifier,
             "handle" : handle,
-            "picture" : pictureData.array
+            "picture" : pictureData.array,
+            "assets" : assetData
+        ]
+    }
+    
+    var assetData: [[String : Any]]? {
+        guard let previewId = previewProfileAssetIdentifier, let completeId = completeProfileAssetIdentifier else { return nil }
+        return [
+            ["size" : "preview", "type" : "image", "key" : previewId],
+            ["size" : "preview", "type" : "image", "key" : completeId],
         ]
     }
     

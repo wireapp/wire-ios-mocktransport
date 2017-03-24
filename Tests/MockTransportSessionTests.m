@@ -398,7 +398,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:(id) data];
     FHAssertTrue(fr, [dict isKindOfClass:[NSDictionary class]]);
-    NSArray *keys = @[@"accent_id", @"id", @"name", @"picture", @"handle"];
+    NSArray *keys = @[@"accent_id", @"id", @"name", @"picture", @"handle", @"assets"];
     if(isConnected) {
         keys = [keys arrayByAddingObjectsFromArray:@[@"email", @"phone"]];
     }
