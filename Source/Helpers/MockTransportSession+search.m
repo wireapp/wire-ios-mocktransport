@@ -95,8 +95,8 @@
                 commonConnectionsUUIDs = [commonConnectionsUUIDs subarrayWithRange:NSMakeRange(0, 3)];
             }
             
-            payload[ZMSearchUserMutualFriendsKey] = commonConnectionsUUIDs;
-            payload[ZMSearchUserTotalMutualFriendsKey] = @(commonConnections.count);
+            payload[MockUser.mutualFriendsKey] = commonConnectionsUUIDs;
+            payload[MockUser.totalMutualFriendsKey] = @(commonConnections.count);
             return payload;
         }];
         

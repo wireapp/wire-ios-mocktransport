@@ -20,10 +20,9 @@
 @import CoreGraphics;
 @import MobileCoreServices;
 @import ZMCSystem;
+@import ZMCMockTransport;
 
 static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
-
-#import "MockEvent.h"
 
 #import "MockTransportSessionTests.h"
 #import <libkern/OSAtomic.h>

@@ -160,7 +160,6 @@
                                                   @"id": user2.identifier,
                                                   @"level": @1,
                                                   @"name": user2.name,
-                                                  @"phone": [NSNull null],
                                                   @"handle": user2.handle
 
                                                   
@@ -217,13 +216,10 @@
                                                   @"blocked": @NO,
                                                   @"accent_id": @2,
                                                   @"connected": @YES,
-                                                  @"email": [NSNull null],
                                                   @"id": user1.identifier,
                                                   @"level": @1,
                                                   @"name": user1.name,
-                                                  @"phone": [NSNull null],
                                                   @"handle": user1.handle
-                                                  
                                                   }
                                               ]
                                       };
