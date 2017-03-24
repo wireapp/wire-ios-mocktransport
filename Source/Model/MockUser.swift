@@ -74,7 +74,7 @@ extension MockUser {
         return mediumImage?.identifier
     }
     
-    @objc public var smallImageIdentifier: String? {
+    @objc public var smallProfileImageIdentifier: String? {
         return mediumImage?.identifier
     }
     
