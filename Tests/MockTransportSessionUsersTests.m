@@ -47,6 +47,8 @@
         user1.email = @"";
         user1.accentID = 2;
         user1.phone = @"";
+        user1.previewProfileAssetIdentifier = @"123";
+        user1.completeProfileAssetIdentifier = @"4556";
         user1ID = user1.identifier;
         
         connection1 = [session insertConnectionWithSelfUser:selfUser toUser:user1];
@@ -67,6 +69,8 @@
         user3.email = @"";
         user3.accentID = 1;
         user3.phone = @"";
+        user3.previewProfileAssetIdentifier = @"0099";
+        user3.completeProfileAssetIdentifier = @"29993";
         user3ID = user3.identifier;
         
         connection3 = [session insertConnectionWithSelfUser:selfUser toUser:user3];
@@ -109,6 +113,8 @@
         selfUser.email = @"foo@example.com";
         selfUser.phone = @"+4555575653498";
         selfUser.accentID = 4;
+        selfUser.previewProfileAssetIdentifier = @"1234-1";
+        selfUser.completeProfileAssetIdentifier = @"0987-1";
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -272,9 +278,15 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
+    NSString *previewId = @"123-45";
+    NSString *completeId = @"09873-1";
     NSDictionary *payload = @{
                               @"name" : @"This is the new name",
-                              @"accent_id" : @"4"
+                              @"accent_id" : @"4",
+                              @"assets" : @[
+                                           @{ @"key" : previewId, @"type" : @"image", @"size" : @"preview" },
+                                           @{ @"key" : completeId, @"type" : @"image", @"size" : @"complete" },
+                                             ]
                               };
     
     // WHEN
@@ -288,6 +300,8 @@
         NOT_USED(session);
         XCTAssertEqualObjects(selfUser.name, payload[@"name"]);
         XCTAssertEqual(selfUser.accentID, [payload[@"accent_id"] integerValue] );
+        XCTAssertEqualObjects(selfUser.previewProfileAssetIdentifier, previewId);
+        XCTAssertEqualObjects(selfUser.completeProfileAssetIdentifier, completeId);
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 }

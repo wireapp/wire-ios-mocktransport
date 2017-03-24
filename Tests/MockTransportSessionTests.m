@@ -424,7 +424,36 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
             MockPicture *picture = user.pictures[idx];
             [self checkThatTransportDictionary:pictureData matchesPicture:picture];
         }];
+        if (dict[@"assets"] == [NSNull null]) {
+            XCTAssertNil(user.previewProfileAssetIdentifier);
+            XCTAssertNil(user.completeProfileAssetIdentifier);
+        } else {
+            [self checkThatTransportData:dict[@"assets"] matchesPreviewAssetId:user.previewProfileAssetIdentifier completeAssetId:user.completeProfileAssetIdentifier];
+        }
     }];
+}
+
+- (void)checkThatTransportData:(NSArray *)array matchesPreviewAssetId:(NSString *)previewAsset completeAssetId:(NSString *)completeAsset
+{
+    XCTAssertEqual(array.count, 2u);
+    BOOL previewFound = NO;
+    BOOL completeFound = NO;
+    for (NSDictionary *item in array) {
+        XCTAssertEqualObjects(item[@"type"], @"image");
+        NSString *size = item[@"size"];
+        NSString *key = item[@"key"];
+        if ([size isEqualToString:@"preview"]) {
+            XCTAssertEqualObjects(key, previewAsset);
+            previewFound = YES;
+        } else if ([size isEqualToString:@"complete"]) {
+            XCTAssertEqualObjects(key, completeAsset);
+            completeFound = YES;
+        } else {
+            XCTFail(@"Unknown image size");
+        }
+    }
+    XCTAssert(previewFound, @"Preview image not found");
+    XCTAssert(completeFound, @"Complete image not found");
 }
 
 - (void)checkThatTransportDictionary:(NSDictionary *)dict matchesPicture:(MockPicture *)picture;

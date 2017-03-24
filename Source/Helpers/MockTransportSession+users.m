@@ -266,6 +266,15 @@
         }
         else if([key isEqualToString:@"accent_id"]) {
             self.selfUser.accentID = (int16_t) [changedFields[key] integerValue];
+        } else if([key isEqualToString:@"assets"]) {
+            for (NSDictionary *data in changedFields[key]) {
+                NSString *assetKey = data[@"key"];
+                if ([data[@"size"] isEqualToString:@"preview"]) {
+                    self.selfUser.previewProfileAssetIdentifier = assetKey;
+                } else if ([data[@"size"] isEqualToString:@"complete"]) {
+                    self.selfUser.completeProfileAssetIdentifier = assetKey;
+                }
+            }
         }
     }
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];

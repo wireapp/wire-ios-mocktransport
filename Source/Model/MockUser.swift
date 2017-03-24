@@ -131,7 +131,7 @@ extension MockUser {
         guard let previewId = previewProfileAssetIdentifier, let completeId = completeProfileAssetIdentifier else { return nil }
         return [
             ["size" : "preview", "type" : "image", "key" : previewId],
-            ["size" : "preview", "type" : "image", "key" : completeId],
+            ["size" : "complete", "type" : "image", "key" : completeId],
         ]
     }
     
