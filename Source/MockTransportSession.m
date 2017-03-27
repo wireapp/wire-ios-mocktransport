@@ -54,7 +54,7 @@ NSString * const ZMPushChannelResponseStatusKey = @"responseStatus";
 
 static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
-@interface MockTransportSession ()
+@interface MockTransportSession () <ZMPushChannel>
 
 @property (nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic) MockUser *selfUser;
@@ -98,9 +98,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 @end
 
 
-@interface MockTransportSession (PushEvents) <ZMPushChannel>
-
-@property (nonatomic, readonly) id<ZMPushChannel> pushChannel;
+@interface MockTransportSession (PushEvents)
 
 - (void)managedObjectContextPropagateChangesWithInsertedObjects:(NSSet *)inserted
                                                  updatedObjects:(NSSet *)updated
@@ -162,6 +160,21 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     
 }
 
+- (void)setKeepOpen:(BOOL)keepOpen
+{
+    self.shouldKeepPushChannelOpen = keepOpen;
+}
+
+- (BOOL)keepOpen
+{
+    return self.shouldKeepPushChannelOpen;
+}
+
+- (id<ZMPushChannel>)pushChannel
+{
+    return self;
+}
+
 - (void)registerPushEvent:(MockPushEvent *)mockPushEvent
 {
     [self.generatedPushEvents addObject:mockPushEvent];
@@ -170,16 +183,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 - (void)addPushToken:(NSDictionary *)pushToken;
 {
     [(NSMutableArray *) self.pushTokens addObject:pushToken];
-}
-
-- (void)closePushChannelAndRemoveConsumer
-{
-    self.shouldSendPushChannelEvents = NO;
-}
-
-- (void)restartPushChannel
-{
-    
 }
 
 - (void)expireAllBlockedRequests;
@@ -209,6 +212,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     [self.generatedPushEvents removeAllObjects];
     [self.generatedTransportRequests removeAllObjects];
     self.shouldSendPushChannelEvents = NO;
+    self.shouldKeepPushChannelOpen = NO;
 }
 
 - (ZMTransportSession *)mockedTransportSession;
@@ -867,21 +871,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
 
 @implementation MockTransportSession (PushEvents)
-
- - (void)setKeepOpen:(BOOL)keepOpen
-{
-    self.shouldKeepPushChannelOpen = keepOpen;
-}
-
-- (BOOL)keepOpen
-{
-    return self.shouldKeepPushChannelOpen;
-}
-
-- (id<ZMPushChannel>)pushChannel
-{
-    return self;
-}
 
 - (void)configurePushChannelWithConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
 {
