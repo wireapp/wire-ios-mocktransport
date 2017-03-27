@@ -97,9 +97,9 @@
     XCTAssertEqual(data.count, 3u);
     
     if (3 <= data.count) {
-        [self checkThatTransportData:data[0] matchesUser:user1 isConnected:YES failureRecorder:NewFailureRecorder()];
-        [self checkThatTransportData:data[1] matchesUser:user2 isConnected:YES failureRecorder:NewFailureRecorder()];
-        [self checkThatTransportData:data[2] matchesUser:user3 isConnected:YES failureRecorder:NewFailureRecorder()];
+        [self checkThatTransportData:data[0] matchesUser:user1 failureRecorder:NewFailureRecorder()];
+        [self checkThatTransportData:data[1] matchesUser:user2 failureRecorder:NewFailureRecorder()];
+        [self checkThatTransportData:data[2] matchesUser:user3 failureRecorder:NewFailureRecorder()];
     }
 }
 
@@ -132,7 +132,7 @@
     XCTAssertTrue([response.payload isKindOfClass:[NSDictionary class]]);
     NSDictionary *data = (id) response.payload;
     
-    [self checkThatTransportData:data matchesUser:selfUser isConnected:YES failureRecorder:NewFailureRecorder()];
+    [self checkThatTransportData:data matchesUser:selfUser failureRecorder:NewFailureRecorder()];
 }
 
 - (void)testThatItCreatesHandleForSelfUser
@@ -229,7 +229,7 @@
     XCTAssertTrue([response.payload isKindOfClass:[NSDictionary class]]);
     NSDictionary *data = (id) response.payload;
     
-    [self checkThatTransportData:data matchesUser:user1 isConnected:YES failureRecorder:NewFailureRecorder()];
+    [self checkThatTransportData:data matchesUser:user1 failureRecorder:NewFailureRecorder()];
 }
 
 - (void)testCreatingAndRequestingNonConnectedUser;
@@ -265,7 +265,7 @@
     XCTAssertTrue([response.payload isKindOfClass:[NSDictionary class]]);
     NSDictionary *data = (id) response.payload;
     
-    [self checkThatTransportData:data matchesUser:user1 isConnected:NO failureRecorder:NewFailureRecorder()];
+    [self checkThatTransportData:data matchesUser:user1 failureRecorder:NewFailureRecorder()];
 }
 
 - (void)testThatItUpdatesTheSelfUserOnPUT
@@ -552,7 +552,7 @@
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
-    [self checkThatTransportData:response.payload matchesUser:user isConnected:NO failureRecorder:NewFailureRecorder()];
+    [self checkThatTransportData:response.payload matchesUser:user failureRecorder:NewFailureRecorder()];
 }
 
 - (void)testThatItFindsAnExhistingHandle_HEAD
@@ -572,7 +572,7 @@
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertEqualObjects(response.rawResponse.URL.path, path);
-    [self checkThatTransportData:response.payload matchesUser:user isConnected:NO failureRecorder:NewFailureRecorder()];
+    [self checkThatTransportData:response.payload matchesUser:user failureRecorder:NewFailureRecorder()];
 }
 
 - (void)testThatItDoesNotFindANonExhistingHandle

@@ -394,23 +394,15 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     return generator;
 }
 
-- (void)checkThatTransportData:(id <ZMTransportData>)data matchesUser:(MockUser *)user isConnected:(BOOL)isConnected failureRecorder:(ZMTFailureRecorder *)fr;
+- (void)checkThatTransportData:(id <ZMTransportData>)data matchesUser:(MockUser *)user failureRecorder:(ZMTFailureRecorder *)fr;
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:(id) data];
     FHAssertTrue(fr, [dict isKindOfClass:[NSDictionary class]]);
     NSArray *keys = @[@"accent_id", @"id", @"name", @"picture", @"handle", @"assets"];
-    if(isConnected) {
-        keys = [keys arrayByAddingObjectsFromArray:@[@"email", @"phone"]];
-    }
     
     AssertDictionaryHasKeys(dict, keys);
     
     [user.managedObjectContext performBlockAndWait:^{
-        
-        if(isConnected) {
-            FHAssertEqualObjects(fr, dict[@"email"], user.email);
-            FHAssertEqual(fr, dict[@"phone"], user.phone);
-        }
         
         FHAssertEqualObjects(fr, dict[@"name"], user.name);
         FHAssertEqualObjects(fr, dict[@"id"], user.identifier);

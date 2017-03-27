@@ -126,13 +126,7 @@
             
             MockConnection *connection = [self fetchConnectionFrom:self.selfUser to:user];
             
-            NSMutableDictionary *payload;
-            if(connection != nil) {
-                payload = [(NSMutableDictionary *)user.transportData mutableCopy];
-            }
-            else {
-                payload = [(NSMutableDictionary *)user.transportDataWhenNotConnected mutableCopy];
-            }
+            NSMutableDictionary *payload = [(NSMutableDictionary *)user.transportData mutableCopy];
             
             payload[@"blocked"]= @NO;
             payload[@"connected"]= @(connection != nil);

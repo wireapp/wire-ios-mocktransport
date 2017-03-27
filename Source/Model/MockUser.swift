@@ -103,19 +103,8 @@ extension MockUser {
         return data as ZMTransportData
     }
     
-    @objc public var transportDataWhenNotConnected: ZMTransportData {
-        return dataWhenNotConnected as ZMTransportData
-    }
-    
     var data: [String : Any?] {
         precondition(self.accentID != 0, "Accent ID is not set")
-        var allData = dataWhenNotConnected
-        allData["email"] = email
-        allData["phone"] = phone
-        return allData
-    }
-    
-    var dataWhenNotConnected: [String : Any?] {
         let pictureData = pictures.map(with: #selector(getter: transportData)) ?? []
         return [
             "accent_id" : accentID,

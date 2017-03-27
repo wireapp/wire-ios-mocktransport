@@ -109,7 +109,7 @@
         return [self errorResponseWithCode:404 reason:@"user not found"];
     } else {
         MockUser *user = users[0];
-        id<ZMTransportData> payload = [self isConnectedToUser:user] ? [user transportData] : [user transportDataWhenNotConnected];
+        id<ZMTransportData> payload = [user transportData];
         return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
     }
 }
@@ -137,7 +137,7 @@
     NSMutableArray *resultArray = [NSMutableArray array];
     for (MockUser *user in users) {
         
-        id<ZMTransportData> payload = [self isConnectedToUser:user] ? [user transportData] : [user transportDataWhenNotConnected];
+        id<ZMTransportData> payload = [user transportData];
         [resultArray addObject:payload];
     }
     return [ZMTransportResponse responseWithPayload:resultArray HTTPStatus:200 transportSessionError:nil];
@@ -356,7 +356,7 @@
     if(users.count > 0) {
         statusCode = 200;
         MockUser *user = users[0];
-        id <ZMTransportData> payload = [self isConnectedToUser:user] ? [user transportData] : [user transportDataWhenNotConnected];
+        id <ZMTransportData> payload = [user transportData];
         payloadData = [NSJSONSerialization dataWithJSONObject:payload options:0 error:nil];
     }
     else {

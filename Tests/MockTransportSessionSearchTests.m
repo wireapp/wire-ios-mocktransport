@@ -81,11 +81,9 @@
                                                   @"blocked": @NO,
                                                   @"accent_id": @2,
                                                   @"connected": @YES,
-                                                  @"email": user2email,
                                                   @"id": user2.identifier,
                                                   @"level": @1,
                                                   @"name": user2.name,
-                                                  @"phone": user2phone,
                                                   @"handle": user2.handle,
                                                   @"assets" : [NSNull null]
 
@@ -158,7 +156,6 @@
                                                   @"blocked": @NO,
                                                   @"accent_id": @2,
                                                   @"connected": @YES,
-                                                  @"email": user2email,
                                                   @"id": user2.identifier,
                                                   @"level": @1,
                                                   @"name": user2.name,
@@ -173,11 +170,9 @@
                                                   @"blocked": @NO,
                                                   @"accent_id": @2,
                                                   @"connected": @YES,
-                                                  @"email": user3email,
                                                   @"id": user3.identifier,
                                                   @"level": @1,
                                                   @"name": user3.name,
-                                                  @"phone": user3phone,
                                                   @"handle": user3.handle,
                                                   @"assets" : [NSNull null]
 
