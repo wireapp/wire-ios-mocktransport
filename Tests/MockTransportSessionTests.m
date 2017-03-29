@@ -20,10 +20,9 @@
 @import CoreGraphics;
 @import MobileCoreServices;
 @import ZMCSystem;
+@import ZMCMockTransport;
 
 static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
-
-#import "MockEvent.h"
 
 #import "MockTransportSessionTests.h"
 #import <libkern/OSAtomic.h>
@@ -395,12 +394,12 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     return generator;
 }
 
-- (void)checkThatTransportData:(id <ZMTransportData>)data matchesUser:(MockUser *)user isConnected:(BOOL)isConnected failureRecorder:(ZMTFailureRecorder *)fr;
+- (void)checkThatTransportData:(id <ZMTransportData>)data matchesUser:(MockUser *)user isSelfUser:(BOOL)isSelf failureRecorder:(ZMTFailureRecorder *)fr
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:(id) data];
     FHAssertTrue(fr, [dict isKindOfClass:[NSDictionary class]]);
-    NSArray *keys = @[@"accent_id", @"id", @"name", @"picture", @"handle"];
-    if(isConnected) {
+    NSArray *keys = @[@"accent_id", @"id", @"name", @"picture", @"handle", @"assets"];
+    if(isSelf) {
         keys = [keys arrayByAddingObjectsFromArray:@[@"email", @"phone"]];
     }
     
@@ -408,7 +407,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     
     [user.managedObjectContext performBlockAndWait:^{
         
-        if(isConnected) {
+        if(isSelf) {
             FHAssertEqualObjects(fr, dict[@"email"], user.email);
             FHAssertEqual(fr, dict[@"phone"], user.phone);
         }
@@ -425,7 +424,36 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
             MockPicture *picture = user.pictures[idx];
             [self checkThatTransportDictionary:pictureData matchesPicture:picture];
         }];
+        if (dict[@"assets"] == [NSNull null]) {
+            XCTAssertNil(user.previewProfileAssetIdentifier);
+            XCTAssertNil(user.completeProfileAssetIdentifier);
+        } else {
+            [self checkThatTransportData:dict[@"assets"] matchesPreviewAssetId:user.previewProfileAssetIdentifier completeAssetId:user.completeProfileAssetIdentifier];
+        }
     }];
+}
+
+- (void)checkThatTransportData:(NSArray *)array matchesPreviewAssetId:(NSString *)previewAsset completeAssetId:(NSString *)completeAsset
+{
+    XCTAssertEqual(array.count, 2u);
+    BOOL previewFound = NO;
+    BOOL completeFound = NO;
+    for (NSDictionary *item in array) {
+        XCTAssertEqualObjects(item[@"type"], @"image");
+        NSString *size = item[@"size"];
+        NSString *key = item[@"key"];
+        if ([size isEqualToString:@"preview"]) {
+            XCTAssertEqualObjects(key, previewAsset);
+            previewFound = YES;
+        } else if ([size isEqualToString:@"complete"]) {
+            XCTAssertEqualObjects(key, completeAsset);
+            completeFound = YES;
+        } else {
+            XCTFail(@"Unknown image size");
+        }
+    }
+    XCTAssert(previewFound, @"Preview image not found");
+    XCTAssert(completeFound, @"Complete image not found");
 }
 
 - (void)checkThatTransportDictionary:(NSDictionary *)dict matchesPicture:(MockPicture *)picture;

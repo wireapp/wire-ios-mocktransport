@@ -20,7 +20,6 @@
 @import CoreData;
 @import ZMTransport;
 
-#import "MockUser.h"
 #import "MockConnection.h"
 #import "MockConversation.h"
 #import "MockPicture.h"
@@ -108,6 +107,7 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 - (MockUser *)insertUserWithName:(NSString *)name;
 - (MockUser *)insertUserWithName:(NSString *)name includeClient:(BOOL)shouldIncludeClient;
 - (void)addProfilePictureToUser:(MockUser *)user;
+- (void)addV3ProfilePictureToUser:(MockUser *)user;
 - (MockConnection *)insertConnectionWithSelfUser:(MockUser *)selfUser toUser:(MockUser *)toUser;
 
 - (MockConversation *)insertSelfConversationWithSelfUser:(MockUser *)selfUser;
