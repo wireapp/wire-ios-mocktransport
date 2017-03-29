@@ -1076,27 +1076,14 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     for(NSManagedObject* mo in updated) {
         if([mo isKindOfClass:MockUser.class]) {
             MockUser *user = (MockUser *)mo;
-            
-            NSMutableDictionary *userPayload = [NSMutableDictionary dictionary];
-            for(NSString *key in user.changedValues.allKeys) {
-                // 1 TODO PROFILE how do I generate a changed picture push notification?
-                // https://wearezeta.atlassian.net/browse/MEC-29
-                if([@[@"name", @"email", @"phone"] containsObject:key]) {
-                    userPayload[key] = user.changedValues[key];
-                }
-                else if([key isEqualToString:@"accentID"]) {
-                    userPayload[@"accent_id"] = @(user.accentID);
-                }
+            NSDictionary *userPayload = user.changePushPayload;
+            if (userPayload != nil) {
+                [userPayload description];
+                [pushEvents addObject:[MockPushEvent eventWithPayload:@{@"type" : @"user.update", @"user" : userPayload} uuid:[NSUUID timeBasedUUID] fromUser:user isTransient:NO]];
             }
-            // nothing to update?
-            if(userPayload.count == 0u) {
-                continue;
-            }
-            userPayload[@"id"] = user.identifier;
-            
-            [pushEvents addObject:[MockPushEvent eventWithPayload:@{@"type" : @"user.update", @"user" :userPayload} uuid:[NSUUID timeBasedUUID] fromUser:user isTransient:NO]];
         }
     }
+    
     return pushEvents;
 }
 
