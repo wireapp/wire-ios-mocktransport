@@ -652,6 +652,14 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     [medium setAsMediumWithSmallProfile:smallProfile forUser:user imageData:imageData];
 }
 
+- (void)addV3ProfilePictureToUser:(MockUser *)user
+{
+    MockAsset *previewAsset = [self insertAssetWithID:[NSUUID createUUID] assetToken:[NSUUID createUUID] assetData:[ZMTBaseTest verySmallJPEGData] contentType:@"application/octet-stream"];
+    MockAsset *completeAsset = [self insertAssetWithID:[NSUUID createUUID] assetToken:[NSUUID createUUID] assetData:[ZMTBaseTest verySmallJPEGData] contentType:@"application/octet-stream"];
+    user.previewProfileAssetIdentifier = previewAsset.identifier;
+    user.completeProfileAssetIdentifier = completeAsset.identifier;
+}
+
 - (MockConnection *)insertConnectionWithSelfUser:(MockUser *)selfUser toUser:(MockUser *)toUser
 {
     MockConnection *connection = (id) [NSEntityDescription insertNewObjectForEntityForName:@"Connection" inManagedObjectContext:self.managedObjectContext];
