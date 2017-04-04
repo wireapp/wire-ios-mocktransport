@@ -21,7 +21,7 @@
 @import WireUtilities;
 #import "MockConnection.h"
 #import "MockConversation.h"
-#import "MockUser.h"
+#import <WireMockTransport/WireMockTransport-Swift.h>
 
 @implementation MockConnection
 

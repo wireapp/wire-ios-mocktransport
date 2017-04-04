@@ -22,8 +22,8 @@
 @import WireCryptobox;
 
 #import "MockConversation.h"
-#import "MockUser.h"
-#import "MockUser.h"
+#import <WireMockTransport/WireMockTransport-Swift.h>
+#import <WireMockTransport/WireMockTransport-Swift.h>
 #import "MockEvent.h"
 #import "MockEvent.h"
 #import "MockAsset.h"

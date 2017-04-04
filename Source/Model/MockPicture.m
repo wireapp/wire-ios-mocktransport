@@ -32,7 +32,7 @@
 @import CoreServices;
 #endif
 
-#import "MockUser.h"
+#import <WireMockTransport/WireMockTransport-Swift.h>
 
 @implementation MockPicture
 

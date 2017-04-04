@@ -25,7 +25,7 @@
 
 #import "MockTransportSession+internal.h"
 #import "MockTransportSession.h"
-#import "MockUser.h"
+#import <WireMockTransport/WireMockTransport-Swift.h>
 #import "MockTransportSession+assets.h"
 #import "MockTransportSession+OTR.h"
 #import "MockFlowManager.h"

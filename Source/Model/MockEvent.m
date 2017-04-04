@@ -23,7 +23,7 @@
 
 #import "MockEvent.h"
 #import "MockConversation.h"
-#import "MockUser.h"
+#import <WireMockTransport/WireMockTransport-Swift.h>
 
 static ZMLogLevel_t const ZMLogLevel ZM_UNUSED = ZMLogLevelWarn;
 

@@ -20,7 +20,7 @@
 @import WireTransport;
 @import WireUtilities;
 #import "MockPushEvent.h"
-#import "MockUser.h"
+#import <WireMockTransport/WireMockTransport-Swift.h>
 
 @implementation MockPushEvent
 

@@ -18,7 +18,8 @@
 
 
 #import "MockPersonalInvitation.h"
-#import "MockUser.h"
+#import <WireMockTransport/WireMockTransport-Swift.h>
+@import WireTesting;
 
 @implementation MockPersonalInvitation
 
