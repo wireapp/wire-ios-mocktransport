@@ -17,10 +17,10 @@
 // 
 
 
-@import ZMTesting;
-@import ZMUtilities;
-@import ZMCSystem;
-@import ZMTransport;
+@import WireTesting;
+@import WireUtilities;
+@import WireSystem;
+@import WireTransport;
 @import CoreData;
 
 @class MockPicture;

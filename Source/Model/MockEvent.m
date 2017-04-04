@@ -17,9 +17,9 @@
 // 
 
 
-@import ZMTransport;
-@import ZMUtilities;
-@import ZMCSystem;
+@import WireTransport;
+@import WireUtilities;
+@import WireSystem;
 
 #import "MockEvent.h"
 #import "MockConversation.h"

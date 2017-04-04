@@ -17,8 +17,8 @@
 // 
 
 
-@import ZMTransport;
-@import ZMUtilities;
+@import WireTransport;
+@import WireUtilities;
 
 #import "MockUser.h"
 #import "MockPicture.h"

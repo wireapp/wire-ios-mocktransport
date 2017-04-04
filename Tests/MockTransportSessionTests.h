@@ -17,9 +17,9 @@
 // 
 
 
-@import ZMTransport;
-@import ZMUtilities;
-@import ZMTesting;
+@import WireTransport;
+@import WireUtilities;
+@import WireTesting;
 @import UIKit;
 
 #import "MockTransportSession.h"

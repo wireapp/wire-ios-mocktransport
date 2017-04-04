@@ -17,8 +17,8 @@
 // 
 
 
-@import ZMTransport;
-@import ZMUtilities;
+@import WireTransport;
+@import WireUtilities;
 
 #import "MockFlowManager.h"
 #import "MockTransportSession+internal.h"

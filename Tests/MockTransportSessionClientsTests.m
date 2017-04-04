@@ -20,7 +20,7 @@
 #import "MockTransportSessionTests.h"
 #import "MockUser.h"
 #import "MockPushEvent.h"
-#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
+#import <WireMockTransport/WireMockTransport-Swift.h>
 
 
 @interface MockTransportSessionClientsTests : MockTransportSessionTests
