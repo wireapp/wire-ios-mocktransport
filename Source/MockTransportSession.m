@@ -17,9 +17,9 @@
 // 
 
 
-@import ZMUtilities;
-@import ZMTesting;
-@import ZMTransport;
+@import WireUtilities;
+@import WireTesting;
+@import WireTransport;
 #import "MockPicture.h"
 #import "MockTransportSession+conversations.h"
 #import "MockTransportSession+internal.h"
@@ -30,7 +30,7 @@
 #import "MockFlowManager.h"
 #import "MockPushEvent.h"
 #import "MockPreKey.h"
-#import "ZMCMockTransport/ZMCMockTransport-Swift.h"
+#import "WireMockTransport/WireMockTransport-Swift.h"
 
 NSString * const ZMPushChannelStateChangeNotificationName = @"ZMPushChannelStateChangeNotification";
 NSString * const ZMPushChannelIsOpenKey = @"pushChannelIsOpen";
@@ -424,8 +424,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
              @[@"/assets/v3", @"processAssetV3Request:"],
              @[@"/assets", @"processAssetRequest:"],
              @[@"/search/contacts", @"processSearchRequest:"],
-             @[@"/search/common", @"processCommonConnectionsSearchRequest:"],
-             @[@"/search/suggestions", @"processSearchForSuggestionsRequest:"],
              @[@"/notifications", @"processNotificationsRequest:"],
              @[@"/register", @"processRegistrationRequest:"],
              @[@"/activate/send", @"processVerificationCodeRequest:"],
@@ -646,7 +644,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return user;
 }
 
-- (void)addProfilePictureToUser:(MockUser *)user;
+- (NSDictionary<NSString *, MockPicture *> *)addProfilePictureToUser:(MockUser *)user
 {
     MockPicture *smallProfile = (id) [NSEntityDescription insertNewObjectForEntityForName:@"Picture" inManagedObjectContext:self.managedObjectContext];
     MockPicture *medium = (id) [NSEntityDescription insertNewObjectForEntityForName:@"Picture" inManagedObjectContext:self.managedObjectContext];
@@ -656,6 +654,18 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     
     [smallProfile setAsSmallProfileFromImageData:imageData forUser:user];
     [medium setAsMediumWithSmallProfile:smallProfile forUser:user imageData:imageData];
+    
+    return @{ medium.info[@"tag"] : medium, smallProfile.info[@"tag"] : smallProfile };
+}
+
+- (NSDictionary<NSString *, MockAsset *> *)addV3ProfilePictureToUser:(MockUser *)user
+{
+    MockAsset *previewAsset = [self insertAssetWithID:[NSUUID createUUID] assetToken:[NSUUID createUUID] assetData:[ZMTBaseTest verySmallJPEGData] contentType:@"application/octet-stream"];
+    MockAsset *completeAsset = [self insertAssetWithID:[NSUUID createUUID] assetToken:[NSUUID createUUID] assetData:[ZMTBaseTest verySmallJPEGData] contentType:@"application/octet-stream"];
+    user.previewProfileAssetIdentifier = previewAsset.identifier;
+    user.completeProfileAssetIdentifier = completeAsset.identifier;
+    
+    return @{ @"preview" : previewAsset, @"complete" : completeAsset };
 }
 
 - (MockConnection *)insertConnectionWithSelfUser:(MockUser *)selfUser toUser:(MockUser *)toUser
@@ -1073,27 +1083,14 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     for(NSManagedObject* mo in updated) {
         if([mo isKindOfClass:MockUser.class]) {
             MockUser *user = (MockUser *)mo;
-            
-            NSMutableDictionary *userPayload = [NSMutableDictionary dictionary];
-            for(NSString *key in user.changedValues.allKeys) {
-                // 1 TODO PROFILE how do I generate a changed picture push notification?
-                // https://wearezeta.atlassian.net/browse/MEC-29
-                if([@[@"name", @"email", @"phone"] containsObject:key]) {
-                    userPayload[key] = user.changedValues[key];
-                }
-                else if([key isEqualToString:@"accentID"]) {
-                    userPayload[@"accent_id"] = @(user.accentID);
-                }
+            NSDictionary *userPayload = user.changePushPayload;
+            if (userPayload != nil) {
+                [userPayload description];
+                [pushEvents addObject:[MockPushEvent eventWithPayload:@{@"type" : @"user.update", @"user" : userPayload} uuid:[NSUUID timeBasedUUID] fromUser:user isTransient:NO]];
             }
-            // nothing to update?
-            if(userPayload.count == 0u) {
-                continue;
-            }
-            userPayload[@"id"] = user.identifier;
-            
-            [pushEvents addObject:[MockPushEvent eventWithPayload:@{@"type" : @"user.update", @"user" :userPayload} uuid:[NSUUID timeBasedUUID] fromUser:user isTransient:NO]];
         }
     }
+    
     return pushEvents;
 }
 

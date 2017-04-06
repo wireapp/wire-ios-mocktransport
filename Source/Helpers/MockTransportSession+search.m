@@ -16,97 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import ZMTransport;
-@import ZMTesting;
-@import ZMProtos;
+@import WireTransport;
+@import WireTesting;
+@import WireProtos;
 #import "MockTransportSession+assets.h"
 #import "MockTransportSession+OTR.h"
 #import "MockAsset.h"
-#import <ZMCMockTransport/ZMCMockTransport-Swift.h>
+#import <WireMockTransport/WireMockTransport-Swift.h>
 
 @implementation MockTransportSession (Search)
-
-/// handles /search/common/xxxxxxx
-- (ZMTransportResponse *)processCommonConnectionsSearchRequest:(ZMTransportRequest *)request
-{
-    if ([request matchesWithPath:@"/search/common/*" method:ZMMethodGET]) {
-        // check that requested user exists
-        {
-            NSString *userID = [request RESTComponentAtIndex:2];
-            
-            NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
-            fetchRequest.predicate = [NSPredicate predicateWithFormat: @"identifier == %@", userID];
-            
-            NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
-            if(users == nil || users.count != 1u) {
-                return [self errorResponseWithCode:404 reason:@"uknown user"];
-            }
-        }
-        
-        // return results
-        {
-            NSFetchRequest *fetchRequest = [MockConnection sortedFetchRequest];
-            NSArray *connections = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
-            NSArray *connectionsSortedByUserName = [connections sortedArrayUsingComparator:^NSComparisonResult(MockConnection *c1, MockConnection *c2) {
-                return [c1.to.name compare:c2.to.name];
-            }];
-            
-            NSMutableArray *resultData = [NSMutableArray array];
-            for (MockConnection *c in connectionsSortedByUserName) {
-                [resultData addObject:@{@"id": c.to.identifier}];
-            }
-            
-            NSDictionary *payload = @{@"documents" : resultData};
-            return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
-        }
-    }
-    
-    return [self errorResponseWithCode:400 reason:@"invalid-method"];
-}
-
-- (ZMTransportResponse *)processSearchForSuggestionsRequest:(ZMTransportRequest *)request;
-{
-    if ([request matchesWithPath:@"/search/suggestions" method:ZMMethodGET]) {
-        // Find all users that are not connected to the self user:
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(self != %@) && (NOT ANY connectionsFrom.to == %@) && (NOT ANY connectionsTo.from == %@)", self.selfUser, self.selfUser, self.selfUser];
-        NSFetchRequest *fetchRequest = [MockUser sortedFetchRequestWithPredicate:predicate];
-        fetchRequest.fetchLimit = (NSUInteger) [request.queryParameters[@"size"] integerValue];
-        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
-        
-        NSArray *contacts = [users mapWithBlock:^(MockUser *user) {
-            NSMutableDictionary *payload = [NSMutableDictionary dictionary];
-            if (user.name != nil) {
-                payload[@"name"] = user.name;
-            }
-            if (user.identifier != nil) {
-                payload[@"id"] = user.identifier;
-            }
-            
-            NSPredicate *commonConnectionsPredicate = [NSPredicate predicateWithFormat:@"((ANY connectionsFrom.to == %@) OR (ANY connectionsTo.from == %@)) AND ((ANY connectionsFrom.to = %@) OR (ANY connectionsTo.from = %@))", self.selfUser, self.selfUser, user, user];
-            
-            NSFetchRequest *fetchRequestForCommonConnections = [MockUser sortedFetchRequestWithPredicate:commonConnectionsPredicate];
-            NSArray *commonConnections = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequestForCommonConnections];
-            
-            NSArray *commonConnectionsUUIDs = [commonConnections mapWithBlock:^id(MockUser * obj) {
-                return obj.identifier;
-            }];
-            
-            if (commonConnectionsUUIDs.count > 3) {
-                commonConnectionsUUIDs = [commonConnectionsUUIDs subarrayWithRange:NSMakeRange(0, 3)];
-            }
-            
-            payload[ZMSearchUserMutualFriendsKey] = commonConnectionsUUIDs;
-            payload[ZMSearchUserTotalMutualFriendsKey] = @(commonConnections.count);
-            return payload;
-        }];
-        
-        id responsePayload = @{@"found": @(contacts.count),
-                               @"returned": @(contacts.count),
-                               @"documents": contacts,};
-        return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil];
-    }
-    return [self errorResponseWithCode:400 reason:@"invalid-method"];
-}
 
 /// handles /search/contacts/
 - (ZMTransportResponse *)processSearchRequest:(ZMTransportRequest *)request;
@@ -126,19 +44,13 @@
             
             MockConnection *connection = [self fetchConnectionFrom:self.selfUser to:user];
             
-            NSMutableDictionary *payload;
-            if(connection != nil) {
-                payload = [(NSMutableDictionary *)user.transportData mutableCopy];
-            }
-            else {
-                payload = [(NSMutableDictionary *)user.transportDataWhenNotConnected mutableCopy];
-            }
+            NSMutableDictionary *payload = [(NSMutableDictionary *)user.transportData mutableCopy];
             
             payload[@"blocked"]= @NO;
             payload[@"connected"]= @(connection != nil);
             payload[@"level"]= @1;
             [payload removeObjectForKey:@"picture"];
-            
+            [payload removeObjectForKey:@"assets"];
             
             [userPayload addObject:payload];
         }

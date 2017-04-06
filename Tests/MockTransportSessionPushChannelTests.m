@@ -17,7 +17,7 @@
 // 
 
 
-@import ZMTransport;
+@import WireTransport;
 #import "MockTransportSessionTests.h"
 #import "MockPushEvent.h"
 
@@ -189,6 +189,41 @@
                                 @"phone" : selfUser.phone,
                                 @"accent_id" : @(selfUser.accentID)
                                 };
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    XCTAssertEqual(self.pushChannelReceivedEvents.count, 1u);
+    TestPushChannelEvent *nameEvent = self.pushChannelReceivedEvents.firstObject;
+    XCTAssertEqual(nameEvent.type, ZMTUpdateEventUserUpdate);
+    XCTAssertEqualObjects(nameEvent.payload[@"user"], expectedUserPayload);
+}
+
+- (void)testThatWeReceiveAPushEventWhenChangingSelfProfilePictureAssetsV3
+{
+    // GIVEN
+    [self createAndOpenPushChannel];
+    
+    __block MockUser *selfUser;
+    __block NSDictionary *expectedUserPayload;
+    
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> __unused session) {
+        selfUser = self.sut.selfUser;
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    XCTAssertEqual(self.pushChannelReceivedEvents.count, 0u);
+    
+    // WHEN
+    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> * ZM_UNUSED session) {
+        selfUser.previewProfileAssetIdentifier = @"preview-id";
+        selfUser.completeProfileAssetIdentifier = @"complete-id";
+        expectedUserPayload = @{
+                                @"id" : selfUser.identifier,
+                                @"assets" :
+                                    @[
+                                         @{ @"size" : @"preview", @"type" : @"image", @"key" : selfUser.previewProfileAssetIdentifier },
+                                         @{ @"size" : @"complete", @"type" : @"image", @"key" : selfUser.completeProfileAssetIdentifier }
+                                    ]
+                                 };
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
