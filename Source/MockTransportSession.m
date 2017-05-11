@@ -430,6 +430,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
              @[@"/activate", @"processPhoneActivationRequest:"],
              @[@"/onboarding/v3", @"processOnboardingRequest:"],
              @[@"/invitations", @"processInvitationsRequest:"],
+             @[@"/teams", @"processTeamsRequest:"]
              ];
 }
 
@@ -858,7 +859,8 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     [self.generatedPushEvents removeAllObjects];
 }
 
-- (MockUser *)userWithRemoteIdentifier:(NSString *)remoteIdentifier {
+- (MockUser *)userWithRemoteIdentifier:(NSString *)remoteIdentifier
+{
     NSFetchRequest *userFetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"User"];
     userFetchRequest.predicate = [NSPredicate predicateWithFormat:@"identifier == %@", remoteIdentifier];
     
@@ -866,7 +868,8 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return results.firstObject;
 }
 
-- (MockUserClient *)clientForUser:(MockUser *)user remoteIdentifier:(NSString *)remoteIdentifier {
+- (MockUserClient *)clientForUser:(MockUser *)user remoteIdentifier:(NSString *)remoteIdentifier
+{
     NSFetchRequest *userClientFetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"UserClient"];
     userClientFetchRequest.predicate = [NSPredicate predicateWithFormat:@"identifier == %@ AND user == %@", remoteIdentifier, user];
     
@@ -874,6 +877,17 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return results.firstObject;
 }
 
+#pragma mark - Teams
+
+- (MockTeam *)insertTeamWithName:(nullable NSString *)name
+{
+    return [MockTeam insertIn:self.managedObjectContext name:name assetKey:nil];
+}
+
+- (MockMember *)insertMemberWithUser:(MockUser *)user inTeam:(MockTeam *)team
+{
+    return [MockMember insertInContext:self.managedObjectContext forUser: user inTeam: team];
+}
 
 @end
 

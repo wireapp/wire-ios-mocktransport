@@ -29,6 +29,8 @@
 
 @class MockFlowManager;
 @class MockPushEvent;
+@class MockTeam;
+@class MockMember;
 
 @protocol MockTransportSessionObjectCreation;
 
@@ -153,6 +155,9 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 /// Returns the client (if any) for the given remote identifier
 - (nullable MockUserClient *)clientForUser:(MockUser *)user remoteIdentifier:(NSString *)remoteIdentifier;
+
+- (MockTeam *)insertTeamWithName:(nullable NSString *)name;
+- (MockMember *)insertMemberWithUser:(MockUser *)user inTeam:(MockTeam *)team;
 
 @end
 

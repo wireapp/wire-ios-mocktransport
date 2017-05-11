@@ -22,9 +22,6 @@
 @import WireCryptobox;
 
 #import "MockConversation.h"
-#import <WireMockTransport/WireMockTransport-Swift.h>
-#import <WireMockTransport/WireMockTransport-Swift.h>
-#import "MockEvent.h"
 #import "MockEvent.h"
 #import "MockAsset.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
@@ -70,6 +67,7 @@ static NSString * const IdleString = @"idle";
 @dynamic otrArchivedRef;
 @dynamic otrMuted;
 @dynamic otrMutedRef;
+@dynamic team;
 
 + (instancetype)insertConversationIntoContext:(NSManagedObjectContext *)moc withSelfUser:(MockUser *)selfUser creator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)type;
 {
@@ -216,6 +214,13 @@ static NSString * const IdleString = @"idle";
     data[@"type"] = self.transportConversationType;
     data[@"last_event_time"] = self.lastEventTime ? [self.lastEventTime transportString] : [NSNull null];
     data[@"last_event"] = self.lastEvent ?: [NSNull null];
+    
+    if (self.team != nil) {
+        data[@"team"] = @{
+                          @"teamid" : self.team.identifier,
+                          @"managed" : @NO
+                          };
+    }
 
     NSMutableDictionary *members = [NSMutableDictionary dictionary];
     data[@"members"] = members;
