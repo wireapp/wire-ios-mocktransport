@@ -46,6 +46,7 @@ import Foundation
     
     @NSManaged public var invitations: NSOrderedSet
     
+    @NSManaged public var memberships: Set<MockMember>?
     
     override public func awakeFromInsert() {
         if accentID == 0 {

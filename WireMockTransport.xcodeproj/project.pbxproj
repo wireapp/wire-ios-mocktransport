@@ -107,6 +107,8 @@
 		CE89FED31C19780D0093C3B6 /* MockPersonalInvitation.m in Sources */ = {isa = PBXBuildFile; fileRef = CE89FECF1C19780D0093C3B6 /* MockPersonalInvitation.m */; };
 		CE89FED61C19865E0093C3B6 /* MockTransportSession+invitations.h in Headers */ = {isa = PBXBuildFile; fileRef = CE89FED41C19865E0093C3B6 /* MockTransportSession+invitations.h */; };
 		CE89FED71C19865E0093C3B6 /* MockTransportSession+invitations.m in Sources */ = {isa = PBXBuildFile; fileRef = CE89FED51C19865E0093C3B6 /* MockTransportSession+invitations.m */; };
+		F14741531EC45F8900A3688C /* MockTeam.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14741521EC45F8900A3688C /* MockTeam.swift */; };
+		F14741551EC462EB00A3688C /* MockMember.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14741541EC462EB00A3688C /* MockMember.swift */; };
 		F1519B5C1EC09D3100AD4E33 /* MockTransportSessionAssetsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1519B5B1EC09D3100AD4E33 /* MockTransportSessionAssetsTests.swift */; };
 		F1519B5E1EC0A30100AD4E33 /* MockTransportSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1519B5D1EC0A30100AD4E33 /* MockTransportSessionTests.swift */; };
 		F1519B601EC0A6FC00AD4E33 /* MockTransportSession+assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1519B591EC09C0100AD4E33 /* MockTransportSession+assets.swift */; };
@@ -273,6 +275,8 @@
 		CE89FED41C19865E0093C3B6 /* MockTransportSession+invitations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+invitations.h"; sourceTree = "<group>"; };
 		CE89FED51C19865E0093C3B6 /* MockTransportSession+invitations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+invitations.m"; sourceTree = "<group>"; };
 		CED2BC911CECC63400E285B3 /* Cryptobox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cryptobox.framework; path = Carthage/Build/iOS/Cryptobox.framework; sourceTree = "<group>"; };
+		F14741521EC45F8900A3688C /* MockTeam.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTeam.swift; sourceTree = "<group>"; };
+		F14741541EC462EB00A3688C /* MockMember.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockMember.swift; sourceTree = "<group>"; };
 		F1519B591EC09C0100AD4E33 /* MockTransportSession+assets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+assets.swift"; sourceTree = "<group>"; };
 		F1519B5B1EC09D3100AD4E33 /* MockTransportSessionAssetsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSessionAssetsTests.swift; sourceTree = "<group>"; };
 		F1519B5D1EC0A30100AD4E33 /* MockTransportSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSessionTests.swift; sourceTree = "<group>"; };
@@ -363,6 +367,8 @@
 				54AE5A611B78FA43002757E9 /* MockPicture.m */,
 				54AE5A621B78FA43002757E9 /* MockPushEvent.m */,
 				54AE5A631B78FA43002757E9 /* MockTransportSession.xcdatamodeld */,
+				F14741521EC45F8900A3688C /* MockTeam.swift */,
+				F14741541EC462EB00A3688C /* MockMember.swift */,
 				F1E9BC941E8519FC00D96342 /* MockUser.swift */,
 				547AC6351E377B5A001458FD /* MockUserClient.swift */,
 				54ADA7971E3B996100B90C7D /* MockUserClient+Protos.swift */,
@@ -696,6 +702,7 @@
 				54AE5A7D1B78FA43002757E9 /* MockFlowManager.m in Sources */,
 				54AE5A7A1B78FA43002757E9 /* MockTransportSession+registration.m in Sources */,
 				54AE5A851B78FA43002757E9 /* MockPushEvent.m in Sources */,
+				F14741531EC45F8900A3688C /* MockTeam.swift in Sources */,
 				F1519B601EC0A6FC00AD4E33 /* MockTransportSession+assets.swift in Sources */,
 				5425EF021E1E339B006D7A01 /* MockTransportSession+search.m in Sources */,
 				CE89FED71C19865E0093C3B6 /* MockTransportSession+invitations.m in Sources */,
@@ -703,6 +710,7 @@
 				09E393EE1BB012EA00F3EA1B /* MockTransportSession+Clients.m in Sources */,
 				54AE5A781B78FA43002757E9 /* MockTransportSession+PushToken.m in Sources */,
 				F1E9BC951E8519FC00D96342 /* MockUser.swift in Sources */,
+				F14741551EC462EB00A3688C /* MockMember.swift in Sources */,
 				547AC6361E377B5A001458FD /* MockUserClient.swift in Sources */,
 				09E393F81BB0339200F3EA1B /* MockPreKey.m in Sources */,
 				54AE5A741B78FA43002757E9 /* MockTransportSession+connections.m in Sources */,
