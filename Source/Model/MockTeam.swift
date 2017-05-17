@@ -43,8 +43,16 @@ extension MockTeam {
     
     public static func fetch(in context: NSManagedObjectContext, identifier: String) -> MockTeam? {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: MockTeam.entityName)
+        fetchRequest.predicate = NSPredicate(format: "%K == %@", #keyPath(MockTeam.identifier), identifier)
         let results = try? context.fetch(fetchRequest)
         return results?.first as? MockTeam
+    }
+    
+    public static func fetchAll(in context: NSManagedObjectContext) -> [MockTeam] {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: MockTeam.entityName)
+        let results = try? context.fetch(fetchRequest)
+        let teams = results as? [MockTeam]
+        return teams ?? []
     }
     
     var payload: ZMTransportData {

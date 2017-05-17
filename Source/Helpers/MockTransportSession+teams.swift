@@ -26,6 +26,8 @@ extension MockTransportSession {
         switch request {
         case "/teams/*":
             response = fetchTeam(with: request.RESTComponents(index: 1))
+        case "/teams":
+            response = fetchAllTeams()
         default:
             break
         }
@@ -42,4 +44,14 @@ extension MockTransportSession {
         guard let team = MockTeam.fetch(in: managedObjectContext, identifier: identifier) else { return nil }
         return ZMTransportResponse(payload: team.payload, httpStatus: 200, transportSessionError: nil)
     }
+    
+    private func fetchAllTeams() -> ZMTransportResponse? {
+        let allTeams = MockTeam.fetchAll(in: managedObjectContext)
+        let payload: [String : Any] = [
+            "teams" : allTeams.map { $0.payload },
+            "has_more" : false
+        ]
+        return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
+    }
+    
 }

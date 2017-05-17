@@ -97,6 +97,34 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
         XCTAssertEqual(payload?["icon_key"], team.assetKey)
     }
     
+    func testThatItFetchesAllTeams() {
+        // Given
+        var team1: MockTeam!
+        var team2: MockTeam!
+
+        sut.performRemoteChanges { session in
+            team1 = session.insertTeam(withName: "some")
+            team2 = session.insertTeam(withName: "other")
+        }
+        
+        // When
+        let path = "/teams"
+        let response = self.response(forPayload: nil, path: path, method: .methodGET)
+        XCTAssertNotNil(response)
+        XCTAssertEqual(response?.httpStatus, 200)
+        XCTAssertNotNil(response?.payload)
+
+        // Then
+        let payload = response?.payload?.asDictionary() as? [String : Any]
+        guard let teams = payload?["teams"] as? [[String : Any]] else {
+            XCTFail("Should have teams array")
+            return
+        }
+        XCTAssertEqual(teams.count, 2)
+        
+        let identifiers = Set(teams.flatMap { $0["id"] as? String })
+        XCTAssertEqual(identifiers, [team1.identifier, team2.identifier])
+    }
     
 
 }
