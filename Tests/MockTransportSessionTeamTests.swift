@@ -55,7 +55,6 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
             team.assetKey = "1234-abc"
             creator = session.insertUser(withName: "creator")
             team.creator = creator
-            
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
@@ -126,5 +125,37 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
         XCTAssertEqual(identifiers, [team1.identifier, team2.identifier])
     }
     
+    func testThatConversationReturnsTeamInPayload() {
+        // Given
+        var team: MockTeam!
+        var creator: MockUser!
+        var conversation: MockConversation!
+        
+        sut.performRemoteChanges { session in
+            team = session.insertTeam(withName: "name")
+            team.assetKey = "1234-abc"
+            creator = session.insertUser(withName: "creator")
+            team.creator = creator
+            conversation = session.insertConversation(withCreator: creator, otherUsers: [session.insertSelfUser(withName: "Am I")], type: .oneOnOne)
+            conversation.team = team
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // When
+        let payload = conversation.transportData().asDictionary() as? [String : Any]
+        guard let teamData = payload?["team"] as? [String : Any] else {
+            XCTFail("Should have team data")
+            return
+        }
+        
+        // Then
+        let teamId = teamData["teamid"]
+        XCTAssertNotNil(teamId)
+        XCTAssertEqual(teamId as? String, team.identifier)
+        
+        let managed = teamData["managed"]
+        XCTAssertNotNil(managed)
+        XCTAssertEqual(managed as? Bool, false)
+    }
 
 }
