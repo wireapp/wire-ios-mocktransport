@@ -81,9 +81,11 @@
         <relationship name="lastPrekeyOfClient" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserClient" inverseName="lastPrekey" inverseEntity="UserClient" syncable="YES"/>
     </entity>
     <entity name="Team" representedClassName=".MockTeam" syncable="YES">
+        <attribute name="assetKey" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="conversations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Conversation" inverseName="team" inverseEntity="Conversation" syncable="YES"/>
+        <relationship name="creator" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="createdTeams" inverseEntity="User" syncable="YES"/>
         <relationship name="members" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Member" inverseName="team" inverseEntity="Member" syncable="YES"/>
     </entity>
     <entity name="User" representedClassName=".MockUser" syncable="YES">
@@ -105,6 +107,7 @@
         <relationship name="connectionsTo" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Connection" inverseName="to" inverseEntity="Connection" syncable="YES"/>
         <relationship name="createdConversations" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Conversation" inverseName="creator" inverseEntity="Conversation" syncable="YES"/>
         <relationship name="createdEvents" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Event" inverseName="from" inverseEntity="Event" syncable="YES"/>
+        <relationship name="createdTeams" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Team" inverseName="creator" inverseEntity="Team" syncable="YES"/>
         <relationship name="ignoredCallConversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="usersIgnoringCall" inverseEntity="Conversation" syncable="YES"/>
         <relationship name="inactiveConversations" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Conversation" inverseName="inactiveUsers" inverseEntity="Conversation" syncable="YES"/>
         <relationship name="invitations" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="PersonalInvitation" inverseName="inviter" inverseEntity="PersonalInvitation" syncable="YES"/>
@@ -132,12 +135,12 @@
         <element name="Connection" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Conversation" positionX="0" positionY="0" width="128" height="465"/>
         <element name="Event" positionX="0" positionY="0" width="128" height="150"/>
+        <element name="Member" positionX="18" positionY="162" width="128" height="30"/>
         <element name="PersonalInvitation" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Picture" positionX="0" positionY="0" width="128" height="120"/>
         <element name="PreKey" positionX="0" positionY="0" width="128" height="105"/>
-        <element name="User" positionX="0" positionY="0" width="128" height="390"/>
+        <element name="Team" positionX="9" positionY="153" width="128" height="135"/>
+        <element name="User" positionX="0" positionY="0" width="128" height="405"/>
         <element name="UserClient" positionX="0" positionY="0" width="128" height="255"/>
-        <element name="Team" positionX="9" positionY="153" width="128" height="105"/>
-        <element name="Member" positionX="18" positionY="162" width="128" height="30"/>
     </elements>
 </model>

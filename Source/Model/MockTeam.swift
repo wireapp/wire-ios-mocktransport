@@ -21,6 +21,8 @@ import Foundation
 @objc public class MockTeam: NSManagedObject {
     @NSManaged public var conversations: Set<MockConversation>?
     @NSManaged public var members: Set<MockMember>?
+    @NSManaged public var creator: MockUser?
     @NSManaged public var name: String?
+    @NSManaged public var assetKey: String?
     @NSManaged public var identifier: String
 }
