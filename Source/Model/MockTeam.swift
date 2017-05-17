@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import CoreData
 
 @objc public class MockTeam: NSManagedObject {
     @NSManaged public var conversations: Set<MockConversation>?
@@ -25,4 +26,16 @@ import Foundation
     @NSManaged public var name: String?
     @NSManaged public var assetKey: String?
     @NSManaged public var identifier: String
+}
+
+extension MockTeam {
+    @objc
+    public static func insert(in context: NSManagedObjectContext, name: String?, assetKey: String?) -> MockTeam {
+        let entity = NSEntityDescription.entity(forEntityName: "Team", in: context)!
+        let team = MockTeam(entity: entity, insertInto: context)
+        team.name = name
+        team.assetKey = assetKey
+        team.identifier = NSUUID.create().transportString()
+        return team
+    }
 }
