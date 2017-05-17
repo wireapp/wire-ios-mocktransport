@@ -26,16 +26,34 @@ import CoreData
     @NSManaged public var name: String?
     @NSManaged public var assetKey: String?
     @NSManaged public var identifier: String
+    
+    static var entityName = "Team"
 }
 
 extension MockTeam {
     @objc
     public static func insert(in context: NSManagedObjectContext, name: String?, assetKey: String?) -> MockTeam {
-        let entity = NSEntityDescription.entity(forEntityName: "Team", in: context)!
+        let entity = NSEntityDescription.entity(forEntityName: MockTeam.entityName, in: context)!
         let team = MockTeam(entity: entity, insertInto: context)
         team.name = name
         team.assetKey = assetKey
         team.identifier = NSUUID.create().transportString()
         return team
+    }
+    
+    public static func fetch(in context: NSManagedObjectContext, identifier: String) -> MockTeam? {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: MockTeam.entityName)
+        let results = try? context.fetch(fetchRequest)
+        return results?.first as? MockTeam
+    }
+    
+    var payload: ZMTransportData {
+        let data: [String : String?] = [
+            "id": identifier,
+            "name" : name,
+            "icon_key" : assetKey,
+            "creator" : creator?.identifier
+            ]
+        return data as NSDictionary
     }
 }

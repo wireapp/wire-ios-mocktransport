@@ -18,26 +18,85 @@
 
 import Foundation
 import XCTest
+@testable import WireMockTransport
 
 class MockTransportSessionTeamTests : MockTransportSessionTests {
     
     func testThatItInsertsTeam() {
+        // Given
         let name1 = "foo"
         let name2 = "bar"
 
         var team1: MockTeam!
         var team2: MockTeam!
 
+        // When
         sut.performRemoteChanges { session in
             team1 = session.insertTeam(withName: name1)
             team2 = session.insertTeam(withName: name2)
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // Then
         XCTAssertEqual(team1.name, name1)
         XCTAssertNotNil(team1.identifier)
         XCTAssertEqual(team2.name, name2)
         XCTAssertNotNil(team2.identifier)
         XCTAssertNotEqual(team1.identifier, team2.identifier)
     }
+    
+    func testThatItCreatesTeamPayload() {
+        // Given
+        var team: MockTeam!
+        var creator: MockUser!
+        
+        sut.performRemoteChanges { session in
+            team = session.insertTeam(withName: "name")
+            team.assetKey = "1234-abc"
+            creator = session.insertUser(withName: "creator")
+            team.creator = creator
+            
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // When
+        let payload = team.payload.asDictionary() as? [String : String]
+
+        // Then
+        XCTAssertEqual(payload?["id"], team.identifier)
+        XCTAssertEqual(payload?["creator"], creator.identifier)
+        XCTAssertEqual(payload?["name"], team.name)
+        XCTAssertEqual(payload?["icon_key"], team.assetKey)
+    }
+    
+    func testThatItFetchesTeam() {
+        // Given
+        var team: MockTeam!
+        var creator: MockUser!
+        
+        sut.performRemoteChanges { session in
+            team = session.insertTeam(withName: "name")
+            team.assetKey = "1234-abc"
+            creator = session.insertUser(withName: "creator")
+            team.creator = creator
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // When
+        let path = "/teams/\(team.identifier)"
+        let response = self.response(forPayload: nil, path: path, method: .methodGET)
+        XCTAssertNotNil(response)
+        XCTAssertEqual(response?.httpStatus, 200)
+        XCTAssertNotNil(response?.payload)
+
+        // Then
+        let payload = response?.payload?.asDictionary() as? [String : String]
+        XCTAssertEqual(payload?["id"], team.identifier)
+        XCTAssertEqual(payload?["creator"], creator.identifier)
+        XCTAssertEqual(payload?["name"], team.name)
+        XCTAssertEqual(payload?["icon_key"], team.assetKey)
+    }
+    
+    
 
 }
