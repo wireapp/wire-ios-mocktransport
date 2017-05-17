@@ -111,6 +111,8 @@
 		F14741551EC462EB00A3688C /* MockMember.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14741541EC462EB00A3688C /* MockMember.swift */; };
 		F149F80E1ECC75C100B05E16 /* MockTransportSessionTeamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F149F80D1ECC75C100B05E16 /* MockTransportSessionTeamTests.swift */; };
 		F149F8111ECC7A6E00B05E16 /* MockTransportSession+teams.swift in Sources */ = {isa = PBXBuildFile; fileRef = F149F80F1ECC7A1B00B05E16 /* MockTransportSession+teams.swift */; };
+		F149F82A1ECC9C2700B05E16 /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F149F8251ECC9C1B00B05E16 /* WireDataModel.framework */; };
+		F149F82D1ECC9DC500B05E16 /* NSManagedObject+Additions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F149F82B1ECC9DC300B05E16 /* NSManagedObject+Additions.swift */; };
 		F1519B5C1EC09D3100AD4E33 /* MockTransportSessionAssetsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1519B5B1EC09D3100AD4E33 /* MockTransportSessionAssetsTests.swift */; };
 		F1519B5E1EC0A30100AD4E33 /* MockTransportSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1519B5D1EC0A30100AD4E33 /* MockTransportSessionTests.swift */; };
 		F1519B601EC0A6FC00AD4E33 /* MockTransportSession+assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1519B591EC09C0100AD4E33 /* MockTransportSession+assets.swift */; };
@@ -126,6 +128,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = 54C902321B7532DD007162A8;
 			remoteInfo = WireMockTransport;
+		};
+		F149F8241ECC9C1B00B05E16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F149F81E1ECC9C1B00B05E16 /* WireDataModel.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F9C9A4FC1CAD5DF10039E10C;
+			remoteInfo = WireDataModel;
+		};
+		F149F8261ECC9C1B00B05E16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F149F81E1ECC9C1B00B05E16 /* WireDataModel.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F9C9A5061CAD5DF10039E10C;
+			remoteInfo = WireDataModelTests;
+		};
+		F149F8281ECC9C1B00B05E16 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F149F81E1ECC9C1B00B05E16 /* WireDataModel.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F9C9A7F31CAED9510039E10C;
+			remoteInfo = WireDataModelTestHost;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -281,6 +304,8 @@
 		F14741541EC462EB00A3688C /* MockMember.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockMember.swift; sourceTree = "<group>"; };
 		F149F80D1ECC75C100B05E16 /* MockTransportSessionTeamTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSessionTeamTests.swift; sourceTree = "<group>"; };
 		F149F80F1ECC7A1B00B05E16 /* MockTransportSession+teams.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+teams.swift"; sourceTree = "<group>"; };
+		F149F81E1ECC9C1B00B05E16 /* WireDataModel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = WireDataModel.xcodeproj; path = "../wire-ios-data-model/WireDataModel.xcodeproj"; sourceTree = "<group>"; };
+		F149F82B1ECC9DC300B05E16 /* NSManagedObject+Additions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+Additions.swift"; sourceTree = "<group>"; };
 		F1519B591EC09C0100AD4E33 /* MockTransportSession+assets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+assets.swift"; sourceTree = "<group>"; };
 		F1519B5B1EC09D3100AD4E33 /* MockTransportSessionAssetsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSessionAssetsTests.swift; sourceTree = "<group>"; };
 		F1519B5D1EC0A30100AD4E33 /* MockTransportSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSessionTests.swift; sourceTree = "<group>"; };
@@ -300,6 +325,7 @@
 				BF0F77831E93AC550060494E /* WireCryptobox.framework in Frameworks */,
 				BF0F77841E93AC550060494E /* WireProtos.framework in Frameworks */,
 				BF0F77851E93AC550060494E /* WireTransport.framework in Frameworks */,
+				F149F82A1ECC9C2700B05E16 /* WireDataModel.framework in Frameworks */,
 				BF0F77861E93AC550060494E /* WireUtilities.framework in Frameworks */,
 				BF0F77871E93AC550060494E /* WireSystem.framework in Frameworks */,
 				BF0F77881E93AC550060494E /* OCMock.framework in Frameworks */,
@@ -380,6 +406,7 @@
 				09E393F71BB0339200F3EA1B /* MockPreKey.m */,
 				CE89FECF1C19780D0093C3B6 /* MockPersonalInvitation.m */,
 				547AC6371E37811C001458FD /* String+Random.swift */,
+				F149F82B1ECC9DC300B05E16 /* NSManagedObject+Additions.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -406,6 +433,7 @@
 		54C902291B7532DD007162A8 = {
 			isa = PBXGroup;
 			children = (
+				F149F81E1ECC9C1B00B05E16 /* WireDataModel.xcodeproj */,
 				BF0F77911E93ACBE0060494E /* WireTesting.framework */,
 				F97E28D01D8FE31700A77567 /* Cartfile.resolved */,
 				0928E1FA1B975CCE0057232E /* Cartfile */,
@@ -562,6 +590,16 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		F149F81F1ECC9C1B00B05E16 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F149F8251ECC9C1B00B05E16 /* WireDataModel.framework */,
+				F149F8271ECC9C1B00B05E16 /* WireDataModelTests.xctest */,
+				F149F8291ECC9C1B00B05E16 /* WireDataModelTestHost.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -668,6 +706,12 @@
 			mainGroup = 54C902291B7532DD007162A8;
 			productRefGroup = 54C902341B7532DD007162A8 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = F149F81F1ECC9C1B00B05E16 /* Products */;
+					ProjectRef = F149F81E1ECC9C1B00B05E16 /* WireDataModel.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				54C902321B7532DD007162A8 /* WireMockTransport-ios */,
@@ -675,6 +719,30 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		F149F8251ECC9C1B00B05E16 /* WireDataModel.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = WireDataModel.framework;
+			remoteRef = F149F8241ECC9C1B00B05E16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F149F8271ECC9C1B00B05E16 /* WireDataModelTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = WireDataModelTests.xctest;
+			remoteRef = F149F8261ECC9C1B00B05E16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		F149F8291ECC9C1B00B05E16 /* WireDataModelTestHost.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = WireDataModelTestHost.app;
+			remoteRef = F149F8281ECC9C1B00B05E16 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		54C902311B7532DD007162A8 /* Resources */ = {
@@ -714,6 +782,7 @@
 				5425EF021E1E339B006D7A01 /* MockTransportSession+search.m in Sources */,
 				CE89FED71C19865E0093C3B6 /* MockTransportSession+invitations.m in Sources */,
 				09BCDB6A1BC7CFFC0020DCC7 /* MockTransportSession+OTR.m in Sources */,
+				F149F82D1ECC9DC500B05E16 /* NSManagedObject+Additions.swift in Sources */,
 				09E393EE1BB012EA00F3EA1B /* MockTransportSession+Clients.m in Sources */,
 				54AE5A781B78FA43002757E9 /* MockTransportSession+PushToken.m in Sources */,
 				F1E9BC951E8519FC00D96342 /* MockUser.swift in Sources */,

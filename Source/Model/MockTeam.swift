@@ -19,7 +19,7 @@
 import Foundation
 import CoreData
 
-@objc public class MockTeam: NSManagedObject {
+@objc public final class MockTeam: NSManagedObject, EntityNamedProtocol {
     @NSManaged public var conversations: Set<MockConversation>?
     @NSManaged public var members: Set<MockMember>?
     @NSManaged public var creator: MockUser?
@@ -27,32 +27,21 @@ import CoreData
     @NSManaged public var assetKey: String?
     @NSManaged public var identifier: String
     
-    static var entityName = "Team"
+    public static var entityName = "Team"
 }
 
 extension MockTeam {
+    public static func predicateWithIdentifier(identifier: String) -> NSPredicate {
+        return NSPredicate(format: "%K == %@", #keyPath(MockTeam.identifier), identifier)
+    }
+    
     @objc
     public static func insert(in context: NSManagedObjectContext, name: String?, assetKey: String?) -> MockTeam {
-        let entity = NSEntityDescription.entity(forEntityName: MockTeam.entityName, in: context)!
-        let team = MockTeam(entity: entity, insertInto: context)
+        let team: MockTeam = insert(in: context)
+        team.identifier = NSUUID.create().transportString()
         team.name = name
         team.assetKey = assetKey
-        team.identifier = NSUUID.create().transportString()
         return team
-    }
-    
-    public static func fetch(in context: NSManagedObjectContext, identifier: String) -> MockTeam? {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: MockTeam.entityName)
-        fetchRequest.predicate = NSPredicate(format: "%K == %@", #keyPath(MockTeam.identifier), identifier)
-        let results = try? context.fetch(fetchRequest)
-        return results?.first as? MockTeam
-    }
-    
-    public static func fetchAll(in context: NSManagedObjectContext) -> [MockTeam] {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: MockTeam.entityName)
-        let results = try? context.fetch(fetchRequest)
-        let teams = results as? [MockTeam]
-        return teams ?? []
     }
     
     var payload: ZMTransportData {

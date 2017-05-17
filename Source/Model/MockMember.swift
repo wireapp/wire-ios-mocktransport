@@ -19,14 +19,34 @@
 import Foundation
 import WireDataModel
 
-@objc public class MockMember: NSManagedObject {
-    @NSManaged public var team: MockTeam?
-    @NSManaged public var user: MockUser?
+@objc public final class MockMember: NSManagedObject, EntityNamedProtocol {
+    @NSManaged public var team: MockTeam
+    @NSManaged public var user: MockUser
     
     @NSManaged private var permissionsRawValue: Int32
     
     public var permissions: Permissions {
         get { return Permissions(rawValue: permissionsRawValue) }
         set { permissionsRawValue = newValue.rawValue }
+    }
+    
+    public static let entityName = "Member"
+}
+
+extension MockMember {
+    var payload: ZMTransportData {
+        let data: [String : String?] = [
+            "user": user.identifier,
+            "permissions" : permissions.debugDescription // TODO: Build values properly
+        ]
+        return data as NSDictionary
+    }
+    
+    @objc(insertInContext:forUser:inTeam:)
+    public static func insert(in context: NSManagedObjectContext, for user: MockUser, in team: MockTeam) -> MockMember {
+        let member: MockMember = insert(in: context)
+        member.user = user
+        member.team = team
+        return member
     }
 }

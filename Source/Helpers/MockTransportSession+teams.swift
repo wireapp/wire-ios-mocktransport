@@ -24,10 +24,12 @@ extension MockTransportSession {
         var response: ZMTransportResponse?
         
         switch request {
-        case "/teams/*":
-            response = fetchTeam(with: request.RESTComponents(index: 1))
         case "/teams":
             response = fetchAllTeams()
+        case "/teams/*":
+            response = fetchTeam(with: request.RESTComponents(index: 1))
+        case "/teams/*/members":
+            response = fetchMembersForTeam(with: request.RESTComponents(index: 1))
         default:
             break
         }
@@ -41,16 +43,30 @@ extension MockTransportSession {
     
     private func fetchTeam(with identifier: String?) -> ZMTransportResponse? {
         guard let identifier = identifier else { return nil }
-        guard let team = MockTeam.fetch(in: managedObjectContext, identifier: identifier) else { return nil }
+        let predicate = MockTeam.predicateWithIdentifier(identifier: identifier)
+        guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return nil }
         return ZMTransportResponse(payload: team.payload, httpStatus: 200, transportSessionError: nil)
     }
     
     private func fetchAllTeams() -> ZMTransportResponse? {
-        let allTeams = MockTeam.fetchAll(in: managedObjectContext)
+        let allTeams: [MockTeam] = MockTeam.fetchAll(in: managedObjectContext)
         let payload: [String : Any] = [
             "teams" : allTeams.map { $0.payload },
             "has_more" : false
         ]
+        return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
+    }
+    
+    private func fetchMembersForTeam(with identifier: String?) -> ZMTransportResponse? {
+        guard let identifier = identifier else { return nil }
+        let predicate = MockTeam.predicateWithIdentifier(identifier: identifier)
+        guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return nil }
+        let members = team.members ?? []
+        
+        let payload: [String : Any] = [
+            "members" : members.map { $0.payload }
+        ]
+
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
     }
     

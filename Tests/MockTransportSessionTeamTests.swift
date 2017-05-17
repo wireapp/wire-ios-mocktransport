@@ -157,5 +157,42 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
         XCTAssertNotNil(managed)
         XCTAssertEqual(managed as? Bool, false)
     }
-
+    
+    func testThatItFetchesTeamMembers() {
+        // Given
+        var user1: MockUser!
+        var user2: MockUser!
+        var team: MockTeam!
+        var creator: MockUser!
+        
+        sut.performRemoteChanges { session in
+            team = session.insertTeam(withName: "name")
+            team.assetKey = "1234-abc"
+            creator = session.insertUser(withName: "creator")
+            team.creator = creator
+            user1 = session.insertUser(withName: "one")
+            user2 = session.insertUser(withName: "two")
+            _ = session.insertMember(with: user1, in: team)
+            _ = session.insertMember(with: user2, in: team)
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // When
+        let path = "/teams/\(team.identifier)/members"
+        let response = self.response(forPayload: nil, path: path, method: .methodGET)
+        XCTAssertNotNil(response)
+        XCTAssertEqual(response?.httpStatus, 200)
+        XCTAssertNotNil(response?.payload)
+        
+        // Then
+        let payload = response?.payload?.asDictionary() as? [String : Any]
+        guard let teams = payload?["members"] as? [[String : Any]] else {
+            XCTFail("Should have teams array")
+            return
+        }
+        XCTAssertEqual(teams.count, 2)
+        
+        let identifiers = Set(teams.flatMap { $0["user"] as? String })
+        XCTAssertEqual(identifiers, [user1.identifier, user2.identifier])
+    }
 }

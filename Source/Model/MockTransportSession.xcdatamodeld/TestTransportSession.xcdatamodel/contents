@@ -54,7 +54,7 @@
         <relationship name="conversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="events" inverseEntity="Conversation" syncable="YES"/>
         <relationship name="from" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="createdEvents" inverseEntity="User" syncable="YES"/>
     </entity>
-    <entity name="Member" syncable="YES">
+    <entity name="Member" representedClassName=".MockMember" syncable="YES">
         <attribute name="permissionsRawValue" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="team" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Team" inverseName="members" inverseEntity="Team" syncable="YES"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="memberships" inverseEntity="User" syncable="YES"/>
@@ -135,7 +135,7 @@
         <element name="Connection" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Conversation" positionX="0" positionY="0" width="128" height="465"/>
         <element name="Event" positionX="0" positionY="0" width="128" height="150"/>
-        <element name="Member" positionX="18" positionY="162" width="128" height="30"/>
+        <element name="Member" positionX="18" positionY="162" width="128" height="90"/>
         <element name="PersonalInvitation" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Picture" positionX="0" positionY="0" width="128" height="120"/>
         <element name="PreKey" positionX="0" positionY="0" width="128" height="105"/>
