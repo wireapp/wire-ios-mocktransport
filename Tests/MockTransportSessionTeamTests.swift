@@ -21,6 +21,7 @@ import XCTest
 import WireDataModel
 @testable import WireMockTransport
 
+// MARK: - Teams
 class MockTransportSessionTeamTests : MockTransportSessionTests {
     
     func testThatItInsertsTeam() {
@@ -127,7 +128,98 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
     }
 }
 
-// MARK: Conversation
+// MARK: - Team permissions
+extension MockTransportSessionTests {
+    func testThatItDoesNotReturnErrorForTeamsWhereUserIsNotAMemberWhenNotEnforced() {
+        // Given
+        var team: MockTeam!
+        
+        sut.performRemoteChanges { session in
+            _ = session.insertSelfUser(withName: "Am I")
+            team = session.insertTeam(withName: "name")
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // When
+        let path = "/teams/\(team.identifier)"
+        let response = self.response(forPayload: nil, path: path, method: .methodGET)
+        
+        // Then
+        XCTAssertNotNil(response)
+        XCTAssertEqual(response?.httpStatus, 200)
+        XCTAssertNotNil(response?.payload)
+    }
+    
+    func testThatItReturnsErrorForTeamsWhereUserIsNotAMemberWhenEnforced() {
+        // Given
+        var team: MockTeam!
+        
+        sut.performRemoteChanges { session in
+            _ = session.insertSelfUser(withName: "Am I")
+            team = session.insertTeam(withName: "name")
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // When
+        sut.teamPermissionsEnforced = true
+        let path = "/teams/\(team.identifier)"
+        let response = self.response(forPayload: nil, path: path, method: .methodGET)
+        
+        // Then
+        XCTAssertNotNil(response)
+        XCTAssertEqual(response?.httpStatus, 404)
+        let payload = response?.payload?.asDictionary() as? [String : String]
+        XCTAssertEqual(payload?["label"], "no-team")
+    }
+    
+    func testThatItReturnsErrorForTeamMembersWhereUserIsNotAMemberWhenEnforced() {
+        // Given
+        var team: MockTeam!
+        
+        sut.performRemoteChanges { session in
+            _ = session.insertSelfUser(withName: "Am I")
+            team = session.insertTeam(withName: "name")
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // When
+        sut.teamPermissionsEnforced = true
+        let path = "/teams/\(team.identifier)/members"
+        let response = self.response(forPayload: nil, path: path, method: .methodGET)
+        
+        // Then
+        XCTAssertNotNil(response)
+        XCTAssertEqual(response?.httpStatus, 404)
+        let payload = response?.payload?.asDictionary() as? [String : String]
+        XCTAssertEqual(payload?["label"], "no-team")
+    }
+
+    func testThatItReturnsErrorForTeamMembersWhereUserDoesNotHavePermissionWhenEnforced() {
+        // Given
+        var team: MockTeam!
+        
+        sut.performRemoteChanges { session in
+            let selfUser = session.insertSelfUser(withName: "Am I")
+            team = session.insertTeam(withName: "name")
+            let member = session.insertMember(with: selfUser, in: team)
+            member.permissions = []
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // When
+        sut.teamPermissionsEnforced = true
+        let path = "/teams/\(team.identifier)/members"
+        let response = self.response(forPayload: nil, path: path, method: .methodGET)
+        
+        // Then
+        XCTAssertNotNil(response)
+        XCTAssertEqual(response?.httpStatus, 403)
+        let payload = response?.payload?.asDictionary() as? [String : String]
+        XCTAssertEqual(payload?["label"], "operation-denied")
+    }
+}
+
+// MARK: - Conversation
 extension MockTransportSessionTeamTests {
     func testThatConversationReturnsTeamInPayload() {
         // Given
@@ -161,10 +253,9 @@ extension MockTransportSessionTeamTests {
         XCTAssertNotNil(managed)
         XCTAssertEqual(managed as? Bool, false)
     }
-    
 }
 
-// MARK: Members
+// MARK: - Members
 extension MockTransportSessionTeamTests {
     
     func testMembersPayload() {

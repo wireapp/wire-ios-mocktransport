@@ -64,6 +64,8 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 @property (nonatomic) BOOL doNotRespondToRequests; //to simulate offline
 
+@property (atomic) BOOL teamPermissionsEnforced; // Check permissions of selfUser for team calls, default = false
+
 @property (nonatomic) NSUInteger maxMembersForGroupCall;
 @property (nonatomic) NSUInteger maxCallParticipants;
 
