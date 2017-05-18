@@ -28,6 +28,11 @@ import CoreData
     @NSManaged public var identifier: String
     
     public static var entityName = "Team"
+    
+    public override func awakeFromInsert() {
+        super.awakeFromInsert()
+        identifier = NSUUID.create().transportString()
+    }
 }
 
 extension MockTeam {
@@ -38,7 +43,6 @@ extension MockTeam {
     @objc
     public static func insert(in context: NSManagedObjectContext, name: String?, assetKey: String?) -> MockTeam {
         let team: MockTeam = insert(in: context)
-        team.identifier = NSUUID.create().transportString()
         team.name = name
         team.assetKey = assetKey
         return team
