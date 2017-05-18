@@ -18,6 +18,7 @@
 
 import Foundation
 import XCTest
+import WireDataModel
 @testable import WireMockTransport
 
 class MockTransportSessionTeamTests : MockTransportSessionTests {
@@ -124,7 +125,10 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
         let identifiers = Set(teams.flatMap { $0["id"] as? String })
         XCTAssertEqual(identifiers, [team1.identifier, team2.identifier])
     }
-    
+}
+
+// MARK: Conversation
+extension MockTransportSessionTeamTests {
     func testThatConversationReturnsTeamInPayload() {
         // Given
         var team: MockTeam!
@@ -156,6 +160,46 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
         let managed = teamData["managed"]
         XCTAssertNotNil(managed)
         XCTAssertEqual(managed as? Bool, false)
+    }
+    
+}
+
+// MARK: Members
+extension MockTransportSessionTeamTests {
+    
+    func testMembersPayload() {
+        // Given
+        var member: MockMember!
+        var user: MockUser!
+        let permission1 = Permissions.TransportString.addTeamMember
+        let permission2 = Permissions.TransportString.getTeamConversations
+
+        sut.performRemoteChanges { session in
+            let team = session.insertTeam(withName: "name")
+            user = session.insertUser(withName: "Am I")
+            member = session.insertMember(with: user, in: team)
+            member.permissions = [
+                Permissions(string: permission1.rawValue)!,
+                Permissions(string: permission2.rawValue)!
+            ]
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // When
+        let payload = member.payload.asDictionary() as? [String : Any]
+        
+        // Then
+        let userId = payload?["user"]
+        XCTAssertNotNil(userId)
+        XCTAssertEqual(userId as? String, user.identifier)
+        
+        guard let permissions = payload?["permissions"] else { XCTFail("No permissions key"); return }
+        guard let permissionData = permissions as? [String] else { XCTFail("Wrong permissions key type"); return }
+
+        let permissionsSet = Set(permissionData)
+        XCTAssertEqual(permissionsSet.count, 2)
+        XCTAssert(permissionData.contains(permission1.rawValue))
+        XCTAssert(permissionData.contains(permission2.rawValue))
     }
     
     func testThatItFetchesTeamMembers() {
