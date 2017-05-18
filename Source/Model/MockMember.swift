@@ -33,11 +33,37 @@ import WireDataModel
     public static let entityName = "Member"
 }
 
+extension Permissions.TransportString {
+    static var allValues: [Permissions.TransportString] {
+        return [
+            .createConversation,
+            .deleteConversation,
+            .addTeamMember,
+            .removeTeamMember,
+            .addConversationMember,
+            .removeConversationMember,
+            .getMemberPermissions,
+            .getTeamConversations,
+            .getBilling,
+            .setBilling,
+            .setTeamData,
+            .deleteTeam
+        ]
+    }
+}
+
 extension MockMember {
     var payload: ZMTransportData {
-        let data: [String : String?] = [
+        var permissionsPayload = [String]()
+        for transportPermission in Permissions.TransportString.allValues {
+            if let permission = Permissions(string: transportPermission.rawValue), self.permissions.contains(permission) {
+                permissionsPayload.append(transportPermission.rawValue)
+            }
+        }
+        
+        let data: [String : Any] = [
             "user": user.identifier,
-            "permissions" : permissions.debugDescription // TODO: Build values properly
+            "permissions" : permissionsPayload
         ]
         return data as NSDictionary
     }
