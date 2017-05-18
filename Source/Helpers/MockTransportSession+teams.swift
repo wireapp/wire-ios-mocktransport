@@ -17,6 +17,12 @@
 //
 
 import Foundation
+import WireDataModel
+
+extension ZMTransportResponse {
+    static let teamNotFound = ZMTransportResponse(payload: ["label" : "no-team"] as ZMTransportData, httpStatus: 404, transportSessionError: nil)
+    static let operationDenied = ZMTransportResponse(payload: ["label" : "operation-denied"] as ZMTransportData, httpStatus: 403, transportSessionError: nil)
+}
 
 extension MockTransportSession {
     @objc(processTeamsRequest:)
@@ -44,7 +50,10 @@ extension MockTransportSession {
     private func fetchTeam(with identifier: String?) -> ZMTransportResponse? {
         guard let identifier = identifier else { return nil }
         let predicate = MockTeam.predicateWithIdentifier(identifier: identifier)
-        guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return nil }
+        guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound }
+        if let permissionError = ensurePermission([], in: team) {
+            return permissionError
+        }
         return ZMTransportResponse(payload: team.payload, httpStatus: 200, transportSessionError: nil)
     }
     
@@ -60,7 +69,10 @@ extension MockTransportSession {
     private func fetchMembersForTeam(with identifier: String?) -> ZMTransportResponse? {
         guard let identifier = identifier else { return nil }
         let predicate = MockTeam.predicateWithIdentifier(identifier: identifier)
-        guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return nil }
+        guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound }
+        if let permissionError = ensurePermission(.getMemberPermissions, in: team) {
+            return permissionError
+        }
         let members = team.members ?? []
         
         let payload: [String : Any] = [
@@ -68,6 +80,20 @@ extension MockTransportSession {
         ]
 
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
+    }
+    
+    private func ensurePermission(_ permissions: Permissions, in team: MockTeam) -> ZMTransportResponse? {
+        guard teamPermissionsEnforced else { return nil }
+        guard let teamMembers = team.members,
+            let selfTeams = selfUser.memberships,
+            let member = selfTeams.union(teamMembers).first
+            else { return .teamNotFound }
+        
+        guard member.permissions.contains(permissions) else {
+            return .operationDenied
+        }
+        // All good, no error returned
+        return nil
     }
     
 }
