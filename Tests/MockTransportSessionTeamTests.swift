@@ -54,7 +54,8 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
         
         sut.performRemoteChanges { session in
             team = session.insertTeam(withName: "name")
-            team.assetKey = "1234-abc"
+            team.pictureAssetKey = "1234-abc"
+            team.pictureAssetId = "123-1234-abc"
             creator = session.insertUser(withName: "creator")
             team.creator = creator
         }
@@ -67,7 +68,8 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
         XCTAssertEqual(payload?["id"], team.identifier)
         XCTAssertEqual(payload?["creator"], creator.identifier)
         XCTAssertEqual(payload?["name"], team.name)
-        XCTAssertEqual(payload?["icon_key"], team.assetKey)
+        XCTAssertEqual(payload?["icon_key"], team.pictureAssetKey)
+        XCTAssertEqual(payload?["icon"], team.pictureAssetId)
     }
     
     func testThatItFetchesTeam() {
@@ -77,7 +79,8 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
         
         sut.performRemoteChanges { session in
             team = session.insertTeam(withName: "name")
-            team.assetKey = "1234-abc"
+            team.pictureAssetKey = "1234-abc"
+            team.pictureAssetId = "123-1234-abc"
             creator = session.insertUser(withName: "creator")
             team.creator = creator
         }
@@ -95,7 +98,8 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
         XCTAssertEqual(payload?["id"], team.identifier)
         XCTAssertEqual(payload?["creator"], creator.identifier)
         XCTAssertEqual(payload?["name"], team.name)
-        XCTAssertEqual(payload?["icon_key"], team.assetKey)
+        XCTAssertEqual(payload?["icon_key"], team.pictureAssetKey)
+        XCTAssertEqual(payload?["icon"], team.pictureAssetId)
     }
     
     func testThatItFetchesAllTeams() {
@@ -229,7 +233,8 @@ extension MockTransportSessionTeamTests {
         
         sut.performRemoteChanges { session in
             team = session.insertTeam(withName: "name")
-            team.assetKey = "1234-abc"
+            team.pictureAssetKey = "1234-abc"
+            team.pictureAssetId = "123-1234-abc"
             creator = session.insertUser(withName: "creator")
             team.creator = creator
             conversation = session.insertConversation(withCreator: creator, otherUsers: [session.insertSelfUser(withName: "Am I")], type: .oneOnOne)
@@ -302,7 +307,8 @@ extension MockTransportSessionTeamTests {
         
         sut.performRemoteChanges { session in
             team = session.insertTeam(withName: "name")
-            team.assetKey = "1234-abc"
+            team.pictureAssetKey = "1234-abc"
+            team.pictureAssetId = "123-1234-abc"
             creator = session.insertUser(withName: "creator")
             team.creator = creator
             user1 = session.insertUser(withName: "one")
