@@ -881,7 +881,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
 - (MockTeam *)insertTeamWithName:(nullable NSString *)name
 {
-    return [MockTeam insertIn:self.managedObjectContext name:name assetKey:nil];
+    return [MockTeam insertIn:self.managedObjectContext name:name assetId:nil assetKey:nil];
 }
 
 - (MockMember *)insertMemberWithUser:(MockUser *)user inTeam:(MockTeam *)team

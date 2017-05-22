@@ -81,9 +81,10 @@
         <relationship name="lastPrekeyOfClient" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserClient" inverseName="lastPrekey" inverseEntity="UserClient" syncable="YES"/>
     </entity>
     <entity name="Team" representedClassName=".MockTeam" syncable="YES">
-        <attribute name="assetKey" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pictureAssetId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="pictureAssetKey" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="conversations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Conversation" inverseName="team" inverseEntity="Conversation" syncable="YES"/>
         <relationship name="creator" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="createdTeams" inverseEntity="User" syncable="YES"/>
         <relationship name="members" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Member" inverseName="team" inverseEntity="Member" syncable="YES"/>
@@ -139,7 +140,7 @@
         <element name="PersonalInvitation" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Picture" positionX="0" positionY="0" width="128" height="120"/>
         <element name="PreKey" positionX="0" positionY="0" width="128" height="105"/>
-        <element name="Team" positionX="9" positionY="153" width="128" height="135"/>
+        <element name="Team" positionX="9" positionY="153" width="128" height="150"/>
         <element name="User" positionX="0" positionY="0" width="128" height="405"/>
         <element name="UserClient" positionX="0" positionY="0" width="128" height="255"/>
     </elements>
