@@ -21,14 +21,39 @@ import CoreData
 
 public extension MockTransportSession {
     @objc(pushEventsForTeamsWithInserted:updated:deleted:shouldSendEventsToSelfUser:)
-    public func pushEventsForTeams(inserted: Set<NSManagedObject>, updated: Set<NSManagedObject>, deleted: Set<NSManagedObject>, shouldSendEventsToSelfUser: Bool) -> Array<MockPushEventProtocol> {
+    public func pushEventsForTeams(inserted: Set<NSManagedObject>, updated: Set<NSManagedObject>, deleted: Set<NSManagedObject>, shouldSendEventsToSelfUser: Bool) -> [MockPushEventProtocol] {
         guard shouldSendEventsToSelfUser else { return [] }
         
-        let insertedEvents = inserted.flatMap { $0 as? MockTeam }.map(MockTeamEvent.Inserted)
-        let updatedEvents =  updated.flatMap { $0 as? MockTeam }.map(MockTeamEvent.Updated)
-        let deletedEvents = deleted.flatMap { $0 as? MockTeam }.map(MockTeamEvent.Deleted)
-        let allEvents = insertedEvents + updatedEvents + deletedEvents
+        let insertedEvents = inserted
+            .flatMap { $0 as? MockTeam }
+            .map(MockTeamEvent.Inserted)
+            .map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
         
-        return allEvents.map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
+        let updatedEvents =  updated
+            .flatMap { $0 as? MockTeam }
+            .flatMap { self.pushEventForUpdatedTeam(team: $0, insertedObjects: inserted) }
+        
+        let deletedEvents = deleted
+            .flatMap { $0 as? MockTeam }
+            .map(MockTeamEvent.Deleted)
+            .map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
+        
+        return insertedEvents + updatedEvents + deletedEvents
+    }
+    
+    private func pushEventForUpdatedTeam(team: MockTeam, insertedObjects: Set<NSManagedObject>) -> [MockPushEvent] {
+        var allEvents = [MockPushEvent]()
+        let changedValues = team.changedValues()
+        if let teamUpdateEvent = MockTeamEvent.Updated(team: team , changedValues: changedValues) {
+            allEvents.append(MockPushEvent(with: teamUpdateEvent.payload, uuid: UUID.create(), isTransient: false) )
+        }
+        
+        let insertedMembers = insertedObjects.flatMap { $0 as? MockMember }
+        let membersEvents = MockTeamMemberEvent.createIfNeeded(team: team, changedValues: team.changedValues(), insertedMembers: Set(insertedMembers))
+        let membersPushEvents = membersEvents.flatMap{ $0 }.map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
+        
+        allEvents.append(contentsOf: membersPushEvents)
+        
+        return allEvents
     }
 }

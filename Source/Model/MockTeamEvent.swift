@@ -26,7 +26,7 @@ import Foundation
         case update = "team.update"
     }
     
-    public let data: [String : String]
+    public let data: [String : String?]
     public let teamIdentifier: String
     public let kind: Kind
     
@@ -34,18 +34,28 @@ import Foundation
         return MockTeamEvent(kind: .create, team: team, data: [:])
     }
     
-    public static func Updated(team: MockTeam) -> MockTeamEvent {
-        var data = [String : String]()
-        if let name = team.name {
-            data["name"] = name
-        }
-        if let assetId = team.pictureAssetId {
-            data["icon"] = assetId
-        }
-        if let assetKey = team.pictureAssetKey {
-            data["icon_key"] = assetKey
+    public static func Updated(team: MockTeam, changedValues: [String: Any]) -> MockTeamEvent? {
+        var data = [String : String?]()
+        
+        let nameKey = #keyPath(MockTeam.name)
+        if changedValues[nameKey] != nil {
+            data["name"] = team.name
         }
         
+        let pictureAssetIdKey = #keyPath(MockTeam.pictureAssetId)
+        if changedValues[pictureAssetIdKey] != nil {
+            data["icon"] = team.pictureAssetId
+        }
+        
+        let pictureAssetKeyKey = #keyPath(MockTeam.pictureAssetKey)
+        if changedValues[pictureAssetKeyKey] != nil {
+            data["icon_key"] = team.pictureAssetKey
+        }
+        
+        if data.isEmpty {
+            // No changes to team
+            return nil
+        }
         return MockTeamEvent(kind: .update, team: team, data: data)
     }
     
@@ -53,7 +63,7 @@ import Foundation
         return MockTeamEvent(kind: .delete, team: team, data: [:])
     }
     
-    public init(kind: Kind, team: MockTeam, data: [String : String]) {
+    public init(kind: Kind, team: MockTeam, data: [String : String?]) {
         self.kind = kind
         self.teamIdentifier = team.identifier
         self.data = data

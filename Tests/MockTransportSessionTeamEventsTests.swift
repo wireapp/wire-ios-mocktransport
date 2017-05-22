@@ -132,4 +132,134 @@ class MockTransportSessionTeamEventsTests : MockTransportSessionTests {
         ]
         check(event: events.first, hasType: .ZMTUpdateEventTeamUpdate, team: team, data: updateData)
     }
+    
+    func testThatItCreatesEventsForUpdatedTeamsAndHasOnlyChangedData() {
+        // Given
+        var team: MockTeam!
+        
+        sut.performRemoteChanges { session in
+            team = session.insertTeam(withName: "some")
+            team.pictureAssetId = "123-082"
+            team.pictureAssetKey = "541-992"
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        createAndOpenPushChannel()
+        
+        // When
+        let newName = "other"
+        sut.performRemoteChanges { session in
+            team.name = newName
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // Then
+        let events = pushChannelReceivedEvents as! [TestPushChannelEvent]
+        XCTAssertEqual(events.count, 1)
+        
+        let updateData = [
+            "name" : newName,
+        ]
+        check(event: events.first, hasType: .ZMTUpdateEventTeamUpdate, team: team, data: updateData)
+    }
+
+}
+
+// MARK: - Members events
+extension MockTransportSessionTeamEventsTests {
+    
+    func testThatItCreatesEventWhenMemberJoinsTheTeam() {
+        // Given
+        var team: MockTeam!
+        
+        sut.performRemoteChanges { session in
+            team = session.insertTeam(withName: "some")
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        createAndOpenPushChannel()
+        
+        // When
+        var newUser: MockUser!
+        sut.performRemoteChanges { session in
+            newUser = session.insertUser(withName: "name")
+            _ = session.insertMember(with: newUser, in: team)
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // Then
+        let events = pushChannelReceivedEvents as! [TestPushChannelEvent]
+        XCTAssertEqual(events.count, 1)
+        
+        let updateData = [
+            "user" : newUser.identifier,
+            ]
+        check(event: events.first, hasType: .ZMTUpdateEventTeamMemberJoin, team: team, data: updateData)
+    }
+    
+    func testThatItCreatesEventWhenMemberIsRemovedFromTeam() {
+        // Given
+        var team: MockTeam!
+        var user: MockUser!
+        
+        sut.performRemoteChanges { session in
+            team = session.insertTeam(withName: "some")
+            user = session.insertUser(withName: "name")
+            _ = session.insertMember(with: user, in: team)
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        createAndOpenPushChannel()
+        
+        // When
+        sut.performRemoteChanges { session in
+            team.members = []
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // Then
+        let events = pushChannelReceivedEvents as! [TestPushChannelEvent]
+        XCTAssertEqual(events.count, 1)
+        
+        let updateData = [
+            "user" : user.identifier,
+            ]
+        check(event: events.first, hasType: .ZMTUpdateEventTeamMemberLeave, team: team, data: updateData)
+    }
+    
+    func testThatItCreatesEventsWhenMemberIsAddedToMultipleTeams() {
+        // Given
+        var team1: MockTeam!
+        var team2: MockTeam!
+        
+        sut.performRemoteChanges { session in
+            team1 = session.insertTeam(withName: "some")
+            team2 = session.insertTeam(withName: "other")
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        createAndOpenPushChannel()
+        
+        // When
+        var newUser: MockUser!
+        sut.performRemoteChanges { session in
+            newUser = session.insertUser(withName: "name")
+            _ = session.insertMember(with: newUser, in: team1)
+            _ = session.insertMember(with: newUser, in: team2)
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // Then
+        let events = pushChannelReceivedEvents as! [TestPushChannelEvent]
+        XCTAssertEqual(events.count, 2)
+        
+        let updateData = [
+            "user" : newUser.identifier,
+            ]
+        var eventsByTeamId = [String : TestPushChannelEvent]()
+        for event in events {
+            guard let payload = event.payload as? [String : Any] else { continue }
+            guard let teamId = payload["team"] as? String else { continue }
+            eventsByTeamId[teamId] = event
+        }
+        
+        check(event: eventsByTeamId[team1.identifier], hasType: .ZMTUpdateEventTeamMemberJoin, team: team1, data: updateData)
+        check(event: eventsByTeamId[team2.identifier], hasType: .ZMTUpdateEventTeamMemberJoin, team: team2, data: updateData)
+    }
 }
