@@ -25,7 +25,7 @@ import WireDataModel
     @NSManaged public var team: MockTeam
     @NSManaged public var user: MockUser
     
-    @NSManaged private var permissionsRawValue: Int32
+    @NSManaged private var permissionsRawValue: Int64
     
     public var permissions: Permissions {
         get { return Permissions(rawValue: permissionsRawValue) }
