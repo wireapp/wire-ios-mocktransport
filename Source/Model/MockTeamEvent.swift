@@ -30,11 +30,11 @@ import Foundation
     public let teamIdentifier: String
     public let kind: Kind
     
-    public static func Inserted(team: MockTeam) -> MockTeamEvent {
+    public static func inserted(team: MockTeam) -> MockTeamEvent {
         return MockTeamEvent(kind: .create, team: team, data: [:])
     }
     
-    public static func Updated(team: MockTeam, changedValues: [String: Any]) -> MockTeamEvent? {
+    public static func updated(team: MockTeam, changedValues: [String: Any]) -> MockTeamEvent? {
         var data = [String : String?]()
         
         let nameKey = #keyPath(MockTeam.name)
@@ -59,7 +59,7 @@ import Foundation
         return MockTeamEvent(kind: .update, team: team, data: data)
     }
     
-    public static func Deleted(team: MockTeam) -> MockTeamEvent {
+    public static func deleted(team: MockTeam) -> MockTeamEvent {
         return MockTeamEvent(kind: .delete, team: team, data: [:])
     }
     

@@ -26,7 +26,7 @@ public extension MockTransportSession {
         
         let insertedEvents = inserted
             .flatMap { $0 as? MockTeam }
-            .map(MockTeamEvent.Inserted)
+            .map(MockTeamEvent.inserted)
             .map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
         
         let updatedEvents =  updated
@@ -35,7 +35,7 @@ public extension MockTransportSession {
         
         let deletedEvents = deleted
             .flatMap { $0 as? MockTeam }
-            .map(MockTeamEvent.Deleted)
+            .map(MockTeamEvent.deleted)
             .map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
         
         return insertedEvents + updatedEvents + deletedEvents
@@ -44,7 +44,7 @@ public extension MockTransportSession {
     private func pushEventForUpdatedTeam(team: MockTeam, insertedObjects: Set<NSManagedObject>) -> [MockPushEvent] {
         var allEvents = [MockPushEvent]()
         let changedValues = team.changedValues()
-        if let teamUpdateEvent = MockTeamEvent.Updated(team: team , changedValues: changedValues) {
+        if let teamUpdateEvent = MockTeamEvent.updated(team: team , changedValues: changedValues) {
             allEvents.append(MockPushEvent(with: teamUpdateEvent.payload, uuid: UUID.create(), isTransient: false) )
         }
         
