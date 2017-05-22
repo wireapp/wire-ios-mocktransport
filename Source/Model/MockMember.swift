@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+
 import Foundation
 import WireDataModel
+
 
 @objc public final class MockMember: NSManagedObject, EntityNamedProtocol {
     @NSManaged public var team: MockTeam
@@ -33,37 +35,12 @@ import WireDataModel
     public static let entityName = "Member"
 }
 
-extension Permissions.TransportString {
-    static var allValues: [Permissions.TransportString] {
-        return [
-            .createConversation,
-            .deleteConversation,
-            .addTeamMember,
-            .removeTeamMember,
-            .addConversationMember,
-            .removeConversationMember,
-            .getMemberPermissions,
-            .getTeamConversations,
-            .getBilling,
-            .setBilling,
-            .setTeamData,
-            .deleteTeam
-        ]
-    }
-}
 
 extension MockMember {
     var payload: ZMTransportData {
-        var permissionsPayload = [String]()
-        for transportPermission in Permissions.TransportString.allValues {
-            if let permission = Permissions(string: transportPermission.rawValue), self.permissions.contains(permission) {
-                permissionsPayload.append(transportPermission.rawValue)
-            }
-        }
-        
         let data: [String : Any] = [
             "user": user.identifier,
-            "permissions" : permissionsPayload
+            "permissions": Int(permissions.rawValue)
         ]
         return data as NSDictionary
     }
