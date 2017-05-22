@@ -115,6 +115,8 @@
 		F1519B5C1EC09D3100AD4E33 /* MockTransportSessionAssetsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1519B5B1EC09D3100AD4E33 /* MockTransportSessionAssetsTests.swift */; };
 		F1519B5E1EC0A30100AD4E33 /* MockTransportSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1519B5D1EC0A30100AD4E33 /* MockTransportSessionTests.swift */; };
 		F1519B601EC0A6FC00AD4E33 /* MockTransportSession+assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1519B591EC09C0100AD4E33 /* MockTransportSession+assets.swift */; };
+		F1782D701ED2E9E700486BE3 /* MockTeamEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1782D6F1ED2E9E700486BE3 /* MockTeamEvent.swift */; };
+		F1782D8F1ED304CF00486BE3 /* MockTransportSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1782D8E1ED304CF00486BE3 /* MockTransportSession.swift */; };
 		F190E0951E8C0286003E81F8 /* MockUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F190E0931E8C0218003E81F8 /* MockUserTests.swift */; };
 		F1E9BC951E8519FC00D96342 /* MockUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E9BC941E8519FC00D96342 /* MockUser.swift */; };
 		F97E28D11D8FE31700A77567 /* Cartfile.resolved in Resources */ = {isa = PBXBuildFile; fileRef = F97E28D01D8FE31700A77567 /* Cartfile.resolved */; };
@@ -298,6 +300,8 @@
 		F1519B591EC09C0100AD4E33 /* MockTransportSession+assets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+assets.swift"; sourceTree = "<group>"; };
 		F1519B5B1EC09D3100AD4E33 /* MockTransportSessionAssetsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSessionAssetsTests.swift; sourceTree = "<group>"; };
 		F1519B5D1EC0A30100AD4E33 /* MockTransportSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSessionTests.swift; sourceTree = "<group>"; };
+		F1782D6F1ED2E9E700486BE3 /* MockTeamEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTeamEvent.swift; sourceTree = "<group>"; };
+		F1782D8E1ED304CF00486BE3 /* MockTransportSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSession.swift; sourceTree = "<group>"; };
 		F190E0931E8C0218003E81F8 /* MockUserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockUserTests.swift; sourceTree = "<group>"; };
 		F1E9BC941E8519FC00D96342 /* MockUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockUser.swift; sourceTree = "<group>"; };
 		F97E28D01D8FE31700A77567 /* Cartfile.resolved */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
@@ -386,6 +390,7 @@
 				54AE5A601B78FA43002757E9 /* MockEvent.m */,
 				54AE5A611B78FA43002757E9 /* MockPicture.m */,
 				F149F8701ECF1ED600B05E16 /* MockPushEvent.swift */,
+				F1782D6F1ED2E9E700486BE3 /* MockTeamEvent.swift */,
 				54AE5A631B78FA43002757E9 /* MockTransportSession.xcdatamodeld */,
 				F14741521EC45F8900A3688C /* MockTeam.swift */,
 				F14741541EC462EB00A3688C /* MockMember.swift */,
@@ -448,6 +453,7 @@
 				54AE5A4C1B78FA43002757E9 /* Helpers */,
 				54AE5A591B78FA43002757E9 /* MockFlowManager.m */,
 				54AE5A5A1B78FA43002757E9 /* MockTransportSession.m */,
+				F1782D8E1ED304CF00486BE3 /* MockTransportSession.swift */,
 				54AE5A5B1B78FA43002757E9 /* MockTransportSession+internal.h */,
 				5406F3CF1E1D4A3900541E7F /* ZMTransportRequest+Utils.swift */,
 				54AE5A5C1B78FA43002757E9 /* Model */,
@@ -774,11 +780,13 @@
 				547AC6381E37811C001458FD /* String+Random.swift in Sources */,
 				5425EEFE1E1E30DF006D7A01 /* MockTransportSession+login.m in Sources */,
 				54ADA7981E3B996100B90C7D /* MockUserClient+Protos.swift in Sources */,
+				F1782D8F1ED304CF00486BE3 /* MockTransportSession.swift in Sources */,
 				54AE5A761B78FA43002757E9 /* MockTransportSession+conversations.m in Sources */,
 				5425EF061E1E3579006D7A01 /* MockTransportSession+notifications.m in Sources */,
 				54AE5A861B78FA43002757E9 /* MockTransportSession.xcdatamodeld in Sources */,
 				54AE5A811B78FA43002757E9 /* MockConnection.m in Sources */,
 				54AE5A801B78FA43002757E9 /* MockAsset.m in Sources */,
+				F1782D701ED2E9E700486BE3 /* MockTeamEvent.swift in Sources */,
 				5406F3D01E1D4A3900541E7F /* ZMTransportRequest+Utils.swift in Sources */,
 				54AE5A831B78FA43002757E9 /* MockEvent.m in Sources */,
 				54AE5A7C1B78FA43002757E9 /* MockTransportSession+users.m in Sources */,

@@ -18,35 +18,31 @@
 
 import Foundation
 
-@objc public protocol MockPushEventProtocol: NSObjectProtocol {
-    var timestamp: NSDate { get }
-    var transportData: ZMTransportData { get }
-    var debugDescription: String { get }
-}
-
-@objc public class MockPushEvent: NSObject, MockPushEventProtocol {
+@objc public class MockTeamEvent: NSObject {
     
-    public let payload: ZMTransportData
-    public let uuid: NSUUID
-    public let timestamp = NSDate()
-    public let isTransient: Bool
-    
-    @objc(eventWithPayload:uuid:fromUser:isTransient:)
-    static public func event(with payload: ZMTransportData, uuid: NSUUID, from user: MockUser, isTransient: Bool) -> MockPushEvent {
-        return MockPushEvent(with: payload, uuid: uuid, isTransient: isTransient)
+    public enum Kind: String {
+        case create = "team.create"
+        case delete = "team.delete"
+        case update = "team.update"
     }
     
-    public init(with payload: ZMTransportData, uuid: NSUUID, isTransient: Bool) {
+    public let payload: ZMTransportData
+    public let conversation: MockConversation
+    public let timestamp = NSDate()
+    public let kind: Kind
+    
+    public init(kind: Kind, payload: ZMTransportData, conversation: MockConversation) {
+        self.kind = kind
         self.payload = payload
-        self.uuid = uuid
-        self.isTransient = isTransient
+        self.conversation = conversation
     }
     
     @objc public var transportData: ZMTransportData {
         return [
-                "id" : uuid.transportString(),
-                "payload" : [ payload ],
-                "transient" : isTransient,
+            "id" : conversation.identifier,
+            "payload" : [ payload ],
+            "time" : "",
+            "type" : kind.rawValue,
             ] as ZMTransportData
     }
     
@@ -55,6 +51,6 @@ import Foundation
     }
     
     public override var debugDescription: String {
-        return "<\(type(of: self))> [\(uuid.transportString())] payload = \(payload)"
+        return "<\(type(of: self))> payload = \(payload)"
     }
 }

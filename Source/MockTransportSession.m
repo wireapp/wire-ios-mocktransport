@@ -28,7 +28,6 @@
 #import "MockEvent.h"
 #import "MockConnection.h"
 #import "MockFlowManager.h"
-#import "MockPushEvent.h"
 #import "MockPreKey.h"
 #import "WireMockTransport/WireMockTransport-Swift.h"
 
@@ -916,6 +915,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     [pushEvents addObjectsFromArray:[self pushEventsForUpdatedUsers:updated includeEventsForUserThatInitiatedChanges:shouldSendEventsToSelfUser]];
     [pushEvents addObjectsFromArray:[self pushEventsForInsertedConnections:inserted updated:updated includeEventsForUserThatInitiatedChanges:shouldSendEventsToSelfUser]];
     [pushEvents addObjectsFromArray:[self pushEventsForUserClients:inserted deleted:deleted includeEventsForTheUserThatInitiatedChanges:shouldSendEventsToSelfUser]];
+    [pushEvents addObjectsFromArray:[self pushEventsForTeamsWithInserted:inserted updated:updated deleted:deleted shouldSendEventsToSelfUser:shouldSendEventsToSelfUser]];
     [self firePushEvents:pushEvents];
 }
 
@@ -1130,18 +1130,18 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return pushEvents;
 }
 
-- (void)firePushEvents:(NSArray<MockPushEvent *>*)events
+- (void)firePushEvents:(NSArray<id<MockPushEventProtocol>> *)events
 {
-    events = [events sortedArrayUsingComparator:^NSComparisonResult(MockPushEvent *event1, MockPushEvent *event2) {
+    events = [events sortedArrayUsingComparator:^NSComparisonResult(id<MockPushEventProtocol> event1, id<MockPushEventProtocol> event2) {
         return [event1.timestamp compare:event2.timestamp];
     }];
     
     [self.generatedPushEvents addObjectsFromArray:events];
     
     if(self.shouldSendPushChannelEvents) {
-        for(MockPushEvent *event in events) {
+        for(id<MockPushEventProtocol> event in events) {
             
-            LogNetwork(@"<<<--- Push channel event(%@): %@", event.uuid, event.payload);
+            LogNetwork(@"<<<--- Push channel event: %@", event.debugDescription);
             
             id<ZMTransportData> payload = event.transportData;
             [self.pushChannelGroupQueue performGroupedBlock:^{
