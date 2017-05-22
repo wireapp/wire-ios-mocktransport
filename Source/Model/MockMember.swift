@@ -40,7 +40,7 @@ extension MockMember {
     var payload: ZMTransportData {
         let data: [String : Any] = [
             "user": user.identifier,
-            "permissions": Int(permissions.rawValue)
+            "permissions": NSNumber(value: permissions.rawValue)
         ]
         return data as NSDictionary
     }
