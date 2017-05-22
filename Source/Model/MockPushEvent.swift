@@ -25,11 +25,12 @@ import Foundation
     public let timestamp = NSDate()
     public let isTransient: Bool
     
-    @objc(eventWithPayload:uuid:fromUser:isTransient:)
-    static public func event(with payload: ZMTransportData, uuid: UUID, from user: MockUser, isTransient: Bool) -> MockPushEvent {
+    
+    @objc(eventWithPayload:uuid:isTransient:)
+    static public func event(with payload: ZMTransportData, uuid: UUID, isTransient: Bool) -> MockPushEvent {
         return MockPushEvent(with: payload, uuid: uuid, isTransient: isTransient)
     }
-    
+        
     public init(with payload: ZMTransportData, uuid: UUID, isTransient: Bool) {
         self.payload = payload
         self.uuid = uuid
