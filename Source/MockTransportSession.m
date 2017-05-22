@@ -1135,18 +1135,18 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return pushEvents;
 }
 
-- (void)firePushEvents:(NSArray<id<MockPushEventProtocol>> *)events
+- (void)firePushEvents:(NSArray<MockPushEvent *>*)events
 {
-    events = [events sortedArrayUsingComparator:^NSComparisonResult(id<MockPushEventProtocol> event1, id<MockPushEventProtocol> event2) {
+    events = [events sortedArrayUsingComparator:^NSComparisonResult(MockPushEvent *event1, MockPushEvent *event2) {
         return [event1.timestamp compare:event2.timestamp];
     }];
     
     [self.generatedPushEvents addObjectsFromArray:events];
     
     if(self.shouldSendPushChannelEvents) {
-        for(id<MockPushEventProtocol> event in events) {
+        for(MockPushEvent *event in events) {
             
-            LogNetwork(@"<<<--- Push channel event: %@", event.debugDescription);
+            LogNetwork(@"<<<--- Push channel event(%@): %@", event.uuid, event.payload);
             
             id<ZMTransportData> payload = event.transportData;
             [self.pushChannelGroupQueue performGroupedBlock:^{

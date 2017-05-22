@@ -21,7 +21,7 @@ import CoreData
 
 public extension MockTransportSession {
     @objc(pushEventsForTeamsWithInserted:updated:deleted:shouldSendEventsToSelfUser:)
-    public func pushEventsForTeams(inserted: Set<NSManagedObject>, updated: Set<NSManagedObject>, deleted: Set<NSManagedObject>, shouldSendEventsToSelfUser: Bool) -> [MockPushEventProtocol] {
+    public func pushEventsForTeams(inserted: Set<NSManagedObject>, updated: Set<NSManagedObject>, deleted: Set<NSManagedObject>, shouldSendEventsToSelfUser: Bool) -> [MockPushEvent] {
         guard shouldSendEventsToSelfUser else { return [] }
         
         let insertedEvents = inserted

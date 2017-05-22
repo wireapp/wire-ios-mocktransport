@@ -18,13 +18,7 @@
 
 import Foundation
 
-@objc public protocol MockPushEventProtocol: NSObjectProtocol {
-    var timestamp: NSDate { get }
-    var transportData: ZMTransportData { get }
-    var debugDescription: String { get }
-}
-
-@objc public class MockPushEvent: NSObject, MockPushEventProtocol {
+@objc public class MockPushEvent: NSObject {
     
     public let payload: ZMTransportData
     public let uuid: UUID
