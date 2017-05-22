@@ -24,7 +24,8 @@ import CoreData
     @NSManaged public var members: Set<MockMember>?
     @NSManaged public var creator: MockUser?
     @NSManaged public var name: String?
-    @NSManaged public var assetKey: String?
+    @NSManaged public var pictureAssetKey: String?
+    @NSManaged public var pictureAssetId: String?
     @NSManaged public var identifier: String
     
     public static var entityName = "Team"
@@ -41,10 +42,11 @@ extension MockTeam {
     }
     
     @objc
-    public static func insert(in context: NSManagedObjectContext, name: String?, assetKey: String?) -> MockTeam {
+    public static func insert(in context: NSManagedObjectContext, name: String?, assetId: String?, assetKey: String?) -> MockTeam {
         let team: MockTeam = insert(in: context)
         team.name = name
-        team.assetKey = assetKey
+        team.pictureAssetId = assetId
+        team.pictureAssetKey = assetKey
         return team
     }
     
@@ -52,7 +54,8 @@ extension MockTeam {
         let data: [String : String?] = [
             "id": identifier,
             "name" : name,
-            "icon_key" : assetKey,
+            "icon_key" : pictureAssetKey,
+            "icon" : pictureAssetId,
             "creator" : creator?.identifier
             ]
         return data as NSDictionary
