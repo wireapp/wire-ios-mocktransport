@@ -27,16 +27,16 @@ import Foundation
 @objc public class MockPushEvent: NSObject, MockPushEventProtocol {
     
     public let payload: ZMTransportData
-    public let uuid: NSUUID
+    public let uuid: UUID
     public let timestamp = NSDate()
     public let isTransient: Bool
     
     @objc(eventWithPayload:uuid:fromUser:isTransient:)
-    static public func event(with payload: ZMTransportData, uuid: NSUUID, from user: MockUser, isTransient: Bool) -> MockPushEvent {
+    static public func event(with payload: ZMTransportData, uuid: UUID, from user: MockUser, isTransient: Bool) -> MockPushEvent {
         return MockPushEvent(with: payload, uuid: uuid, isTransient: isTransient)
     }
     
-    public init(with payload: ZMTransportData, uuid: NSUUID, isTransient: Bool) {
+    public init(with payload: ZMTransportData, uuid: UUID, isTransient: Bool) {
         self.payload = payload
         self.uuid = uuid
         self.isTransient = isTransient

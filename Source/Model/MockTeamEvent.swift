@@ -26,31 +26,49 @@ import Foundation
         case update = "team.update"
     }
     
-    public let payload: ZMTransportData
-    public let conversation: MockConversation
-    public let timestamp = NSDate()
+    public let data: [String : String]
+    public let teamIdentifier: String
     public let kind: Kind
     
-    public init(kind: Kind, payload: ZMTransportData, conversation: MockConversation) {
-        self.kind = kind
-        self.payload = payload
-        self.conversation = conversation
+    public static func Inserted(team: MockTeam) -> MockTeamEvent {
+        return MockTeamEvent(kind: .create, team: team, data: [:])
     }
     
-    @objc public var transportData: ZMTransportData {
+    public static func Updated(team: MockTeam) -> MockTeamEvent {
+        var data = [String : String]()
+        if let name = team.name {
+            data["name"] = name
+        }
+        if let assetId = team.pictureAssetId {
+            data["icon"] = assetId
+        }
+        if let assetKey = team.pictureAssetKey {
+            data["icon_key"] = assetKey
+        }
+        
+        return MockTeamEvent(kind: .update, team: team, data: data)
+    }
+    
+    public static func Deleted(team: MockTeam) -> MockTeamEvent {
+        return MockTeamEvent(kind: .delete, team: team, data: [:])
+    }
+    
+    public init(kind: Kind, team: MockTeam, data: [String : String]) {
+        self.kind = kind
+        self.teamIdentifier = team.identifier
+        self.data = data
+    }
+    
+    @objc public var payload: ZMTransportData {
         return [
-            "id" : conversation.identifier,
-            "payload" : [ payload ],
+            "team" : teamIdentifier,
             "time" : "",
             "type" : kind.rawValue,
+            "data" : data
             ] as ZMTransportData
     }
     
-    public override var description: String {
-        return payload.description
-    }
-    
     public override var debugDescription: String {
-        return "<\(type(of: self))> payload = \(payload)"
+        return "<\(type(of: self))> = \(kind.rawValue) team \(teamIdentifier)"
     }
 }

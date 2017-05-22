@@ -24,6 +24,11 @@ public extension MockTransportSession {
     public func pushEventsForTeams(inserted: Set<NSManagedObject>, updated: Set<NSManagedObject>, deleted: Set<NSManagedObject>, shouldSendEventsToSelfUser: Bool) -> Array<MockPushEventProtocol> {
         guard shouldSendEventsToSelfUser else { return [] }
         
-        return []
+        let insertedEvents = inserted.flatMap { $0 as? MockTeam }.map(MockTeamEvent.Inserted)
+        let updatedEvents =  updated.flatMap { $0 as? MockTeam }.map(MockTeamEvent.Updated)
+        let deletedEvents = deleted.flatMap { $0 as? MockTeam }.map(MockTeamEvent.Deleted)
+        let allEvents = insertedEvents + updatedEvents + deletedEvents
+        
+        return allEvents.map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
     }
 }
