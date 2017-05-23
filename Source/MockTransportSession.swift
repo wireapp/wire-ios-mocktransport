@@ -48,11 +48,13 @@ public extension MockTransportSession {
             allEvents.append(MockPushEvent(with: teamUpdateEvent.payload, uuid: UUID.create(), isTransient: false) )
         }
         
-        let insertedMembers = insertedObjects.flatMap { $0 as? MockMember }
-        let membersEvents = MockTeamMemberEvent.createIfNeeded(team: team, changedValues: team.changedValues(), insertedMembers: Set(insertedMembers))
+        let membersEvents = MockTeamMemberEvent.createIfNeeded(team: team, changedValues: team.changedValues())
         let membersPushEvents = membersEvents.flatMap{ $0 }.map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
-        
         allEvents.append(contentsOf: membersPushEvents)
+
+        let conversationsEvents = MockTeamConversationEvent.createIfNeeded(team: team, changedValues: team.changedValues())
+        let conversationsPushEvents = conversationsEvents.flatMap{ $0 }.map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
+        allEvents.append(contentsOf: conversationsPushEvents)
         
         return allEvents
     }
