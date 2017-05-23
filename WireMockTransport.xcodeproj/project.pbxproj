@@ -110,7 +110,6 @@
 		F149F80E1ECC75C100B05E16 /* MockTransportSessionTeamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F149F80D1ECC75C100B05E16 /* MockTransportSessionTeamTests.swift */; };
 		F149F8111ECC7A6E00B05E16 /* MockTransportSession+teams.swift in Sources */ = {isa = PBXBuildFile; fileRef = F149F80F1ECC7A1B00B05E16 /* MockTransportSession+teams.swift */; };
 		F149F82D1ECC9DC500B05E16 /* NSManagedObject+Additions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F149F82B1ECC9DC300B05E16 /* NSManagedObject+Additions.swift */; };
-		F149F8571ECEF79C00B05E16 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F149F8521ECEF79500B05E16 /* WireTransport.framework */; };
 		F149F8711ECF1ED600B05E16 /* MockPushEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F149F8701ECF1ED600B05E16 /* MockPushEvent.swift */; };
 		F1519B5C1EC09D3100AD4E33 /* MockTransportSessionAssetsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1519B5B1EC09D3100AD4E33 /* MockTransportSessionAssetsTests.swift */; };
 		F1519B5E1EC0A30100AD4E33 /* MockTransportSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1519B5D1EC0A30100AD4E33 /* MockTransportSessionTests.swift */; };
@@ -131,27 +130,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 54C902321B7532DD007162A8;
 			remoteInfo = WireMockTransport;
-		};
-		F149F8511ECEF79500B05E16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F149F84B1ECEF79500B05E16 /* WireTransport.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3E88BCA71B1F35DF00232589;
-			remoteInfo = "WireTransport-ios";
-		};
-		F149F8531ECEF79500B05E16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F149F84B1ECEF79500B05E16 /* WireTransport.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3E88BCB21B1F35DF00232589;
-			remoteInfo = "WireTransport-ios-tests";
-		};
-		F149F8551ECEF79500B05E16 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F149F84B1ECEF79500B05E16 /* WireTransport.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 09A218661B790D330076547A;
-			remoteInfo = "WireTransport-tests-host";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -297,7 +275,6 @@
 		F149F80D1ECC75C100B05E16 /* MockTransportSessionTeamTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSessionTeamTests.swift; sourceTree = "<group>"; };
 		F149F80F1ECC7A1B00B05E16 /* MockTransportSession+teams.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+teams.swift"; sourceTree = "<group>"; };
 		F149F82B1ECC9DC300B05E16 /* NSManagedObject+Additions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+Additions.swift"; sourceTree = "<group>"; };
-		F149F84B1ECEF79500B05E16 /* WireTransport.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = WireTransport.xcodeproj; path = "../wire-ios-transport/WireTransport.xcodeproj"; sourceTree = "<group>"; };
 		F149F8701ECF1ED600B05E16 /* MockPushEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockPushEvent.swift; sourceTree = "<group>"; };
 		F1519B591EC09C0100AD4E33 /* MockTransportSession+assets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+assets.swift"; sourceTree = "<group>"; };
 		F1519B5B1EC09D3100AD4E33 /* MockTransportSessionAssetsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSessionAssetsTests.swift; sourceTree = "<group>"; };
@@ -320,7 +297,6 @@
 				BF0F77811E93AC550060494E /* WireDataModel.framework in Frameworks */,
 				BF0F77821E93AC550060494E /* WireLinkPreview.framework in Frameworks */,
 				BF0F77831E93AC550060494E /* WireCryptobox.framework in Frameworks */,
-				F149F8571ECEF79C00B05E16 /* WireTransport.framework in Frameworks */,
 				BF0F77841E93AC550060494E /* WireProtos.framework in Frameworks */,
 				BF0F77851E93AC550060494E /* WireTransport.framework in Frameworks */,
 				BF0F77861E93AC550060494E /* WireUtilities.framework in Frameworks */,
@@ -431,7 +407,6 @@
 		54C902291B7532DD007162A8 = {
 			isa = PBXGroup;
 			children = (
-				F149F84B1ECEF79500B05E16 /* WireTransport.xcodeproj */,
 				F97E28D01D8FE31700A77567 /* Cartfile.resolved */,
 				0928E1FA1B975CCE0057232E /* Cartfile */,
 				0928E1FB1B975CFE0057232E /* Cartfile.private */,
@@ -581,16 +556,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		F149F84C1ECEF79500B05E16 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F149F8521ECEF79500B05E16 /* WireTransport.framework */,
-				F149F8541ECEF79500B05E16 /* WireTransport-ios-tests.xctest */,
-				F149F8561ECEF79500B05E16 /* WireTransport-tests-host.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -696,12 +661,6 @@
 			mainGroup = 54C902291B7532DD007162A8;
 			productRefGroup = 54C902341B7532DD007162A8 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = F149F84C1ECEF79500B05E16 /* Products */;
-					ProjectRef = F149F84B1ECEF79500B05E16 /* WireTransport.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				54C902321B7532DD007162A8 /* WireMockTransport-ios */,
@@ -709,30 +668,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		F149F8521ECEF79500B05E16 /* WireTransport.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = WireTransport.framework;
-			remoteRef = F149F8511ECEF79500B05E16 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F149F8541ECEF79500B05E16 /* WireTransport-ios-tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "WireTransport-ios-tests.xctest";
-			remoteRef = F149F8531ECEF79500B05E16 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		F149F8561ECEF79500B05E16 /* WireTransport-tests-host.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "WireTransport-tests-host.app";
-			remoteRef = F149F8551ECEF79500B05E16 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		54C902311B7532DD007162A8 /* Resources */ = {
