@@ -28,7 +28,6 @@
 #import "MockEvent.h"
 #import "MockConnection.h"
 #import "MockFlowManager.h"
-#import "MockPushEvent.h"
 #import "MockPreKey.h"
 #import "WireMockTransport/WireMockTransport-Swift.h"
 
@@ -884,6 +883,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return [MockTeam insertIn:self.managedObjectContext name:name assetId:nil assetKey:nil];
 }
 
+- (void)deleteTeam:(nonnull MockTeam *)team
+{
+    [self.managedObjectContext deleteObject:team];
+}
+
 - (MockMember *)insertMemberWithUser:(MockUser *)user inTeam:(MockTeam *)team
 {
     return [MockMember insertInContext:self.managedObjectContext forUser: user inTeam: team];
@@ -916,6 +920,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     [pushEvents addObjectsFromArray:[self pushEventsForUpdatedUsers:updated includeEventsForUserThatInitiatedChanges:shouldSendEventsToSelfUser]];
     [pushEvents addObjectsFromArray:[self pushEventsForInsertedConnections:inserted updated:updated includeEventsForUserThatInitiatedChanges:shouldSendEventsToSelfUser]];
     [pushEvents addObjectsFromArray:[self pushEventsForUserClients:inserted deleted:deleted includeEventsForTheUserThatInitiatedChanges:shouldSendEventsToSelfUser]];
+    [pushEvents addObjectsFromArray:[self pushEventsForTeamsWithInserted:inserted updated:updated deleted:deleted shouldSendEventsToSelfUser:shouldSendEventsToSelfUser]];
     [self firePushEvents:pushEvents];
 }
 
@@ -936,7 +941,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
                                       @"client" : userClient.transportData,
                                       @"type" : @"user.client-add"
                                       };
-            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] fromUser:userClient.user isTransient:NO]];
+            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:NO]];
         }
     }
     
@@ -951,7 +956,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
                                       @"client" : @{ @"id" : userClient.identifier },
                                       @"type" : @"user.client-remove"
                                       };
-            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] fromUser:userClient.user isTransient:NO]];
+            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:NO]];
         }
     }
     return pushEvents;
@@ -978,7 +983,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
                                       @"time": NSDate.date.transportString
                                       };
             
-            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] fromUser:conversation.creator isTransient:NO]];
+            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:NO]];
         }
     }
     return pushEvents;
@@ -1051,7 +1056,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
                               @"conversation" : conversation.identifier,
                               };
     
-    return [MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] fromUser:conversation.creator isTransient:YES];
+    return [MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:YES];
 }
 
 
@@ -1080,7 +1085,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         
         id e = [MockPushEvent eventWithPayload:event.transportData
                                               uuid:[NSUUID timeBasedUUID]
-                                          fromUser:event.from isTransient:NO];
+                                   isTransient:NO];
         [pushEvents addObject:e];
     }
     return pushEvents;
@@ -1100,7 +1105,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
             NSDictionary *userPayload = user.changePushPayload;
             if (userPayload != nil) {
                 [userPayload description];
-                [pushEvents addObject:[MockPushEvent eventWithPayload:@{@"type" : @"user.update", @"user" : userPayload} uuid:[NSUUID timeBasedUUID] fromUser:user isTransient:NO]];
+                [pushEvents addObject:[MockPushEvent eventWithPayload:@{@"type" : @"user.update", @"user" : userPayload} uuid:[NSUUID timeBasedUUID] isTransient:NO]];
             }
         }
     }
@@ -1124,7 +1129,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
                 continue;
             }
             
-            [pushEvents addObject:[MockPushEvent eventWithPayload:@{@"type" : @"user.connection", @"connection" : connection.transportData} uuid:[NSUUID timeBasedUUID] fromUser:connection.from isTransient:NO]];
+            [pushEvents addObject:[MockPushEvent eventWithPayload:@{@"type" : @"user.connection", @"connection" : connection.transportData} uuid:[NSUUID timeBasedUUID] isTransient:NO]];
         }
     }
     return pushEvents;
@@ -1166,7 +1171,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
                                   @"from": user.identifier,
                                   @"data": @{@"status": started ? @"started" : @"stopped"},
                                   @"type": @"conversation.typing"};
-        MockPushEvent *event = [MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] fromUser:user isTransient:YES];
+        MockPushEvent *event = [MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:YES];
         [self firePushEvents:@[event]];
     }];
 }
