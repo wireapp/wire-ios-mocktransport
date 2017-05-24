@@ -66,11 +66,46 @@ extension MockTransportSession {
         
         let sortDescriptors = [NSSortDescriptor(key: #keyPath(MockTeam.createdAt), ascending: true)]
         let allTeams: [MockTeam] = MockTeam.fetchAll(in: managedObjectContext, withPredicate: predicate, sortBy: sortDescriptors)
+        
+        let startTeam = query["start"] as? String
+        var size: Int?
+        if let sizeString = query["size"] as? String {
+            size = Int(sizeString)
+        }
+        
+        let (teams, hasMore) = paginate(teams: allTeams, start: startTeam, size: size)
         let payload: [String : Any] = [
-            "teams" : allTeams.map { $0.payload },
-            "has_more" : false
+            "teams" : teams.map { $0.payload },
+            "has_more" : hasMore
         ]
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
+    }
+    
+    private func paginate(teams: [MockTeam], start: String?, size: Int?) -> ([MockTeam], Bool) {
+        var startTeamIndex: Int?
+        if let start = start {
+            for (idx, team) in teams.enumerated() {
+                if team.identifier == start {
+                    if idx + 1 < teams.count {
+                        startTeamIndex = idx + 1
+                    } else {
+                        startTeamIndex = teams.count - 1
+                    }
+                    break
+                }
+            }
+            // The queried team was not found
+            if startTeamIndex == nil {
+                return ([], false)
+            }
+        }
+        
+        let teamsFrom = startTeamIndex ?? 0
+        let teamsSize = size ?? 100
+        let paginatedTeams = teams.suffix(from: teamsFrom).prefix(teamsSize)
+        
+        let hasMore = !paginatedTeams.isEmpty && (teams.last != paginatedTeams.last)
+        return (Array(paginatedTeams), hasMore)
     }
     
     private func fetchMembersForTeam(with identifier: String?) -> ZMTransportResponse? {
