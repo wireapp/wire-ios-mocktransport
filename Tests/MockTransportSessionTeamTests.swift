@@ -113,7 +113,8 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
         var creator: MockUser!
         
         sut.performRemoteChanges { session in
-            team = session.insertTeam(withName: "name")
+            let selfUser = session.insertSelfUser(withName: "Am I")
+            team = session.insertTeam(withName: "name", users: [selfUser])
             team.pictureAssetKey = "1234-abc"
             team.pictureAssetId = "123-1234-abc"
             creator = session.insertUser(withName: "creator")

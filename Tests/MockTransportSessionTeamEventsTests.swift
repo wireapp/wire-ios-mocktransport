@@ -21,7 +21,6 @@ import XCTest
 import WireDataModel
 @testable import WireMockTransport
 
-// MARK: - Team events
 class MockTransportSessionTeamEventsTests : MockTransportSessionTests {
     
     func check(event: TestPushChannelEvent?, hasType type: ZMTUpdateEventType, team: MockTeam, data: [String : String]? = nil, file: StaticString = #file, line: UInt = #line) {
@@ -50,7 +49,11 @@ class MockTransportSessionTeamEventsTests : MockTransportSessionTests {
             XCTAssertEqual(dataValue, value, "Event payload data for \"\(key)\" does not match, expected \"\(value)\", got \"\(dataValue)\"", file: file, line: line)
         }
     }
-    
+}
+
+// MARK: - Team events
+extension MockTransportSessionTeamEventsTests {
+
     func testThatItCreatesEventsForInsertedTeams() {
         // Given
         let name1 = "foo"
@@ -337,4 +340,23 @@ extension MockTransportSessionTeamEventsTests {
             ]
         check(event: events.first, hasType: .ZMTUpdateEventTeamConversationDelete, team: team, data: updateData)
     }
+    
+    func testThatItDoesNotSendEventsFromATeamThatYouAreNotAMemberOf() {
+        // Given
+        createAndOpenPushChannel()
+        
+        // When
+        sut.performRemoteChanges { session in
+            let user1 = session.insertUser(withName: "one")
+            let team = session.insertTeam(withName: "some", users: [user1])
+            
+            let user2 = session.insertUser(withName: "some user")
+            _ = session.insertTeamConversation(to: team, with: [user1, user2])
+        }
+        
+        // Then
+        let events = pushChannelReceivedEvents as! [TestPushChannelEvent]
+        XCTAssertEqual(events.count, 0)
+    }
+    
 }
