@@ -893,10 +893,17 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return [MockMember insertInContext:self.managedObjectContext forUser: user inTeam: team];
 }
 
+- (MockConversation *)insertTeamConversationToTeam:(MockTeam *)team withUsers:(NSArray<MockUser *> *)users {
+    return [MockConversation insertConversationIntoContext:self.managedObjectContext forTeam:team with:users];
+}
+
+- (void)deleteConversation:(nonnull MockConversation *)conversation
+{
+    conversation.team = nil;
+    [self.managedObjectContext deleteObject:conversation];
+}
+
 @end
-
-
-
 
 @implementation MockTransportSession (PushEvents)
 
@@ -971,8 +978,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     for(NSManagedObject* mo in inserted) {
         if([mo isKindOfClass:MockConversation.class] && includeEventsForUserThatInitiatedChanges) {
             MockConversation *conversation = (MockConversation *)mo;
-            if (conversation.type == ZMTConversationTypeInvalid || conversation.selfIdentifier == nil ||
-                ![conversation.selfIdentifier isEqual:self.selfUser.identifier]) {
+            if (conversation.type == ZMTConversationTypeInvalid ||
+                conversation.selfIdentifier == nil ||
+                ![conversation.selfIdentifier isEqual:self.selfUser.identifier] ||
+                conversation.team != nil) // Team conversations are handled separately
+            {
                 continue; // Conversation that's not visible to the user
             }
             
@@ -1072,7 +1082,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         if (event.conversation.selfIdentifier == nil) {
             NSDictionary *dict = [event.transportData asDictionary];
             //If user_ids (joined users) contains self user identifier, but self identifier of conversation is nil than it is conversation to wich self user was invited
-            //We need to set it's self identifier to self user, so that transport session can build payload for this conversation with selfInfo
+            //We need to set its self identifier to self user, so that transport session can build payload for this conversation with selfInfo
             if ([event.type isEqualToString:@"conversation.member-join"] &&
                 [[dict valueForKeyPath:@"data.user_ids"] containsObject:self.selfUser.identifier])
             {

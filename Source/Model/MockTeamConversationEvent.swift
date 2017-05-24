@@ -18,42 +18,42 @@
 
 import Foundation
 
-@objc public class MockTeamMemberEvent: NSObject {
+@objc public class MockTeamConversationEvent: NSObject {
     
     public enum Kind: String {
-        case join = "team.member-join"
-        case leave = "team.member-leave"
+        case create = "team.conversation-create"
+        case delete = "team.conversation-delete"
     }
     
     public let data: [String : String]
     public let teamIdentifier: String
-    public let userIdentifier: String
+    public let conversationIdentifier: String
     public let kind: Kind
     
-    public static func createIfNeeded(team: MockTeam, changedValues: [String: Any]) -> [MockTeamMemberEvent] {
-        let membersKey = #keyPath(MockTeam.members)
-        let oldMembers = team.committedValues(forKeys: [membersKey])
+    public static func createIfNeeded(team: MockTeam, changedValues: [String: Any]) -> [MockTeamConversationEvent] {
+        let conversationsKey = #keyPath(MockTeam.conversations)
+        let oldConversations = team.committedValues(forKeys: [conversationsKey])
         
-        guard let currentMembers = changedValues[membersKey] as? Set<MockMember> else { return [] }
-        guard let previousMembers = oldMembers[membersKey] as? Set<MockMember> else { return [] }
+        guard let currentConversations = changedValues[conversationsKey] as? Set<MockConversation> else { return [] }
+        guard let previousConversations = oldConversations[conversationsKey] as? Set<MockConversation> else { return [] }
         
-        let removedMembersEvents = previousMembers
-            .subtracting(currentMembers)
-            .map { MockTeamMemberEvent(kind: .leave, team: team, user: $0.user) }
+        let removedConversationsEvents = previousConversations
+            .subtracting(currentConversations)
+            .map { MockTeamConversationEvent(kind: .delete, team: team, conversation: $0) }
         
-        let addedMembersEvents = currentMembers
-            .subtracting(previousMembers)
-            .map { MockTeamMemberEvent(kind: .join, team: team, user: $0.user) }
+        let addedConversationsEvents = currentConversations
+            .subtracting(previousConversations)
+            .map { MockTeamConversationEvent(kind: .create, team: team, conversation: $0) }
         
-        return removedMembersEvents + addedMembersEvents
+        return removedConversationsEvents + addedConversationsEvents
     }
     
-    public init(kind: Kind, team: MockTeam, user: MockUser) {
+    public init(kind: Kind, team: MockTeam, conversation: MockConversation) {
         self.kind = kind
         self.teamIdentifier = team.identifier
-        self.userIdentifier = team.identifier
+        self.conversationIdentifier = conversation.identifier
         self.data = [
-            "user" : user.identifier
+            "conv" : conversation.identifier
         ]
     }
     

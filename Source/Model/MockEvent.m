@@ -80,7 +80,9 @@ static ZMLogLevel_t const ZMLogLevel ZM_UNUSED = ZMLogLevelWarn;
           @[@(ZMTUpdateEventTeamUpdate),@"team.update"],
           @[@(ZMTUpdateEventTeamDelete),@"team.delete"],
           @[@(ZMTUpdateEventTeamMemberJoin),@"team.member-join"],
-          @[@(ZMTUpdateEventTeamMemberLeave),@"team.member-leave"]
+          @[@(ZMTUpdateEventTeamMemberLeave),@"team.member-leave"],
+          @[@(ZMTUpdateEventTeamConversationCreate),@"team.conversation-create"],
+          @[@(ZMTUpdateEventTeamConversationDelete),@"team.conversation-delete"]
           ];
     });
     return mapping;
