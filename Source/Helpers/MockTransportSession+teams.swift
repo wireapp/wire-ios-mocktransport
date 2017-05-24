@@ -58,7 +58,8 @@ extension MockTransportSession {
     }
     
     private func fetchAllTeams() -> ZMTransportResponse? {
-        let allTeams: [MockTeam] = MockTeam.fetchAll(in: managedObjectContext)
+        let sortDescriptors = [NSSortDescriptor(key: #keyPath(MockTeam.identifier), ascending: true)]
+        let allTeams: [MockTeam] = MockTeam.fetchAll(in: managedObjectContext, sortBy: sortDescriptors)
         let payload: [String : Any] = [
             "teams" : allTeams.map { $0.payload },
             "has_more" : false
