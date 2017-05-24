@@ -115,10 +115,9 @@ extension MockTransportSession {
         if let permissionError = ensurePermission(.getMemberPermissions, in: team) {
             return permissionError
         }
-        let members = team.members ?? []
         
         let payload: [String : Any] = [
-            "members" : members.map { $0.payload }
+            "members" : team.members.map { $0.payload }
         ]
 
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
