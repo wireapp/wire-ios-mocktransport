@@ -24,6 +24,40 @@ import WireDataModel
 // MARK: - Teams
 class MockTransportSessionTeamTests : MockTransportSessionTests {
     
+    func checkThat(response: ZMTransportResponse?, contains teams: [MockTeam], hasMore: Bool = false, file: StaticString = #file, line: UInt = #line) {
+        
+        XCTAssertNotNil(response, "Response should not be empty", file: file, line: line)
+        XCTAssertEqual(response?.httpStatus, 200, "Http status should be 200", file: file, line: line)
+        XCTAssertNotNil(response?.payload, "Response should have payload", file: file, line: line)
+        
+        // Then
+        let payload = response?.payload?.asDictionary() as? [String : Any]
+        guard let payloadTeams = payload?["teams"] as? [[String : Any]] else {
+            XCTFail("Response payload should have teams array", file: file, line: line)
+            return
+        }
+        guard let receivedHasMore = payload?["has_more"] as? Bool else {
+            XCTFail("Response payload should have 'has_more' flag")
+            return
+        }
+        
+        XCTAssertEqual(receivedHasMore, hasMore, "has_more should be \(hasMore)")
+
+        XCTAssertEqual(payloadTeams.count, teams.count, "Response should have \(teams.count) teams", file: file, line: line)
+        
+        let receivedTeamIdentifiers = payloadTeams.flatMap { $0["id"] as? String }
+        let expectedTeamIdentifiers = teams.map { $0.identifier }
+        
+        for expectedId in expectedTeamIdentifiers {
+            XCTAssertTrue(receivedTeamIdentifiers.contains(expectedId), "Payload should contain team with identifier '\(expectedId)'", file: file, line: line)
+        }
+        
+        let extraTeams = Set(receivedTeamIdentifiers).subtracting(expectedTeamIdentifiers)
+        for extraTeam in extraTeams {
+            XCTFail("Payload should not contain team with identifier '\(extraTeam)'", file: file, line: line)
+        }
+    }
+    
     func testThatItInsertsTeam() {
         // Given
         let name1 = "foo"
@@ -115,20 +149,102 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
         // When
         let path = "/teams"
         let response = self.response(forPayload: nil, path: path, method: .methodGET)
-        XCTAssertNotNil(response)
-        XCTAssertEqual(response?.httpStatus, 200)
-        XCTAssertNotNil(response?.payload)
-
-        // Then
-        let payload = response?.payload?.asDictionary() as? [String : Any]
-        guard let teams = payload?["teams"] as? [[String : Any]] else {
-            XCTFail("Should have teams array")
-            return
-        }
-        XCTAssertEqual(teams.count, 2)
         
-        let identifiers = Set(teams.flatMap { $0["id"] as? String })
-        XCTAssertEqual(identifiers, [team1.identifier, team2.identifier])
+        // Then
+        checkThat(response: response, contains: [team2, team1], hasMore: false)
+    }
+    
+    func testThatItFetchesTeamsSpecifiedByIdentifiers() {
+        // Given
+        var team1: MockTeam!
+        var team2: MockTeam!
+
+        sut.performRemoteChanges { session in
+            team1 = session.insertTeam(withName: "some")
+            team2 = session.insertTeam(withName: "other")
+            _ = session.insertTeam(withName: "not this")
+        }
+        
+        // When
+        let path = "/teams?ids=" + [team1.identifier, team2.identifier].joined(separator: ",")
+        let response = self.response(forPayload: nil, path: path, method: .methodGET)
+        
+        // Then
+        checkThat(response: response, contains: [team1, team2], hasMore: false)
+    }
+    
+    func testThatItFetchesTeamsAndRespectsStartParameter() {
+        // Given
+        var team1: MockTeam!
+        var team2: MockTeam!
+
+        sut.performRemoteChanges { session in
+            _ = session.insertTeam(withName: "not this")
+            team1 = session.insertTeam(withName: "some")
+            team2 = session.insertTeam(withName: "other")
+        }
+        
+        // When
+        let path = "/teams?start=\(team1.identifier)"
+        let response = self.response(forPayload: nil, path: path, method: .methodGET)
+        
+        // Then
+        checkThat(response: response, contains: [team2], hasMore: false)
+    }
+    
+    func testThatItDoesntReturnAnythingWithInvalidStartParameter() {
+        // Given
+        sut.performRemoteChanges { session in
+            _ = session.insertTeam(withName: "not this")
+            _ = session.insertTeam(withName: "some")
+            _ = session.insertTeam(withName: "other")
+        }
+        
+        // When
+        let path = "/teams?start=1231-321"
+        let response = self.response(forPayload: nil, path: path, method: .methodGET)
+        
+        // Then
+        checkThat(response: response, contains: [], hasMore: false)
+    }
+    
+    func testThatItLimitsNumberOfTeams() {
+        // Given
+        var team1: MockTeam!
+        var team2: MockTeam!
+
+        sut.performRemoteChanges { session in
+            team1 = session.insertTeam(withName: "other")
+            team2 = session.insertTeam(withName: "some")
+            _ = session.insertTeam(withName: "not this")
+        }
+        
+        // When
+        let path = "/teams?size=2"
+        let response = self.response(forPayload: nil, path: path, method: .methodGET)
+        
+        // Then
+        checkThat(response: response, contains: [team1, team2], hasMore: true)
+    }
+    
+    func testThatItLimitsNumberOfTeamsWithStartParameter() {
+        // Given
+        var team1: MockTeam!
+        var team2: MockTeam!
+        
+        sut.performRemoteChanges { session in
+            _ = session.insertTeam(withName: "nope")
+            team1 = session.insertTeam(withName: "other")
+            team2 = session.insertTeam(withName: "some")
+            _ = session.insertTeam(withName: "not this")
+        }
+        
+        // When
+        let path = "/teams?size=1&start=\(team1.identifier)"
+        let response = self.response(forPayload: nil, path: path, method: .methodGET)
+        
+        // Then
+        checkThat(response: response, contains: [team2], hasMore: true)
     }
 }
 

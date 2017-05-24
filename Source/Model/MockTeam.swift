@@ -27,12 +27,14 @@ import CoreData
     @NSManaged public var pictureAssetKey: String?
     @NSManaged public var pictureAssetId: String?
     @NSManaged public var identifier: String
-    
+    @NSManaged public var createdAt: Date
+
     public static var entityName = "Team"
     
     public override func awakeFromInsert() {
         super.awakeFromInsert()
-        identifier = NSUUID.timeBasedUUID().transportString()
+        identifier = NSUUID.create().transportString()
+        createdAt = Date()
     }
 }
 
