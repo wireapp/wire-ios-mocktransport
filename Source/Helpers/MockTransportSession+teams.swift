@@ -31,7 +31,7 @@ extension MockTransportSession {
         
         switch request {
         case "/teams":
-            response = fetchAllTeams()
+            response = fetchAllTeams(query: request.queryParameters)
         case "/teams/*":
             response = fetchTeam(with: request.RESTComponents(index: 1))
         case "/teams/*/members":
@@ -57,9 +57,15 @@ extension MockTransportSession {
         return ZMTransportResponse(payload: team.payload, httpStatus: 200, transportSessionError: nil)
     }
     
-    private func fetchAllTeams() -> ZMTransportResponse? {
+    private func fetchAllTeams(query: [String : Any]) -> ZMTransportResponse? {
+        var predicate: NSPredicate?
+        if let ids = query["ids"] as? String {
+            let teamIds = ids.components(separatedBy: ",")
+            predicate = NSPredicate(format: "%K in %@", #keyPath(MockTeam.identifier), teamIds)
+        }
+        
         let sortDescriptors = [NSSortDescriptor(key: #keyPath(MockTeam.identifier), ascending: true)]
-        let allTeams: [MockTeam] = MockTeam.fetchAll(in: managedObjectContext, sortBy: sortDescriptors)
+        let allTeams: [MockTeam] = MockTeam.fetchAll(in: managedObjectContext, withPredicate: predicate, sortBy: sortDescriptors)
         let payload: [String : Any] = [
             "teams" : allTeams.map { $0.payload },
             "has_more" : false
