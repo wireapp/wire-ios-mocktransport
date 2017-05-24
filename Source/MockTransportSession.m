@@ -883,6 +883,15 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return [MockTeam insertIn:self.managedObjectContext name:name assetId:nil assetKey:nil];
 }
 
+- (MockTeam *)insertTeamWithName:(nullable NSString *)name users:(NSSet<MockUser*> *)users
+{
+    MockTeam *team = [MockTeam insertIn:self.managedObjectContext name:name assetId:nil assetKey:nil];
+    for (MockUser *user in users) {
+        [self insertMemberWithUser:user inTeam:team];
+    }
+    return team;
+}
+
 - (void)deleteTeam:(nonnull MockTeam *)team
 {
     [self.managedObjectContext deleteObject:team];
@@ -891,6 +900,17 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 - (MockMember *)insertMemberWithUser:(MockUser *)user inTeam:(MockTeam *)team
 {
     return [MockMember insertInContext:self.managedObjectContext forUser: user inTeam: team];
+}
+
+- (void)removeMemberWithUser:(MockUser *)user fromTeam:(MockTeam *)team
+{
+    MockMember *member = [team.members.allObjects firstObjectMatchingWithBlock:^BOOL(MockMember *aMember) {
+        return [aMember.user isEqual:user];
+    }];
+    if (member != nil) {
+        [[team mutableSetValueForKey:@"members"] removeObject:member];
+        [self.managedObjectContext deleteObject: member];
+    }
 }
 
 - (MockConversation *)insertTeamConversationToTeam:(MockTeam *)team withUsers:(NSArray<MockUser *> *)users {

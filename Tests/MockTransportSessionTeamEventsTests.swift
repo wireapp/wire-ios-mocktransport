@@ -214,7 +214,7 @@ extension MockTransportSessionTeamEventsTests {
         
         // When
         sut.performRemoteChanges { session in
-            team.members = []
+            session.removeMember(with: user, from: team)
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
