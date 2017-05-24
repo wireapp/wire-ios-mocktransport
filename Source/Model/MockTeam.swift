@@ -32,7 +32,7 @@ import CoreData
     
     public override func awakeFromInsert() {
         super.awakeFromInsert()
-        identifier = NSUUID.create().transportString()
+        identifier = NSUUID.timeBasedUUID().transportString()
     }
 }
 
