@@ -64,7 +64,7 @@ extension MockTransportSession {
             predicate = NSPredicate(format: "%K in %@", #keyPath(MockTeam.identifier), teamIds)
         }
         
-        let sortDescriptors = [NSSortDescriptor(key: #keyPath(MockTeam.identifier), ascending: true)]
+        let sortDescriptors = [NSSortDescriptor(key: #keyPath(MockTeam.createdAt), ascending: true)]
         let allTeams: [MockTeam] = MockTeam.fetchAll(in: managedObjectContext, withPredicate: predicate, sortBy: sortDescriptors)
         let payload: [String : Any] = [
             "teams" : allTeams.map { $0.payload },
