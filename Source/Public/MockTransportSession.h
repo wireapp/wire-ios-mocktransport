@@ -159,7 +159,9 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 - (nullable MockUserClient *)clientForUser:(MockUser *)user remoteIdentifier:(NSString *)remoteIdentifier;
 
 - (MockTeam *)insertTeamWithName:(nullable NSString *)name;
+- (MockTeam *)insertTeamWithName:(nullable NSString *)name users:(NSSet<MockUser*> *)users;
 - (MockMember *)insertMemberWithUser:(MockUser *)user inTeam:(MockTeam *)team;
+- (void)removeMemberWithUser:(MockUser *)user fromTeam:(MockTeam *)team;
 - (void)deleteTeam:(nonnull MockTeam *)team;
 - (MockConversation *)insertTeamConversationToTeam:(MockTeam *)team withUsers:(NSArray<MockUser *> *)users;
 - (void)deleteConversation:(nonnull MockConversation *)conversation;
