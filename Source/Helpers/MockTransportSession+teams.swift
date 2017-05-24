@@ -124,10 +124,8 @@ extension MockTransportSession {
     }
     
     private func ensurePermission(_ permissions: Permissions, in team: MockTeam) -> ZMTransportResponse? {
-        guard teamPermissionsEnforced else { return nil }
-        guard let teamMembers = team.members,
-            let selfTeams = selfUser.memberships,
-            let member = selfTeams.union(teamMembers).first
+        guard let selfTeams = selfUser.memberships,
+            let member = selfTeams.union(team.members).first
             else { return .teamNotFound }
         
         guard member.permissions.contains(permissions) else {

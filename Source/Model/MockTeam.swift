@@ -43,6 +43,11 @@ extension MockTeam {
         return NSPredicate(format: "%K == %@", #keyPath(MockTeam.identifier), identifier)
     }
     
+    public func contains(user: MockUser) -> Bool {
+        guard let userMemberships = user.memberships else { return false }
+        return !userMemberships.union(members).isEmpty
+    }
+    
     @objc
     public static func insert(in context: NSManagedObjectContext, name: String?, assetId: String?, assetKey: String?) -> MockTeam {
         let team: MockTeam = insert(in: context)
