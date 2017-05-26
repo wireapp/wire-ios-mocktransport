@@ -18,8 +18,7 @@
 
 
 #import "MockTransportSessionTests.h"
-#import <WireMockTransport/WireMockTransport-Swift.h>
-
+@import WireMockTransport;
 @import WireProtos;
 @import WireDataModel;
 
@@ -1723,7 +1722,7 @@
 
 
 
-@implementation MockTransportSessionTests (ConversationArchiveAndMuted)
+@implementation MockTransportSessionConversationsTests (ConversationArchiveAndMuted)
 
 - (void)testThatItSetsTheArchivedEventOnTheConversationWhenAsked
 {
@@ -1858,7 +1857,7 @@
 @end
 
 
-@implementation  MockTransportSessionTests (IgnoringCall)
+@implementation MockTransportSessionConversationsTests (IgnoringCall)
 
 - (void)testThatCreatesAnEventForUserIgnoringCall
 {
