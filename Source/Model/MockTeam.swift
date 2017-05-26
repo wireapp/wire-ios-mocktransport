@@ -43,6 +43,7 @@ extension MockTeam {
         return NSPredicate(format: "%K == %@", #keyPath(MockTeam.identifier), identifier)
     }
     
+    @objc(containsUser:)
     public func contains(user: MockUser) -> Bool {
         guard let userMemberships = user.memberships, !userMemberships.isEmpty else { return false }
         return !userMemberships.union(members).isEmpty

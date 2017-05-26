@@ -359,4 +359,22 @@ extension MockTransportSessionTeamEventsTests {
         XCTAssertEqual(events.count, 0)
     }
     
+    func testThatItDoesSendConversationEventsInATeamConversationWhereYouAreGuest() {
+        // Given
+        createAndOpenPushChannel()
+        
+        // When
+        sut.performRemoteChanges { session in
+            let user1 = session.insertUser(withName: "one")
+            let team = session.insertTeam(withName: "some", users: [user1])
+            
+            let user2 = session.insertUser(withName: "some user")
+            _ = session.insertTeamConversation(to: team, with: [user1, user2, self.sut.selfUser])
+        }
+        
+        // Then
+        let events = pushChannelReceivedEvents as! [TestPushChannelEvent]
+        XCTAssertEqual(events.count, 1)
+
+    }
 }
