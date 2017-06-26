@@ -42,8 +42,7 @@ public extension MockTransportSession {
         let updatedEvents =  updated
             .flatMap { $0 as? MockTeam }
             .sorted(by: ascendingCreationDate)
-            .filter(selfUserPartOfTeam)
-            .flatMap { self.pushEventForUpdatedTeam(team: $0, insertedObjects: inserted) }
+            .flatMap{ self.pushEventForUpdatedTeam(team: $0, insertedObjects: inserted) }
         
         let deletedEvents = deleted
             .flatMap { $0 as? MockTeam }
@@ -62,7 +61,7 @@ public extension MockTransportSession {
             allEvents.append(MockPushEvent(with: teamUpdateEvent.payload, uuid: UUID.create(), isTransient: false) )
         }
         
-        let membersEvents = MockTeamMemberEvent.createIfNeeded(team: team, changedValues: team.changedValues())
+        let membersEvents = MockTeamMemberEvent.createIfNeeded(team: team, changedValues: team.changedValues(), selfUser: selfUser)
         let membersPushEvents = membersEvents.flatMap{ $0 }.map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
         allEvents.append(contentsOf: membersPushEvents)
 
@@ -72,4 +71,5 @@ public extension MockTransportSession {
         
         return allEvents
     }
+    
 }

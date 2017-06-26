@@ -887,6 +887,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 {
     MockTeam *team = [MockTeam insertIn:self.managedObjectContext name:name assetId:nil assetKey:nil];
     for (MockUser *user in users) {
+        RequireString(user.membership == nil, "User already has team. There should only be one team per user.");
         [self insertMemberWithUser:user inTeam:team];
     }
     return team;
@@ -899,6 +900,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
 - (MockMember *)insertMemberWithUser:(MockUser *)user inTeam:(MockTeam *)team
 {
+    RequireString(user.membership == nil, "User already has team. There should only be one team per user.");
     return [MockMember insertInContext:self.managedObjectContext forUser: user inTeam: team];
 }
 

@@ -48,7 +48,7 @@ import Foundation
     
     @NSManaged public var invitations: NSOrderedSet
     
-    @NSManaged public var memberships: Set<MockMember>?
+    @NSManaged public var membership: MockMember?
     
     override public func awakeFromInsert() {
         if accentID == 0 {
@@ -119,6 +119,9 @@ extension MockUser {
         }
         if let phone = phone {
             regularData["phone"] = phone
+        }
+        if let team = membership?.team {
+            regularData["team"] = team.identifier
         }
         return regularData
     }
