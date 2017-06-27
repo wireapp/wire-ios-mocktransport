@@ -38,7 +38,7 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
         
         let receivedTeamIdentifier = payload["id"] as? String
         let expectedTeamIdentifier = team.identifier
-        XCTAssertEqual(receivedTeamIdentifier, expectedTeamIdentifier)
+        XCTAssertEqual(receivedTeamIdentifier, expectedTeamIdentifier, file: file, line: line)
     }
     
     func testThatItInsertsTeam() {

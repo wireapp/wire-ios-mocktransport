@@ -58,33 +58,6 @@ extension MockTransportSession {
         return ZMTransportResponse(payload: team.payload, httpStatus: 200, transportSessionError: nil)
     }
     
-    private func paginate(teams: [MockTeam], start: String?, size: Int?) -> ([MockTeam], Bool) {
-        var startTeamIndex: Int?
-        if let start = start {
-            for (idx, team) in teams.enumerated() {
-                if team.identifier == start {
-                    if idx + 1 < teams.count {
-                        startTeamIndex = idx + 1
-                    } else {
-                        startTeamIndex = teams.count - 1
-                    }
-                    break
-                }
-            }
-            // The queried team was not found
-            if startTeamIndex == nil {
-                return ([], false)
-            }
-        }
-        
-        let teamsFrom = startTeamIndex ?? 0
-        let teamsSize = size ?? 100
-        let paginatedTeams = teams.suffix(from: teamsFrom).prefix(teamsSize)
-        
-        let hasMore = !paginatedTeams.isEmpty && (teams.last != paginatedTeams.last)
-        return (Array(paginatedTeams), hasMore)
-    }
-    
     private func fetchMembersForTeam(with identifier: String?) -> ZMTransportResponse? {
         guard let identifier = identifier else { return nil }
         let predicate = MockTeam.predicateWithIdentifier(identifier: identifier)
