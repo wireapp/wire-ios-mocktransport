@@ -45,8 +45,8 @@ extension MockTeam {
     
     @objc(containsUser:)
     public func contains(user: MockUser) -> Bool {
-        guard let userMemberships = user.memberships, !userMemberships.isEmpty else { return false }
-        return !userMemberships.union(members).isEmpty
+        guard let userMembership = user.membership else { return false }
+        return members.contains(userMembership)
     }
     
     @objc

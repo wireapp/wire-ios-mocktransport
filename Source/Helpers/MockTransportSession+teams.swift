@@ -31,8 +31,6 @@ extension MockTransportSession {
         var response: ZMTransportResponse?
         
         switch request {
-        case "/teams":
-            response = fetchAllTeams(query: request.queryParameters)
         case "/teams/*":
             response = fetchTeam(with: request.RESTComponents(index: 1))
         case "/teams/*/members":
@@ -51,62 +49,13 @@ extension MockTransportSession {
     private func fetchTeam(with identifier: String?) -> ZMTransportResponse? {
         guard let identifier = identifier else { return nil }
         let predicate = MockTeam.predicateWithIdentifier(identifier: identifier)
-        guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound }
+        guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate),
+              team == selfUser.membership?.team
+        else { return .teamNotFound }
         if let permissionError = ensurePermission([], in: team) {
             return permissionError
         }
         return ZMTransportResponse(payload: team.payload, httpStatus: 200, transportSessionError: nil)
-    }
-    
-    private func fetchAllTeams(query: [String : Any]) -> ZMTransportResponse? {
-        var predicate: NSPredicate?
-        if let ids = query["ids"] as? String {
-            let teamIds = ids.components(separatedBy: ",")
-            predicate = NSPredicate(format: "%K in %@", #keyPath(MockTeam.identifier), teamIds)
-        }
-        
-        let sortDescriptors = [NSSortDescriptor(key: #keyPath(MockTeam.createdAt), ascending: true)]
-        let allTeams: [MockTeam] = MockTeam.fetchAll(in: managedObjectContext, withPredicate: predicate, sortBy: sortDescriptors)
-        
-        let startTeam = query["start"] as? String
-        var size: Int?
-        if let sizeString = query["size"] as? String {
-            size = Int(sizeString)
-        }
-        
-        let (teams, hasMore) = paginate(teams: allTeams, start: startTeam, size: size)
-        let payload: [String : Any] = [
-            "teams" : teams.map { $0.payload },
-            "has_more" : hasMore
-        ]
-        return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
-    }
-    
-    private func paginate(teams: [MockTeam], start: String?, size: Int?) -> ([MockTeam], Bool) {
-        var startTeamIndex: Int?
-        if let start = start {
-            for (idx, team) in teams.enumerated() {
-                if team.identifier == start {
-                    if idx + 1 < teams.count {
-                        startTeamIndex = idx + 1
-                    } else {
-                        startTeamIndex = teams.count - 1
-                    }
-                    break
-                }
-            }
-            // The queried team was not found
-            if startTeamIndex == nil {
-                return ([], false)
-            }
-        }
-        
-        let teamsFrom = startTeamIndex ?? 0
-        let teamsSize = size ?? 100
-        let paginatedTeams = teams.suffix(from: teamsFrom).prefix(teamsSize)
-        
-        let hasMore = !paginatedTeams.isEmpty && (teams.last != paginatedTeams.last)
-        return (Array(paginatedTeams), hasMore)
     }
     
     private func fetchMembersForTeam(with identifier: String?) -> ZMTransportResponse? {
@@ -125,11 +74,10 @@ extension MockTransportSession {
     }
     
     private func ensurePermission(_ permissions: Permissions, in team: MockTeam) -> ZMTransportResponse? {
-        guard let selfTeams = selfUser.memberships,
-            let member = selfTeams.union(team.members).first
-            else { return .notTeamMember }
+        guard let membership = selfUser.membership, membership.team == team
+        else { return .notTeamMember }
         
-        guard member.permissions.contains(permissions) else {
+        guard membership.permissions.contains(permissions) else {
             return .operationDenied
         }
         // All good, no error returned
