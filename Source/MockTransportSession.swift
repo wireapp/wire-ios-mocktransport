@@ -18,6 +18,7 @@
 
 import Foundation
 import CoreData
+import WireTransport
 
 public extension MockTransportSession {
     private func selfUserPartOfTeam(_ team: MockTeam) -> Bool {
@@ -64,4 +65,43 @@ public extension MockTransportSession {
         
         return allEvents
     }
+}
+
+extension MockTransportSession : UnauthenticatedTransportSessionProtocol {
+    
+    var unauthenticatedTransportSessionDelegate : UnauthenticatedTransportSessionDelegate? {
+        
+        set {
+            _unauthenticatedTransportSessionDelegate = unauthenticatedTransportSessionDelegate
+        }
+        
+        get {
+            if let unauthenticatedTransportSessionDelegate = _unauthenticatedTransportSessionDelegate as? UnauthenticatedTransportSessionDelegate {
+                return unauthenticatedTransportSessionDelegate
+            }
+            
+            return nil
+        }
+    }
+    
+    @objc(authenticatedUser:cookieData:)
+    public func authenticated(_ user: MockUser, cookieData: Data) {
+        let userInfo = UserInfo(identifier: UUID(uuidString: user.identifier)!, cookieData:cookieData)
+        unauthenticatedTransportSessionDelegate?.session(self, didReceiveUserInfo: userInfo)
+    }
+    
+    public func enqueueRequest(withGenerator generator: () -> ZMTransportRequest?) -> EnqueueResult {
+        let result = attemptToEnqueueSyncRequest(generator: generator)
+        
+        if !result.didHaveLessRequestThanMax {
+            return .maximumNumberOfRequests
+        }
+        else if !result.didGenerateNonNullRequest {
+            return .nilRequest
+        }
+        else {
+            return .success
+        }
+    }
+    
 }

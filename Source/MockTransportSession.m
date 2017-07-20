@@ -88,12 +88,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 @end
 
 
-@interface MockTransportSession (Mock)
-
-- (void)completeRequest:(ZMTransportRequest *)originalRequest completionHandler:(ZMCompletionHandlerBlock)completionHandler;
-
-@end
-
 
 @interface MockTransportSession (PushEvents)
 

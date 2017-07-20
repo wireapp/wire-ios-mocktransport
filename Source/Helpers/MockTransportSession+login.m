@@ -77,6 +77,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         
         [self.cookieStorage setAuthenticationCookieData:[@"fake-cookie" dataUsingEncoding:NSUTF8StringEncoding]];
         
+        [self authenticatedUser:user cookieData:[@"fake-cookie" dataUsingEncoding:NSUTF8StringEncoding]]; 
         
         self.selfUser = user;
         self.clientCompletedLogin = YES;

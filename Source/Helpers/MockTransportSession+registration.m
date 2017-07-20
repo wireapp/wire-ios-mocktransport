@@ -156,6 +156,8 @@
         if ([ZMPersistentCookieStorage cookiesPolicy] != NSHTTPCookieAcceptPolicyNever) {
             self.cookieStorage.authenticationCookieData = [cookiesValue dataUsingEncoding:NSUTF8StringEncoding];
         }
+        
+        [self authenticatedUser:user cookieData:[@"fake-cookie" dataUsingEncoding:NSUTF8StringEncoding]];
 
         return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil headers:@{@"Set-Cookie": [NSString stringWithFormat:@"zuid=%@", cookiesValue]}];
     }
