@@ -67,27 +67,18 @@ public extension MockTransportSession {
     }
 }
 
+
 extension MockTransportSession : UnauthenticatedTransportSessionProtocol {
-    
-    var unauthenticatedTransportSessionDelegate : UnauthenticatedTransportSessionDelegate? {
-        
-        set {
-            _unauthenticatedTransportSessionDelegate = unauthenticatedTransportSessionDelegate
-        }
-        
-        get {
-            if let unauthenticatedTransportSessionDelegate = _unauthenticatedTransportSessionDelegate as? UnauthenticatedTransportSessionDelegate {
-                return unauthenticatedTransportSessionDelegate
-            }
-            
-            return nil
-        }
+
+    public var delegate: UnauthenticatedTransportSessionDelegate? {
+        get { return _unauthenticatedTransportSessionDelegate as? UnauthenticatedTransportSessionDelegate }
+        set { _unauthenticatedTransportSessionDelegate = delegate }
     }
-    
+
     @objc(authenticatedUser:cookieData:)
     public func authenticated(_ user: MockUser, cookieData: Data) {
         let userInfo = UserInfo(identifier: UUID(uuidString: user.identifier)!, cookieData:cookieData)
-        unauthenticatedTransportSessionDelegate?.session(self, didReceiveUserInfo: userInfo)
+        delegate?.session(self, didReceiveUserInfo: userInfo)
     }
     
     public func enqueueRequest(withGenerator generator: () -> ZMTransportRequest?) -> EnqueueResult {
