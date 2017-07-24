@@ -70,15 +70,15 @@ public extension MockTransportSession {
 
 extension MockTransportSession : UnauthenticatedTransportSessionProtocol {
 
-    public var delegate: UnauthenticatedTransportSessionDelegate? {
-        get { return _unauthenticatedTransportSessionDelegate as? UnauthenticatedTransportSessionDelegate }
-        set { _unauthenticatedTransportSessionDelegate = delegate }
+    public var didReceiveUserInfo: UserInfoAvailableClosure? {
+        get { return _userInfoAvailableClosure as? UserInfoAvailableClosure }
+        set { _userInfoAvailableClosure = didReceiveUserInfo }
     }
 
     @objc(authenticatedUser:cookieData:)
     public func authenticated(_ user: MockUser, cookieData: Data) {
         let userInfo = UserInfo(identifier: UUID(uuidString: user.identifier)!, cookieData:cookieData)
-        delegate?.session(self, didReceiveUserInfo: userInfo)
+        didReceiveUserInfo?.execute(with: userInfo)
     }
     
     public func enqueueRequest(withGenerator generator: () -> ZMTransportRequest?) -> EnqueueResult {

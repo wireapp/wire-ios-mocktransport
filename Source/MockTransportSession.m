@@ -230,7 +230,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     self.managedObjectContext.persistentStoreCoordinator = psc;
     
     if(!_cookieStorage) {
-        _cookieStorage = [ZMPersistentCookieStorage storageForServerName:@"ztest.example.com" userIdentifier:NSUUID.createUUID]; // TODO: User correct user identifier!
+        _cookieStorage = [ZMPersistentCookieStorage storageForServerName:@"ztest.example.com" userIdentifier:NSUUID.createUUID]; // TODO: Use correct user identifier!
     }
 
 }

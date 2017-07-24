@@ -46,7 +46,7 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 - (ZMTransportSession *)mockedTransportSession;
 
 @property (nonatomic, readonly) id<ZMPushChannel> pushChannel;
-@property (nonatomic, weak) id _unauthenticatedTransportSessionDelegate;
+@property (nonatomic, nullable) id _userInfoAvailableClosure;
 
 @property (nonatomic) NSURL *baseURL;
 @property (nonatomic) NSURL *websocketURL;
