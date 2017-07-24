@@ -72,7 +72,7 @@ extension MockTransportSession : UnauthenticatedTransportSessionProtocol {
 
     public var didReceiveUserInfo: UserInfoAvailableClosure? {
         get { return _userInfoAvailableClosure as? UserInfoAvailableClosure }
-        set { _userInfoAvailableClosure = didReceiveUserInfo }
+        set { _userInfoAvailableClosure = newValue }
     }
 
     @objc(authenticatedUser:cookieData:)

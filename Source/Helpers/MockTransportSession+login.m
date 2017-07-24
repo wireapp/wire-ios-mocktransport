@@ -85,7 +85,8 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         NSDictionary *responsePayload = @{
                                           @"access_token" : HardcodedAccessToken,
                                           @"expires_in" : @900,
-                                          @"token_type" : @"Bearer"
+                                          @"token_type" : @"Bearer",
+                                          @"user": user.identifier
                                           };
         
         return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil];
