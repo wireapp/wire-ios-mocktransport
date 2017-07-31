@@ -53,7 +53,7 @@
         return [self processUserIDRequest:[request RESTComponentAtIndex:1]];
     }
     else if ([request matchesWithPath:@"/users" method:ZMMethodGET]) {
-        return [self processUsersRequest:request.queryParameters[@"handles"] withIDs:request.queryParameters[@"ids"]];
+        return [self processUsersRequestWithHandles:request.queryParameters[@"handles"] orIDs:request.queryParameters[@"ids"]];
     }
     else if ([request matchesWithPath:@"/users/prekeys" method:ZMMethodPOST]) {
         return [self processUsersPreKeysRequestWithPayload:[request.payload asDictionary]];
@@ -114,7 +114,7 @@
     }
 }
 
-- (ZMTransportResponse *)processUsersRequest:(NSString *)handles withIDs:(NSString *)IDs {
+- (ZMTransportResponse *)processUsersRequestWithHandles:(NSString *)handles orIDs:(NSString *)IDs {
     
     // The 'ids' and 'handles' parameters are mutually exclusive, so we want to ensure at least
     // one of these parameters exist
