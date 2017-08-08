@@ -75,9 +75,11 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
             [self.phoneNumbersWaitingForVerificationForLogin removeObject:phone];
         }
         
-        [self.cookieStorage setAuthenticationCookieData:[@"fake-cookie" dataUsingEncoding:NSUTF8StringEncoding]];
-        
-        [self authenticatedUser:user cookieData:[@"fake-cookie" dataUsingEncoding:NSUTF8StringEncoding]]; 
+        NSString *cookiesValue = @"fake cookie";
+
+        if ([ZMPersistentCookieStorage cookiesPolicy] != NSHTTPCookieAcceptPolicyNever) {
+            self.cookieStorage.authenticationCookieData = [cookiesValue dataUsingEncoding:NSUTF8StringEncoding];
+        }
         
         self.selfUser = user;
         self.clientCompletedLogin = YES;
@@ -88,8 +90,9 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
                                           @"token_type" : @"Bearer",
                                           @"user": user.identifier
                                           };
-        
-        return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil];
+
+        NSDictionary *headers = @{ @"Set-Cookie": [NSString stringWithFormat:@"zuid=%@", cookiesValue] };
+        return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil headers:headers];
     }
     return [self errorResponseWithCode:400 reason:@"invalid-method"];
 }

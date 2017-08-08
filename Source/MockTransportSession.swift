@@ -70,17 +70,6 @@ public extension MockTransportSession {
 
 extension MockTransportSession : UnauthenticatedTransportSessionProtocol {
 
-    public var didReceiveUserInfo: UserInfoAvailableClosure? {
-        get { return _userInfoAvailableClosure as? UserInfoAvailableClosure }
-        set { _userInfoAvailableClosure = newValue }
-    }
-
-    @objc(authenticatedUser:cookieData:)
-    public func authenticated(_ user: MockUser, cookieData: Data) {
-        let userInfo = UserInfo(identifier: UUID(uuidString: user.identifier)!, cookieData:cookieData)
-        didReceiveUserInfo?.execute(with: userInfo)
-    }
-    
     public func enqueueRequest(withGenerator generator: () -> ZMTransportRequest?) -> EnqueueResult {
         let result = attemptToEnqueueSyncRequest(generator: generator)
         
