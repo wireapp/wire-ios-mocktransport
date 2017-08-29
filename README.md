@@ -2,7 +2,7 @@
 
 [![Wire logo](https://github.com/wireapp/wire/blob/master/assets/header-small.png?raw=true)](https://wire.com/jobs/)
 
-[![Build Status](https://travis-ci.org/wireapp/wire-ios-mocktransport.svg?branch=develop)](https://travis-ci.org/wireapp/wire-ios-mocktransport)
+[![CircleCI](https://circleci.com/gh/wireapp/wire-ios-mocktransport.svg?style=shield)](https://circleci.com/gh/wireapp/wire-ios-mocktransport) [![codecov](https://codecov.io/gh/wireapp/wire-ios-mocktransport/branch/develop/graph/badge.svg)](https://codecov.io/gh/wireapp/wire-ios-mocktransport)
 
 This repository is part of the source code of Wire. You can find more information at [wire.com](https://wire.com) or by contacting opensource@wire.com.
 
@@ -12,7 +12,7 @@ For licensing information, see the attached LICENSE file and the list of third-p
 
 # wire-ios-mocktransport
 
-This framework is part of Wire iOS SyncEngine. Visit [iOS SyncEngine repository](http://github.com/wireapp/zmessaging-cocoa) for an overview of the architecture.
+This framework is part of Wire iOS. Additional documentation is available in the [Wire iOS wiki](https://github.com/wireapp/wire-ios/wiki).
 
 The wire-ios-mocktransport framework helps us mock the requests to our backend during integration tests.
 
