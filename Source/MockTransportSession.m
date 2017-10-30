@@ -1028,8 +1028,8 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         
         if (event.conversation.selfIdentifier == nil) {
             NSDictionary *dict = [event.transportData asDictionary];
-            //If user_ids (joined users) contains self user identifier, but self identifier of conversation is nil than it is conversation to wich self user was invited
-            //We need to set its self identifier to self user, so that transport session can build payload for this conversation with selfInfo
+            // If user_ids (joined users) contains self user identifier, but self identifier of conversation is nil then it is a conversation to which the self user was invited,
+            // we need to set its self identifier to self user, so that transport session can build payload for this conversation with selfInfo
             if ([event.type isEqualToString:@"conversation.member-join"] &&
                 [[dict valueForKeyPath:@"data.user_ids"] containsObject:self.selfUser.identifier])
             {
@@ -1040,10 +1040,16 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
             }
         }
         
-        id e = [MockPushEvent eventWithPayload:event.transportData
-                                              uuid:[NSUUID timeBasedUUID]
-                                   isTransient:NO];
-        [pushEvents addObject:e];
+        id pushEvent = [MockPushEvent eventWithPayload:event.transportData
+                                                  uuid:[NSUUID timeBasedUUID]
+                                           isTransient:NO];
+        
+        // Member join/leave doesn't generate push events for the change initiator but are still present in the notification stream.
+        if (!includeEventsForUserThatInitiatedChanges && ([event.type isEqualToString:@"conversation.member-join"] || [event.type isEqualToString:@"conversation.member-leave"])) {
+            [self.generatedPushEvents addObject:pushEvent];
+        } else {
+            [pushEvents addObject:pushEvent];
+        }
     }
     return pushEvents;
 }
