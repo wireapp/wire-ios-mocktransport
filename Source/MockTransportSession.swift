@@ -85,3 +85,11 @@ extension MockTransportSession : UnauthenticatedTransportSessionProtocol {
     }
     
 }
+
+
+// MARK: - Email activation
+extension MockTransportSession {
+    @objc public var emailActivationCode: String {
+        return "123456"
+    }
+}
