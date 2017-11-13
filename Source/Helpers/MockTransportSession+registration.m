@@ -185,7 +185,7 @@
             }
             else {
                 if(!dryrun) {
-                    [self.emailsWaitingForVerificationForRegistration removeObject:phone];
+                    [self.emailsWaitingForVerificationForRegistration removeObject:email];
                 }
                 return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
 
