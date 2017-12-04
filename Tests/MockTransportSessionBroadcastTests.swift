@@ -22,7 +22,15 @@ import WireDataModel
 
 class MockTransportSessionBroadcastTests: MockTransportSessionTests {
     
-    func testThatItReturnsMissingClientsWhenReceivingOTRMessage() {
+    func assertExpectedPayload(_ payload : [String : Any], in response:  ZMTransportResponse, file: StaticString = #file, line: UInt = #line) {
+        let missing = response.payload!.asDictionary()!["missing"] as! [String : Any]
+        let redundant = response.payload!.asDictionary()!["redundant"] as! [String : Any]
+        
+        XCTAssertTrue(NSDictionary(dictionary: missing).isEqual(to: payload["missing"]! as! [String : Any]), "missing clients: \n\(missing)\n doesn't match expected payload:\n \(payload)", file: file, line: line)
+        XCTAssertTrue(NSDictionary(dictionary: redundant).isEqual(to: payload["redundant"]! as! [String : Any]), "redundant clients: \n\(redundant)\n doesn't match expected payload:\n \(payload)", file: file, line: line)
+    }
+    
+    func testThatItReturnsMissingConnectedUsersWhenReceivingOTRMessage() {
         // given
         var selfUser : MockUser!
         var selfClient : MockUserClient!
@@ -31,6 +39,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         var otherUser : MockUser!
         var otherUserClient : MockUserClient!
         var secondOtherUserClient : MockUserClient!
+        var otherUserRedundantClient : MockUserClient!
         
         sut.performRemoteChanges { session in
             selfUser = session.insertSelfUser(withName: "foo")
@@ -40,6 +49,10 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
             otherUser = session.insertUser(withName: "bar")
             otherUserClient = otherUser.clients.anyObject() as! MockUserClient
             secondOtherUserClient = session.registerClient(for: otherUser, label: "other2", type: "permanent")
+            otherUserRedundantClient = session.registerClient(for: otherUser, label: "other redundant", type: "permanent")
+            
+            let connection = session.insertConnection(withSelfUser: selfUser, to: otherUser)
+            connection.status = "accepted"
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
@@ -47,21 +60,190 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         let message = ZMGenericMessage.message(text: messageText, nonce: UUID.create().transportString())
         let base64Content = message.data().base64EncodedString()
         
-        let redundantClientId = NSString.createAlphanumerical()
         let payload : [String : Any] = [
             "sender": selfClient.identifier!,
             "recipients": [
                 otherUser.identifier :
                     [ otherUserClient.identifier!: base64Content,
-                      redundantClientId: base64Content] ]
+                      otherUserRedundantClient.identifier!: base64Content] ]
         ]
         
+        let protoPayload = selfClient.otrMessageBuilderWithRecipients(for: [otherUserClient, otherUserRedundantClient], plainText: message.data()).build().data()
+
+        sut.performRemoteChanges { session in
+            otherUserRedundantClient.user = nil
+        }
+        
         // when
-        let response = self.response(forPayload: payload as ZMTransportData, path: "/broadcast/otr/messages", method: .methodPOST)
+        let responseJSON = self.response(forPayload: payload as ZMTransportData, path: "/broadcast/otr/messages", method: .methodPOST)
+        let responsePROTO = self.response(forProtobufData: protoPayload, path: "/broadcast/otr/messages", method: .methodPOST)
         
         // then
-        XCTAssertNil(response)
-        XCTAssertEqual(response?.httpStatus, 412)
+        for response in [responseJSON, responsePROTO] {
+            XCTAssertNotNil(response)
+            
+            if let response = response {
+                XCTAssertEqual(response.httpStatus, 412)
+                
+                let expectedPayload = [
+                    "missing"  : [ selfUser.identifier  : [secondSelfClient.identifier!],
+                                   otherUser.identifier : [secondOtherUserClient.identifier!] ],
+                    "redundant" : [ otherUser.identifier : [otherUserRedundantClient.identifier!]]
+                ]
+                
+                assertExpectedPayload(expectedPayload, in: response)
+            }
+        }
+    }
+    
+    func testThatItReturnsMissingTeamMembersWhenReceivingOTRMessage() {
+        // given
+        var selfUser : MockUser!
+        var selfClient : MockUserClient!
+        
+        var otherUser : MockUser!
+        var otherUserClient : MockUserClient!
+        
+        sut.performRemoteChanges { session in
+            selfUser = session.insertSelfUser(withName: "Self User")
+            selfClient = session.registerClient(for: selfUser, label: "self user", type: "permanent")
+            
+            otherUser = session.insertUser(withName: "Team member1")
+            otherUserClient = otherUser.clients.anyObject() as! MockUserClient
+            
+            session.insertTeam(withName: "Team Foo", isBound: false, users: Set<MockUser>(arrayLiteral: selfUser, otherUser))
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        let message = ZMGenericMessage.message(text: "oaskdos", nonce: UUID.create().transportString())
+        let payload : [String : Any] = [
+            "sender": selfClient.identifier!,
+            "recipients": [:]
+        ]
+        
+        let protoPayload = selfClient.otrMessageBuilderWithRecipients(for: [], plainText: message.data()).build().data()
+        
+        // when
+        let responseJSON = self.response(forPayload: payload as ZMTransportData, path: "/broadcast/otr/messages", method: .methodPOST)
+        let responsePROTO = self.response(forProtobufData: protoPayload, path: "/broadcast/otr/messages", method: .methodPOST)
+        
+        // then
+        for response in [responseJSON, responsePROTO] {
+            XCTAssertNotNil(response)
+            
+            if let response = response {
+                XCTAssertEqual(response.httpStatus, 412)
+                
+                let expectedPayload = [
+                    "missing"  : [ otherUser.identifier : [otherUserClient.identifier!] ],
+                    "redundant" : [:]
+                ]
+                
+                assertExpectedPayload(expectedPayload, in: response)
+            }
+        }
+    }
+    
+    func testThatItAcceptsTeamMembersAsReceiversWhenReceivingOTRMessage() {
+        // given
+        var selfUser : MockUser!
+        var selfClient : MockUserClient!
+        
+        var otherUser : MockUser!
+        var otherUserClient : MockUserClient!
+        
+        sut.performRemoteChanges { session in
+            selfUser = session.insertSelfUser(withName: "Self User")
+            selfClient = session.registerClient(for: selfUser, label: "self user", type: "permanent")
+            
+            otherUser = session.insertUser(withName: "Team member1")
+            otherUserClient = otherUser.clients.anyObject() as! MockUserClient
+            
+            session.insertTeam(withName: "Team Foo", isBound: false, users: Set<MockUser>(arrayLiteral: selfUser, otherUser))
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        let messageText = "asdpasd"
+        let message = ZMGenericMessage.message(text: messageText, nonce: UUID.create().transportString())
+        let base64Content = message.data().base64EncodedString()
+        
+        let payload : [String : Any] = [
+            "sender": selfClient.identifier!,
+            "recipients": [ otherUser.identifier : [ otherUserClient.identifier!: base64Content] ]
+        ]
+        
+        let protoPayload = selfClient.otrMessageBuilderWithRecipients(for: [otherUserClient], plainText: message.data()).build().data()
+        
+        // when
+        let responseJSON = self.response(forPayload: payload as ZMTransportData, path: "/broadcast/otr/messages", method: .methodPOST)
+        let responsePROTO = self.response(forProtobufData: protoPayload, path: "/broadcast/otr/messages", method: .methodPOST)
+        
+        // then
+        for response in [responseJSON, responsePROTO] {
+            XCTAssertNotNil(response)
+            
+            if let response = response {
+                XCTAssertEqual(response.httpStatus, 201)
+                
+                let expectedPayload = [
+                    "missing"  : [:],
+                    "redundant" : [:]
+                ]
+                
+                assertExpectedPayload(expectedPayload, in: response)
+            }
+        }
+    }
+    
+    func testThatItAcceptsConnectedUsersAsReceiversWhenReceivingOTRMessage() {
+        // given
+        var selfUser : MockUser!
+        var selfClient : MockUserClient!
+        
+        var otherUser : MockUser!
+        var otherUserClient : MockUserClient!
+        
+        sut.performRemoteChanges { session in
+            selfUser = session.insertSelfUser(withName: "Self User")
+            selfClient = session.registerClient(for: selfUser, label: "self user", type: "permanent")
+            
+            otherUser = session.insertUser(withName: "Team member1")
+            otherUserClient = otherUser.clients.anyObject() as! MockUserClient
+            
+            let connection = session.insertConnection(withSelfUser: selfUser, to: otherUser)
+            connection.status = "accepted"
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        let messageText = "asdpasd"
+        let message = ZMGenericMessage.message(text: messageText, nonce: UUID.create().transportString())
+        let base64Content = message.data().base64EncodedString()
+        
+        let payload : [String : Any] = [
+            "sender": selfClient.identifier!,
+            "recipients": [ otherUser.identifier : [ otherUserClient.identifier!: base64Content] ]
+        ]
+        let protoPayload = selfClient.otrMessageBuilderWithRecipients(for: [otherUserClient], plainText: message.data()).build().data()
+        
+        // when
+        let responseJSON = self.response(forPayload: payload as ZMTransportData, path: "/broadcast/otr/messages", method: .methodPOST)
+        let responsePROTO = self.response(forProtobufData: protoPayload, path: "/broadcast/otr/messages", method: .methodPOST)
+        
+        // then
+        for response in [responseJSON, responsePROTO] {
+            XCTAssertNotNil(response)
+            
+            if let response = response {
+                XCTAssertEqual(response.httpStatus, 201)
+                
+                let expectedPayload = [
+                    "missing"  : [:],
+                    "redundant" : [:]
+                ]
+                
+                assertExpectedPayload(expectedPayload, in: response)
+            }
+        }
     }
     
 }
