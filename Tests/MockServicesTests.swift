@@ -22,8 +22,8 @@ import Foundation
 class MockServicesTests: MockTransportSessionTests {
     func testThatInsertedServiceCanBeQueried() {
         // given
-        let service1 = sut.insertService(name: "Normal Service", handle: "", accentID: 5, identifier: UUID().transportString(), provider: UUID().transportString(), assets: Set())
-        let _ = sut.insertService(name: "Other Service", handle: "", accentID: 5, identifier: UUID().transportString(), provider: UUID().transportString(), assets: Set())
+        let service1 = sut.insertService(name: "Normal Service", handle: "", accentID: 5, identifier: UUID().transportString(), provider: UUID().transportString(), assets: Set(), pictures: Set())
+        let _ = sut.insertService(name: "Other Service", handle: "", accentID: 5, identifier: UUID().transportString(), provider: UUID().transportString(), assets: Set(), pictures: Set())
         // when
         
         let response = sut.processServicesSearchRequest(ZMTransportRequest(path: "/services?tags=tutorial&start=Normal", method: .methodGET, payload: nil))
@@ -40,8 +40,8 @@ class MockServicesTests: MockTransportSessionTests {
     
     func testThatItCanAddServiceToTheConversation() {
         // given
-        sut.insertSelfUser(withName: "Antonio")
-        let service = sut.insertService(name: "Normal Service", handle: "", accentID: 5, identifier: UUID().transportString(), provider: UUID().transportString(), assets: Set())
+        let _ = sut.insertSelfUser(withName: "Antonio")
+        let service = sut.insertService(name: "Normal Service", handle: "", accentID: 5, identifier: UUID().transportString(), provider: UUID().transportString(), assets: Set(), pictures: Set())
         let conversation = sut.insertConversation(withCreator: sut.selfUser, otherUsers: [], type: .group)
         
         XCTAssertEqual(conversation.activeUsers.count, 1)
@@ -54,6 +54,15 @@ class MockServicesTests: MockTransportSessionTests {
         XCTAssertEqual(response.httpStatus, 201)
         XCTAssertNotNil(response.payload?.asDictionary())
         XCTAssertEqual(conversation.activeUsers.count, 2)
+
+        let conversationUser = conversation.activeUsers.firstObject as! MockUser
+        XCTAssertNil(conversationUser.serviceIdentifier)
+        XCTAssertNil(conversationUser.providerIdentifier)
+
+        let serviceUser = conversation.activeUsers.lastObject as! MockUser
+
+        XCTAssertEqual(serviceUser.serviceIdentifier, service.identifier)
+        XCTAssertEqual(serviceUser.providerIdentifier, service.provider)
     }
 }
 
