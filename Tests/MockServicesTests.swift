@@ -63,10 +63,10 @@ class MockServicesTests: MockTransportSessionTests {
         // when
         let data: [String: Any?] = mackUser.data
 
-        let service = data["service"]
-
         /// then
-        XCTAssertNil(service as Any)
+        if let _ = data["service"] {
+            XCTFail("service should be nil!")
+        }
     }
 
     func testThatItCanAddServiceToTheConversation() {
