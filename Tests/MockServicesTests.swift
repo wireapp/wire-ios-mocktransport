@@ -64,8 +64,9 @@ class MockServicesTests: MockTransportSessionTests {
         let data: [String: Any?] = mackUser.data
 
         let service = data["service"]
+
         /// then
-        XCTAssertNil(service)
+        XCTAssertNil(service as Any)
     }
 
     func testThatItCanAddServiceToTheConversation() {
@@ -95,4 +96,3 @@ class MockServicesTests: MockTransportSessionTests {
         XCTAssertEqual(serviceUser.providerIdentifier, service.provider)
     }
 }
-
