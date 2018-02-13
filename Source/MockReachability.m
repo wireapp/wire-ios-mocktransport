@@ -18,36 +18,67 @@
 
 #import "MockReachability.h"
 
+NSString * const ZMReachabilityChangedNotificationName = @"ZMReachabilityChangedNotification";
+
+@interface MockReachability ()
+@property (nonatomic) BOOL isReachable;
+@property (nonatomic) BOOL isMobile;
+@end
+
 @implementation MockReachability
 
+- (instancetype)init
+{
+    return [self initWithReachability:YES isMobileConnection:YES];
+}
+
+- (instancetype)initWithReachability:(BOOL)isReachable isMobileConnection:(BOOL)isMobileConnection
+{
+    self = [super init];
+    if (self) {
+        self.isReachable = isReachable;
+        self.isMobile = isMobileConnection;
+    }
+    return self;
+}
+
 -(void)tearDown{
-    
+    //no-op
 }
 
 -(BOOL)mayBeReachable{
-    return true;
+    return self.isReachable;
 }
 
 -(BOOL)oldMayBeReachable{
-    return true;
+    return self.isReachable;
 }
 
 -(BOOL)isMobileConnection{
-    return true;
+    return self.isMobile;
 }
 
 -(BOOL)oldIsMobileConnection{
-    return true;
+    return self.isMobile;
 }
 
 -(id)addReachabilityObserver:(id<ZMReachabilityObserver>)observer queue:(NSOperationQueue *)queue{
-    NSLog(@"%@ %@", observer, queue);
-    return self;
+    ZM_WEAK(observer);
+    return [self addReachabilityObserverOnQueue:queue block:^(id<ReachabilityProvider> provider) {
+        ZM_STRONG(observer);
+        [observer reachabilityDidChange:provider];
+    }];
 }
 
 -(id)addReachabilityObserverOnQueue:(NSOperationQueue *)queue block:(ReachabilityObserverBlock)block{
-    NSLog(@"%@ %@", queue, block);
-    return self;
+    ZM_WEAK(self);
+    id token = [[NSNotificationCenter defaultCenter] addObserverForName:ZMReachabilityChangedNotificationName object:self queue:queue usingBlock:^(NSNotification * _Nonnull note) {
+        NOT_USED(note);
+        ZM_STRONG(self);
+        block(self);
+    }];
+    
+    return [[SelfUnregisteringNotificationCenterToken alloc] init:token];
 }
 
 @end
