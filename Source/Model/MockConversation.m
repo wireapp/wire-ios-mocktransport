@@ -168,7 +168,7 @@
     data[@"type"] = self.transportConversationType;
     data[@"access"] = self.accessMode;
     data[@"access_role"] = self.accessRole;
-    data[@"team"] = self.team.identifier;
+    data[@"team"] = self.team.identifier ?: [NSNull null];
 
     NSMutableDictionary *members = [NSMutableDictionary dictionary];
     data[@"members"] = members;
