@@ -62,6 +62,8 @@
     [conversation addUsersByUser:creator addedUsers:addedUsers.array];
     conversation.identifier = [NSUUID createUUID].transportString;
     conversation.creator = creator;
+    conversation.accessMode = [MockConversation defaultAccessModeWithConversationType:type team:nil];
+    conversation.accessRole = [MockConversation defaultAccessRoleWithConversationType:type team:nil];
     [conversation.mutableActiveUsers addObject:creator];
     return conversation;
 }
@@ -76,6 +78,8 @@
     conversation.identifier = [NSUUID createUUID].transportString;
     conversation.creator = creator;
     [conversation.mutableActiveUsers addObject:creator];
+    conversation.accessMode = [MockConversation defaultAccessModeWithConversationType:type team:nil];
+    conversation.accessRole = [MockConversation defaultAccessRoleWithConversationType:type team:nil];
     return conversation;
 }
 
@@ -162,9 +166,9 @@
     data[@"name"] = self.name ?: [NSNull null];
     data[@"id"] = self.identifier ?: [NSNull null];
     data[@"type"] = self.transportConversationType;
-    data[@"access"] = self.accessMode ?: [NSNull null];
-    data[@"access_role"] = self.accessRole ?: [NSNull null];
-    data[@"team"] = self.team.identifier ?: [NSNull null];
+    data[@"access"] = self.accessMode;
+    data[@"access_role"] = self.accessRole;
+    data[@"team"] = self.team.identifier;
 
     NSMutableDictionary *members = [NSMutableDictionary dictionary];
     data[@"members"] = members;
