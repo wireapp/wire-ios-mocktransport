@@ -53,7 +53,7 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
     func testThatSettingAccessModeReturnsErrorWhenMissingAccess() {
         // given
         let payload = [
-            "access_role": "verified",
+            "access_role": "activated",
         ] as ZMTransportData
 
         // when

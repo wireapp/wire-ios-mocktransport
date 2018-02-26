@@ -42,7 +42,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         XCTAssertEqual(conversation.accessMode, ["invite"])
-        XCTAssertEqual(conversation.accessRole, "verified")
+        XCTAssertEqual(conversation.accessRole, "activated")
     }
 
     func testThatDefaultAccessModeForTeamGroupConversationIsCorrect() {
@@ -56,6 +56,6 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         XCTAssertEqual(conversation.accessMode, ["invite"])
-        XCTAssertEqual(conversation.accessRole, "verified")
+        XCTAssertEqual(conversation.accessRole, "activated")
     }
 }

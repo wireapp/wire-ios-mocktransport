@@ -44,11 +44,11 @@ extension MockConversation {
     public static func defaultAccess(conversationType: ZMTConversationType, team: MockTeam?) -> ([String], String) {
         switch (team, conversationType) {
         case (.some, .group):
-            return (["invite"], "verified")
+            return (["invite"], "activated")
         case (.some, _):
             return (["private"], "private")
         case (.none, .group):
-            return (["invite"], "verified")
+            return (["invite"], "activated")
         case (.none, _):
             return (["private"], "private")
         }
