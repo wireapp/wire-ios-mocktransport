@@ -53,6 +53,17 @@ extension MockConversation {
             return (["private"], "private")
         }
     }
+    
+    var changePushPayload: [String: Any]? {
+        let accessModeKeyPath = #keyPath(MockConversation.accessMode)
+        let accessRoleKeyPath = #keyPath(MockConversation.accessRole)
+
+        if changedValues()[accessModeKeyPath] != nil || changedValues()[accessRoleKeyPath] != nil {
+            return [ "access_role" : self.accessRole, "access" : self.accessMode ]
+        } else {
+            return nil
+        }
+    }
 }
 
 extension MockConversation: EntityNamedProtocol {
