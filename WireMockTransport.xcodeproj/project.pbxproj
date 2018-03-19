@@ -182,7 +182,7 @@
 		163EB0CD1FD1A658005B8D8D /* MockTransportSession+Broadcast.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+Broadcast.m"; sourceTree = "<group>"; };
 		163EB0D01FD1BDD4005B8D8D /* MockTransportSessionBroadcastTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTransportSessionBroadcastTests.swift; sourceTree = "<group>"; };
 		5406F3CF1E1D4A3900541E7F /* ZMTransportRequest+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMTransportRequest+Utils.swift"; sourceTree = "<group>"; };
-		541797631CE1F86500C7646D /* WireMockTransportTests-ios-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WireMockTransportTests-ios-Bridging-Header.h"; sourceTree = "<group>"; };
+		541797631CE1F86500C7646D /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		541797641CE1F86500C7646D /* MockTransportSessionCancelationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSessionCancelationTests.swift; sourceTree = "<group>"; };
 		541797661CE1FC0C00C7646D /* CustomResponseGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomResponseGenerator.swift; sourceTree = "<group>"; };
 		5425EEFB1E1E30DF006D7A01 /* MockTransportSession+login.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+login.h"; sourceTree = "<group>"; };
@@ -242,7 +242,7 @@
 		54C902331B7532DD007162A8 /* WireMockTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireMockTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		54C902371B7532DD007162A8 /* WireMockTransport-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WireMockTransport-Info.plist"; sourceTree = "<group>"; };
 		54C9023E1B7532DD007162A8 /* WireMockTransportTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireMockTransportTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		54C902441B7532DD007162A8 /* WireMockTransport-Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WireMockTransport-Tests-Info.plist"; sourceTree = "<group>"; };
+		54C902441B7532DD007162A8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		54C902511B7532F6007162A8 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		54C902541B7532F6007162A8 /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
 		54C902551B7532F6007162A8 /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
@@ -342,6 +342,8 @@
 			children = (
 				545AFFB81CB695040054B665 /* medium.jpg */,
 				545AFFB91CB695040054B665 /* tiny.jpg */,
+				54C902441B7532DD007162A8 /* Info.plist */,
+				541797631CE1F86500C7646D /* Bridging-Header.h */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -421,18 +423,8 @@
 			isa = PBXGroup;
 			children = (
 				545AFFB71CB695040054B665 /* Resources */,
-				54C902431B7532DD007162A8 /* Supporting Files */,
-				541797631CE1F86500C7646D /* WireMockTransportTests-ios-Bridging-Header.h */,
 			);
 			path = Tests;
-			sourceTree = "<group>";
-		};
-		54C902431B7532DD007162A8 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				54C902441B7532DD007162A8 /* WireMockTransport-Tests-Info.plist */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		54C9024F1B7532F6007162A8 /* Resources */ = {
@@ -1053,11 +1045,11 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "Tests/WireMockTransport-Tests-Info.plist";
+				INFOPLIST_FILE = Tests/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = WireMockTransportTests;
-				SWIFT_OBJC_BRIDGING_HEADER = "Tests/WireMockTransportTests-ios-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Resources/Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
@@ -1071,11 +1063,11 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEVELOPMENT_TEAM = W5KEQBF9B5;
-				INFOPLIST_FILE = "Tests/WireMockTransport-Tests-Info.plist";
+				INFOPLIST_FILE = Tests/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = WireMockTransportTests;
-				SWIFT_OBJC_BRIDGING_HEADER = "Tests/WireMockTransportTests-ios-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Resources/Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
