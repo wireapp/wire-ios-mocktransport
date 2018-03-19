@@ -365,8 +365,8 @@
 			isa = PBXGroup;
 			children = (
 				0928E1FA1B975CCE0057232E /* Cartfile */,
-				F97E28D01D8FE31700A77567 /* Cartfile.resolved */,
 				0928E1FB1B975CFE0057232E /* Cartfile.private */,
+				F97E28D01D8FE31700A77567 /* Cartfile.resolved */,
 				54C9024F1B7532F6007162A8 /* Resources */,
 				54C902351B7532DD007162A8 /* Source */,
 				54C902421B7532DD007162A8 /* Tests */,
