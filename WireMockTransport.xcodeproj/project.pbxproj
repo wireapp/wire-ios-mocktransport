@@ -708,9 +708,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		54C902321B7532DD007162A8 /* WireMockTransport-ios */ = {
+		54C902321B7532DD007162A8 /* WireMockTransport */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 54C902491B7532DD007162A8 /* Build configuration list for PBXNativeTarget "WireMockTransport-ios" */;
+			buildConfigurationList = 54C902491B7532DD007162A8 /* Build configuration list for PBXNativeTarget "WireMockTransport" */;
 			buildPhases = (
 				54C9022E1B7532DD007162A8 /* Sources */,
 				54C9022F1B7532DD007162A8 /* Frameworks */,
@@ -721,7 +721,7 @@
 			);
 			dependencies = (
 			);
-			name = "WireMockTransport-ios";
+			name = WireMockTransport;
 			productName = WireMockTransport;
 			productReference = 54C902331B7532DD007162A8 /* WireMockTransport.framework */;
 			productType = "com.apple.product-type.framework";
@@ -779,7 +779,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				54C902321B7532DD007162A8 /* WireMockTransport-ios */,
+				54C902321B7532DD007162A8 /* WireMockTransport */,
 				54C9023D1B7532DD007162A8 /* WireMockTransportTests */,
 			);
 		};
@@ -895,7 +895,7 @@
 /* Begin PBXTargetDependency section */
 		54C902411B7532DD007162A8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 54C902321B7532DD007162A8 /* WireMockTransport-ios */;
+			target = 54C902321B7532DD007162A8 /* WireMockTransport */;
 			targetProxy = 54C902401B7532DD007162A8 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -942,7 +942,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -986,7 +985,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -1084,7 +1082,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		54C902491B7532DD007162A8 /* Build configuration list for PBXNativeTarget "WireMockTransport-ios" */ = {
+		54C902491B7532DD007162A8 /* Build configuration list for PBXNativeTarget "WireMockTransport" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				54C9024A1B7532DD007162A8 /* Debug */,

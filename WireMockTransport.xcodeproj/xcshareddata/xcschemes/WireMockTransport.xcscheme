@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "54C902321B7532DD007162A8"
                BuildableName = "WireMockTransport.framework"
-               BlueprintName = "WireMockTransport-ios"
+               BlueprintName = "WireMockTransport"
                ReferencedContainer = "container:WireMockTransport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -60,7 +60,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "54C902321B7532DD007162A8"
             BuildableName = "WireMockTransport.framework"
-            BlueprintName = "WireMockTransport-ios"
+            BlueprintName = "WireMockTransport"
             ReferencedContainer = "container:WireMockTransport.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -83,7 +83,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "54C902321B7532DD007162A8"
             BuildableName = "WireMockTransport.framework"
-            BlueprintName = "WireMockTransport-ios"
+            BlueprintName = "WireMockTransport"
             ReferencedContainer = "container:WireMockTransport.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -101,7 +101,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "54C902321B7532DD007162A8"
             BuildableName = "WireMockTransport.framework"
-            BlueprintName = "WireMockTransport-ios"
+            BlueprintName = "WireMockTransport"
             ReferencedContainer = "container:WireMockTransport.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
