@@ -107,7 +107,7 @@
 		CE471AF31C19AC670040802B /* MockTransportSessionInvitationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CE471AF21C19AC670040802B /* MockTransportSessionInvitationTests.m */; };
 		CE4750291C19F73500848CCB /* MockPersonalInvitation.h in Headers */ = {isa = PBXBuildFile; fileRef = CE4750281C19F73500848CCB /* MockPersonalInvitation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CE89FED31C19780D0093C3B6 /* MockPersonalInvitation.m in Sources */ = {isa = PBXBuildFile; fileRef = CE89FECF1C19780D0093C3B6 /* MockPersonalInvitation.m */; };
-		CE89FED61C19865E0093C3B6 /* MockTransportSession+invitations.h in Headers */ = {isa = PBXBuildFile; fileRef = CE89FED41C19865E0093C3B6 /* MockTransportSession+invitations.h */; };
+		CE89FED61C19865E0093C3B6 /* MockTransportSession+invitations.h in Headers */ = {isa = PBXBuildFile; fileRef = CE89FED41C19865E0093C3B6 /* MockTransportSession+invitations.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CE89FED71C19865E0093C3B6 /* MockTransportSession+invitations.m in Sources */ = {isa = PBXBuildFile; fileRef = CE89FED51C19865E0093C3B6 /* MockTransportSession+invitations.m */; };
 		F119FC1A20444F9C00969615 /* MockTransportSessionConversationsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F119FC1920444F9C00969615 /* MockTransportSessionConversationsTests.swift */; };
 		F119FC1C2044551200969615 /* MockTransportSessionConversationAccessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F119FC1B2044551200969615 /* MockTransportSessionConversationAccessTests.swift */; };
@@ -391,7 +391,7 @@
 				F16088C42047175A002CA9B4 /* Notification Stream */,
 				F16088C320471730002CA9B4 /* Invitations */,
 				F16088C22047170C002CA9B4 /* Broadcast */,
-				F16088C12047169B002CA9B4 /* Clients */,
+				F16088C12047169B002CA9B4 /* Clients and OTR */,
 				F16088C020471681002CA9B4 /* Users */,
 				F16088BF20471676002CA9B4 /* Push Token */,
 				F16088BE20471633002CA9B4 /* Registration */,
@@ -616,7 +616,7 @@
 			path = Users;
 			sourceTree = "<group>";
 		};
-		F16088C12047169B002CA9B4 /* Clients */ = {
+		F16088C12047169B002CA9B4 /* Clients and OTR */ = {
 			isa = PBXGroup;
 			children = (
 				09BCDB671BC7CFFC0020DCC7 /* MockTransportSession+OTR.h */,
@@ -628,7 +628,7 @@
 				09E393F31BB0336A00F3EA1B /* MockPreKey.h */,
 				09E393F71BB0339200F3EA1B /* MockPreKey.m */,
 			);
-			path = Clients;
+			path = "Clients and OTR";
 			sourceTree = "<group>";
 		};
 		F16088C22047170C002CA9B4 /* Broadcast */ = {
