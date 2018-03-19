@@ -180,7 +180,7 @@ extension MockTransportSession {
         mockService.providerEmail = ""
         mockService.providerDescription = ""
         mockService.providerURL = ""
-        managedObjectContext.saveOrRollback()
+        try? managedObjectContext.save()
         return mockService
     }
 }

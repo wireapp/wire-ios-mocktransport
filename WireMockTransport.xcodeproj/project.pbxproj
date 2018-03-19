@@ -116,6 +116,7 @@
 		F157FE982060011E00BC25F1 /* MockTransportSessionPushChannelTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A9A1B78FA62002757E9 /* MockTransportSessionPushChannelTests.m */; };
 		F157FE9A2060017200BC25F1 /* MockTransportSessionUsersTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5AA01B78FA62002757E9 /* MockTransportSessionUsersTests.m */; };
 		F157FE9C2060026D00BC25F1 /* MockTransportSessionTeamEventsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1782D901ED30F9900486BE3 /* MockTransportSessionTeamEventsTests.swift */; };
+		F157FEE12060235E00BC25F1 /* MockConversation+AccessMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = F157FEE02060235E00BC25F1 /* MockConversation+AccessMode.swift */; };
 		F16C8BED20443F4A00677D31 /* MockTransportSession+conversations.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16C8BEC20443F4A00677D31 /* MockTransportSession+conversations.swift */; };
 		F1782D701ED2E9E700486BE3 /* MockTeamEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1782D6F1ED2E9E700486BE3 /* MockTeamEvent.swift */; };
 		F1782D8F1ED304CF00486BE3 /* MockTransportSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1782D8E1ED304CF00486BE3 /* MockTransportSession.swift */; };
@@ -284,6 +285,7 @@
 		F1519B5B1EC09D3100AD4E33 /* MockTransportSessionAssetsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSessionAssetsTests.swift; sourceTree = "<group>"; };
 		F1519B5D1EC0A30100AD4E33 /* MockTransportSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSessionTests.swift; sourceTree = "<group>"; };
 		F157FE9D2060053500BC25F1 /* MockTransportSessionTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MockTransportSessionTests.h; path = Tests/MockTransportSessionTests.h; sourceTree = SOURCE_ROOT; };
+		F157FEE02060235E00BC25F1 /* MockConversation+AccessMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockConversation+AccessMode.swift"; sourceTree = "<group>"; };
 		F16C8BEC20443F4A00677D31 /* MockTransportSession+conversations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+conversations.swift"; sourceTree = "<group>"; };
 		F1782D6F1ED2E9E700486BE3 /* MockTeamEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTeamEvent.swift; sourceTree = "<group>"; };
 		F1782D8E1ED304CF00486BE3 /* MockTransportSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSession.swift; sourceTree = "<group>"; };
@@ -555,6 +557,7 @@
 				54AE5A691B78FA43002757E9 /* MockConversation.h */,
 				54AE5A5F1B78FA43002757E9 /* MockConversation.m */,
 				F1F7B6FB1ED4789E0042A26D /* MockConversation.swift */,
+				F157FEE02060235E00BC25F1 /* MockConversation+AccessMode.swift */,
 			);
 			path = Conversations;
 			sourceTree = "<group>";
@@ -822,6 +825,7 @@
 				872A2EE01FFE761B00900B22 /* MockService.swift in Sources */,
 				54AE5A801B78FA43002757E9 /* MockAsset.m in Sources */,
 				F1782D701ED2E9E700486BE3 /* MockTeamEvent.swift in Sources */,
+				F157FEE12060235E00BC25F1 /* MockConversation+AccessMode.swift in Sources */,
 				5406F3D01E1D4A3900541E7F /* ZMTransportRequest+Utils.swift in Sources */,
 				F1782DA51ED430EE00486BE3 /* MockTeamConversationEvent.swift in Sources */,
 				F1F7B6FC1ED4789E0042A26D /* MockConversation.swift in Sources */,
