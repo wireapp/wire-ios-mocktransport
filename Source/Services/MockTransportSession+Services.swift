@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireDataModel
 
 extension MockTransportSession {
     @objc(processServicesSearchRequest:)
