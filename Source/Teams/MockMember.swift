@@ -30,6 +30,7 @@ public struct MockPermissions: OptionSet {
     public static let getMemberPermissions = MockPermissions(rawValue: 0x0200)
     public static let member = MockPermissions(rawValue: 1587)
     public static let addTeamMember = MockPermissions(rawValue: 0x0004)
+    public static let getTeamConversations = MockPermissions(rawValue: 0x0400)
 }
 
 
