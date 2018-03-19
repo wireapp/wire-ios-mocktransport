@@ -726,9 +726,9 @@
 			productReference = 54C902331B7532DD007162A8 /* WireMockTransport.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		54C9023D1B7532DD007162A8 /* WireMockTransportTests-ios */ = {
+		54C9023D1B7532DD007162A8 /* WireMockTransportTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 54C9024C1B7532DD007162A8 /* Build configuration list for PBXNativeTarget "WireMockTransportTests-ios" */;
+			buildConfigurationList = 54C9024C1B7532DD007162A8 /* Build configuration list for PBXNativeTarget "WireMockTransportTests" */;
 			buildPhases = (
 				54C9023A1B7532DD007162A8 /* Sources */,
 				54C9023B1B7532DD007162A8 /* Frameworks */,
@@ -740,7 +740,7 @@
 			dependencies = (
 				54C902411B7532DD007162A8 /* PBXTargetDependency */,
 			);
-			name = "WireMockTransportTests-ios";
+			name = WireMockTransportTests;
 			productName = WireMockTransportTests;
 			productReference = 54C9023E1B7532DD007162A8 /* WireMockTransportTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -780,7 +780,7 @@
 			projectRoot = "";
 			targets = (
 				54C902321B7532DD007162A8 /* WireMockTransport-ios */,
-				54C9023D1B7532DD007162A8 /* WireMockTransportTests-ios */,
+				54C9023D1B7532DD007162A8 /* WireMockTransportTests */,
 			);
 		};
 /* End PBXProject section */
@@ -1093,7 +1093,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		54C9024C1B7532DD007162A8 /* Build configuration list for PBXNativeTarget "WireMockTransportTests-ios" */ = {
+		54C9024C1B7532DD007162A8 /* Build configuration list for PBXNativeTarget "WireMockTransportTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				54C9024D1B7532DD007162A8 /* Debug */,

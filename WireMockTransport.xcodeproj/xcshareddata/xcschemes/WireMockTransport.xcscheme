@@ -30,7 +30,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "54C9023D1B7532DD007162A8"
                BuildableName = "WireMockTransportTests.xctest"
-               BlueprintName = "WireMockTransportTests-ios"
+               BlueprintName = "WireMockTransportTests"
                ReferencedContainer = "container:WireMockTransport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -40,6 +40,7 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      language = ""
       shouldUseLaunchSchemeArgsEnv = "YES"
       codeCoverageEnabled = "YES">
       <Testables>
@@ -49,7 +50,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "54C9023D1B7532DD007162A8"
                BuildableName = "WireMockTransportTests.xctest"
-               BlueprintName = "WireMockTransportTests-ios"
+               BlueprintName = "WireMockTransportTests"
                ReferencedContainer = "container:WireMockTransport.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -70,6 +71,7 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      language = ""
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
