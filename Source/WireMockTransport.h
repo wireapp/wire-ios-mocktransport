@@ -17,11 +17,21 @@
 // 
 
 
-#import "MockTransportSession.h"
-#import "MockTransportSession+internal.h"
+#import <UIKit/UIKit.h>
 
-@interface MockTransportSession (invitations)
+//! Project version number for WireMockTransport.
+FOUNDATION_EXPORT double WireMockTransportVersionNumber;
 
-- (ZMTransportResponse *)processInvitationsRequest:(ZMTransportRequest *)request;
+//! Project version string for WireMockTransport.
+FOUNDATION_EXPORT const unsigned char WireMockTransportVersionString[];
 
-@end
+// In this header, you should import all the public headers of your framework using statements like #import <WireMockTransport/PublicHeader.h>
+
+#import <WireMockTransport/MockAsset.h>
+#import <WireMockTransport/MockConnection.h>
+#import <WireMockTransport/MockConversation.h>
+#import <WireMockTransport/MockEvent.h>
+#import <WireMockTransport/MockPicture.h>
+#import <WireMockTransport/MockTransportSession.h>
+#import <WireMockTransport/MockPreKey.h>
+
