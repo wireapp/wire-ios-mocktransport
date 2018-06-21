@@ -45,7 +45,7 @@ typedef NS_ENUM(NSUInteger, ZMTUpdateEventType) {
     ZMTUpdateEventUserNew,
     ZMTUpdateEventUserUpdate,
     ZMTUpdateEventUserPushRemove,
-    ZMTUPdateEventUserCcontactJoin,
+    ZMTUpdateEventUserContactJoin,
     ZMTUPdateEventUserClientAdd,
     ZMTUpdateEventUserClientRemove,
     ZMTUpdateEventTeamCreate,
