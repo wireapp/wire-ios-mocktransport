@@ -26,19 +26,9 @@
 
 typedef NS_ENUM(NSUInteger, ZMTUpdateEventType) {
     ZMTUpdateEventUnknown = 0,
-    ZMTUpdateEventCallCandidatesAdd,
-    ZMTUpdateEventCallCandidatesUpdate,
-    ZMTUpdateEventCallDeviceInfo,
-    ZMTUpdateEventCallFlowActive,
-    ZMTUpdateEventCallFlowAdd,
-    ZMTUpdateEventCallFlowDelete,
-    ZMTUpdateEventCallState,
-    ZMTUpdateEventCallParticipants,
-    ZMTUpdateEventCallRemoteSDP,
     ZMTUpdateEventConversationAssetAdd,
     ZMTUpdateEventConversationConnectRequest,
     ZMTUpdateEventConversationCreate,
-    ZMTUpdateEventConversationHotKnock,
     ZMTUpdateEventConversationKnock,
     ZMTUpdateEventConversationMemberJoin,
     ZMTUpdateEventConversationMemberLeave,
@@ -49,13 +39,13 @@ typedef NS_ENUM(NSUInteger, ZMTUpdateEventType) {
     ZMTUpdateEventConversationOTRAssetAdd,
     ZMTUpdateEventConversationRename,
     ZMTUpdateEventConversationTyping,
-    ZMTUpdateEventConversationVoiceChannel,
-    ZMTUpdateEventConversationVoiceChannelActivate,
-    ZMTUpdateEventConversationVoiceChannelDeactivate,
+    ZMTUpdateEventConversationCodeUpdate,
+    ZMTUpdateEventConversationAccessModeUpdate,
     ZMTUpdateEventUserConnection,
     ZMTUpdateEventUserNew,
     ZMTUpdateEventUserUpdate,
     ZMTUpdateEventUserPushRemove,
+    ZMTUPdateEventUserCcontactJoin,
     ZMTUPdateEventUserClientAdd,
     ZMTUpdateEventUserClientRemove,
     ZMTUpdateEventTeamCreate,
@@ -64,7 +54,11 @@ typedef NS_ENUM(NSUInteger, ZMTUpdateEventType) {
     ZMTUpdateEventTeamMemberJoin,
     ZMTUpdateEventTeamMemberLeave,
     ZMTUpdateEventTeamConversationCreate,
-    ZMTUpdateEventTeamConversationDelete
+    ZMTUpdateEventTeamConversationDelete,
+    ZMTUpdateEventTeamMemberUpdate,
+    ZMTUpdateEventConversationMessageTimerUpdate,
+    
+    ZMTUpdateEvent_LAST
 };
 
 
