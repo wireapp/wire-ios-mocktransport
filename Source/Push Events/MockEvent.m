@@ -44,19 +44,9 @@ static ZMLogLevel_t const ZMLogLevel ZM_UNUSED = ZMLogLevelWarn;
     dispatch_once(&onceToken, ^{
         mapping =
         @[
-          @[@(ZMTUpdateEventCallDeviceInfo),@"call.device-info"],
-          @[@(ZMTUpdateEventCallFlowActive),@"call.flow-active"],
-          @[@(ZMTUpdateEventCallFlowAdd),@"call.flow-add"],
-          @[@(ZMTUpdateEventCallFlowDelete),@"call.flow-delete"],
-          @[@(ZMTUpdateEventCallParticipants),@"call.participants"],
-          @[@(ZMTUpdateEventCallCandidatesAdd),@"call.remote-candidates-add"],
-          @[@(ZMTUpdateEventCallCandidatesUpdate),@"call.remote-candidates-update"],
-          @[@(ZMTUpdateEventCallRemoteSDP),@"call.remote-sdp"],
-          @[@(ZMTUpdateEventCallState),@"call.state"],
           @[@(ZMTUpdateEventConversationAssetAdd),@"conversation.asset-add"],
           @[@(ZMTUpdateEventConversationConnectRequest),@"conversation.connect-request"],
           @[@(ZMTUpdateEventConversationCreate),@"conversation.create"],
-          @[@(ZMTUpdateEventConversationHotKnock),@"conversation.hot-knock"],
           @[@(ZMTUpdateEventConversationKnock),@"conversation.knock"],
           @[@(ZMTUpdateEventConversationMemberJoin),@"conversation.member-join"],
           @[@(ZMTUpdateEventConversationMemberLeave),@"conversation.member-leave"],
@@ -67,9 +57,6 @@ static ZMLogLevel_t const ZMLogLevel ZM_UNUSED = ZMLogLevelWarn;
           @[@(ZMTUpdateEventConversationOTRAssetAdd),@"conversation.otr-asset-add"],
           @[@(ZMTUpdateEventConversationRename),@"conversation.rename"],
           @[@(ZMTUpdateEventConversationTyping),@"conversation.typing"],
-          @[@(ZMTUpdateEventConversationVoiceChannel),@"conversation.voice-channel"],
-          @[@(ZMTUpdateEventConversationVoiceChannelActivate),@"conversation.voice-channel-activate"],
-          @[@(ZMTUpdateEventConversationVoiceChannelDeactivate),@"conversation.voice-channel-deactivate"],
           @[@(ZMTUpdateEventUserConnection),@"user.connection"],
           @[@(ZMTUpdateEventUserNew),@"user.new"],
           @[@(ZMTUpdateEventUserPushRemove),@"user.push-remove"],
@@ -118,9 +105,6 @@ static ZMLogLevel_t const ZMLogLevel ZM_UNUSED = ZMLogLevelWarn;
             @(ZMTUpdateEventConversationClientMessageAdd),
             @(ZMTUpdateEventConversationAssetAdd),
             @(ZMTUpdateEventConversationKnock),
-            @(ZMTUpdateEventConversationHotKnock),
-            @(ZMTUpdateEventConversationVoiceChannelActivate),
-            @(ZMTUpdateEventConversationVoiceChannelDeactivate),
             @(ZMTUpdateEventConversationOTRMessageAdd),
             @(ZMTUpdateEventConversationOTRAssetAdd)
             ];

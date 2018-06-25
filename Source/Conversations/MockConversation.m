@@ -99,10 +99,7 @@
                                             @(ZMTUpdateEventConversationCreate),
                                             @(ZMTUpdateEventConversationMemberJoin),
                                             @(ZMTUpdateEventConversationConnectRequest),
-                                            @(ZMTUpdateEventConversationVoiceChannelDeactivate),
-                                            @(ZMTUpdateEventCallState),
                                             @(ZMTUpdateEventConversationKnock),
-                                            @(ZMTUpdateEventConversationHotKnock),
                                             @(ZMTUpdateEventConversationMemberUpdate)];
     
 
@@ -293,24 +290,6 @@
 - (MockEvent *)insertKnockFromUser:(MockUser *)fromUser nonce:(NSUUID *)nonce;
 {
     return [self eventIfNeededByUser:fromUser type:ZMTUpdateEventConversationKnock data:@{@"nonce": nonce.transportString}];
-}
-
-- (MockEvent *)insertHotKnockFromUser:(MockUser *)fromUser nonce:(NSUUID *)nonce ref:(NSString *)eventID
-{
-    NSDictionary *payload;
-    if (eventID) {
-        payload = @{
-                    @"nonce": nonce.transportString,
-                    @"ref": eventID
-                    };
-    }
-    else {
-        payload = @{
-                    @"nonce": nonce.transportString
-                    };
-    }
-    
-    return [self eventIfNeededByUser:fromUser type:ZMTUpdateEventConversationHotKnock data:payload];
 }
 
 - (void)insertImageEventsFromUser:(MockUser *)fromUser;
