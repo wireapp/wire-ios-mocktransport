@@ -24,7 +24,6 @@
 #import "MockTransportSession+conversations.h"
 #import "MockTransportSession+internal.h"
 #import "MockTransportSession+connections.h"
-#import "MockTransportSession+PushToken.h"
 #import "MockEvent.h"
 #import "MockConnection.h"
 #import "MockPreKey.h"
