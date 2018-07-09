@@ -32,7 +32,7 @@
 - (MockUser *)fetchUserWithIdentifier:(NSString *)userID;
 - (MockConnection *)fetchConnectionFrom:(MockUser *)userID to:(MockUser *)otherUserID;
 - (ZMTransportResponse *)errorResponseWithCode:(NSInteger)code reason:(NSString *)reason;
-- (MockEvent *)eventIfNeededByUser:(MockUser *)byUser type:(ZMTUpdateEventType)type data:(id<ZMTransportData>)data;
+- (MockEvent *)eventIfNeededByUser:(MockUser *)byUser type:(ZMUpdateEventType)type data:(id<ZMTransportData>)data;
 
 - (MockConnection *)connectionFromUserIdentifier:(NSString *)fromUserIdentifier toUserIdentifier:(NSString *)toUserIdentifier;
 
