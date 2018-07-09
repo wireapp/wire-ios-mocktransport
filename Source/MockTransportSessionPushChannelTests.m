@@ -492,8 +492,11 @@
     [self.sut sendIsTypingEventForConversation:conversation user:user2 started:YES];
     WaitForAllGroupsToBeEmpty(0.5);
     
+    XCTAssert([self waitWithTimeout:0.5 verificationBlock:^BOOL{
+        return 1 == self.pushChannelReceivedEvents.count;
+    }]);
+    
     // THEN
-    XCTAssertEqual(self.pushChannelReceivedEvents.count, 1u);
     TestPushChannelEvent *isTypingEvent = self.pushChannelReceivedEvents.firstObject;
     
     XCTAssertEqual(isTypingEvent.type, ZMUpdateEventTypeConversationTyping);
