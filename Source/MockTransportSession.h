@@ -178,10 +178,6 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 - (void)deleteConversation:(nonnull MockConversation *)conversation;
 - (void)deleteAccountForUser:(nonnull MockUser *)user;
 
-/// Support for services
-- (MockService *)insertServiceWithName:(NSString *)name
-                            identifier:(NSString *)identifier
-                              provider:(NSString *)provider;
 @end
 
 @interface MockTransportSession (IsTyping)
