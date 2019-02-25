@@ -27,4 +27,12 @@ extension MockTransportSession {
         
         return users?.first
     }
+    
+    @objc(processRichProfileFetchForUser:)
+    public func processRichProfileFetchFor(user userID: String) -> ZMTransportResponse {
+        guard let user = fetchUser(withIdentifier: userID) else { return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil) }
+        
+        let fields = user.richProfile ?? []
+        return ZMTransportResponse(payload: ["fields" : fields ] as ZMTransportData, httpStatus: 200, transportSessionError: nil)
+    }
 }
