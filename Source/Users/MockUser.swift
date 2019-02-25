@@ -51,6 +51,7 @@ import Foundation
     @NSManaged public var providerIdentifier: String?
 
     @NSManaged public var serviceIdentifier: String?
+    @NSManaged public var richProfile: NSArray?
 
     override public func awakeFromInsert() {
         if accentID == 0 {
