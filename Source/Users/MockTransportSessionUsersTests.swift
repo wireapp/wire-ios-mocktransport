@@ -74,4 +74,29 @@ class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         XCTAssertEqual(fields, values)
     }
     
+    func testThatItReturnsRichInfo_403_WhenUserIsNotPartOfSameTeam() {
+        //given
+        let userId = "123456"
+        let richProfile = [
+            (type: "Department", value: "Sales & Marketing"),
+            (type: "Favorite color", value: "Blue")
+        ]
+        sut.performRemoteChanges {
+            let selfUser = $0.insertSelfUser(withName: "I am")
+            _ = $0.insertTeam(withName: "Mine", isBound: true, users: [selfUser])
+            let user = $0.insertUser(withName: "some")
+            _ = $0.insertTeam(withName: "Other", isBound: false, users:[user])
+            user.identifier = userId
+            for field in richProfile {
+                user.appendRichInfo(type: field.type, value: field.value)
+            }
+        }
+        
+        // when
+        guard let response = self.response(forPayload: nil, path: "/users/\(userId)/rich_info", method: .methodGET) else { XCTFail(); return }
+        
+        // then
+        XCTAssertEqual(response.httpStatus, 403)
+    }
+    
 }

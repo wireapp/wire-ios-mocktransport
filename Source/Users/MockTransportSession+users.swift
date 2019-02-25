@@ -31,6 +31,11 @@ extension MockTransportSession {
     @objc(processRichProfileFetchForUser:)
     public func processRichProfileFetchFor(user userID: String) -> ZMTransportResponse {
         guard let user = fetchUser(withIdentifier: userID) else { return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil) }
+        if let members = self.selfUser.currentTeamMembers {
+            guard members.contains(user) else {
+                return ZMTransportResponse(payload: ["label": "insufficient-permissions"] as NSDictionary, httpStatus: 403, transportSessionError: nil)
+            }
+        }
         
         let fields = user.richProfile ?? []
         return ZMTransportResponse(payload: ["fields" : fields ] as ZMTransportData, httpStatus: 200, transportSessionError: nil)

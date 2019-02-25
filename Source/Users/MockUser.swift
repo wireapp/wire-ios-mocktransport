@@ -103,7 +103,7 @@ extension MockUser {
         let connectedToUsers : [MockUser] = self.connectionsTo.compactMap(acceptedUsers)
         let connectedFromUsers : [MockUser] = self.connectionsFrom.compactMap(acceptedUsers)
 
-        let teamMembers = self.memberships?.first?.team.members.map({ $0.user }) ?? []
+        let teamMembers = currentTeamMembers ?? []
         
         var users = Set<MockUser>()
         users.formUnion(connectedToUsers)
@@ -112,6 +112,11 @@ extension MockUser {
         users.formUnion([self])
         
         return users
+    }
+    
+    // Nil if user is not part of a team
+    public var currentTeamMembers : [MockUser]? {
+        return self.memberships?.first?.team.members.compactMap({ $0.user })
     }
     
 }
