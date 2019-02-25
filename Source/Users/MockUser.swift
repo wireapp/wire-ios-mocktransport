@@ -74,6 +74,22 @@ extension MockUser {
     }
 }
 
+// MARK: - Rich Profile
+
+extension MockUser {
+    public func appendRichInfo(type: String, value: String) {
+        let updatedValues: NSMutableArray
+        if let values = self.richProfile {
+            updatedValues = NSMutableArray(array: values)
+        } else {
+            updatedValues = NSMutableArray()
+        }
+        let value = ["type" : type, "value" : value]
+        updatedValues.add(value)
+        richProfile = updatedValues
+    }
+}
+
 // MARK: - Broadcasting
 extension MockUser {
     

@@ -49,20 +49,16 @@ class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
     func testThatItReturnsRichInfo_WhenUserHasIt() {
         //given
         let userId = "123456"
-        let richProfile: NSArray = [
-                [
-                    "type": "Department",
-                    "value": "Sales & Marketing"
-                ],
-                [
-                    "type": "Favorite color",
-                    "value": "Blue"
-                ]
-            ]
+        let richProfile = [
+            (type: "Department", value: "Sales & Marketing"),
+            (type: "Favorite color", value: "Blue")
+        ]
         sut.performRemoteChanges {
             let user = $0.insertUser(withName: "some")
             user.identifier = userId
-            user.richProfile = richProfile
+            for field in richProfile {
+                user.appendRichInfo(type: field.type, value: field.value)
+            }
         }
         
         // when
@@ -70,8 +66,12 @@ class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         
         // then
         XCTAssertEqual(response.httpStatus, 200)
-        XCTAssertEqual(response.payload as? NSDictionary, ["fields" : richProfile ])
+        guard let payload = response.payload as? [String : [[String : String]]] else { XCTFail("Malformed response: \(String(describing: response.payload))"); return }
+        
+        guard let fields = payload["fields"] else { XCTFail("Malformed payload: \(payload)"); return }
 
+        let values = richProfile.map { ["type" : $0.type, "value" : $0.value] }
+        XCTAssertEqual(fields, values)
     }
     
 }
