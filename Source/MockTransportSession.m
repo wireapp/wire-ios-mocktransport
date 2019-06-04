@@ -803,6 +803,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     
 }
 
+- (MockUserClient *)registerClientForUser:(MockUser *)user
+{
+    return [self registerClientForUser:user label:@"Mock Phone" type:@"permanent" deviceClass:@"phone"];
+}
+
 - (MockUserClient *)registerClientForUser:(MockUser *)user label:(NSString *)label type:(NSString *)type deviceClass:(NSString *)deviceClass
 {
     MockUserClient *client = [MockUserClient insertClientWithLabel:label type:type deviceClass:deviceClass user:user context:self.managedObjectContext];

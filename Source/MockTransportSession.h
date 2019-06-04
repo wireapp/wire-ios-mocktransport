@@ -155,6 +155,7 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 - (MockConnection *)createConnectionRequestFromUser:(MockUser*)fromUser toUser:(MockUser*)toUser message:(nullable NSString *)message;
 
+- (MockUserClient *)registerClientForUser:(MockUser *)user;
 - (MockUserClient *)registerClientForUser:(MockUser *)user label:(NSString *)label type:(NSString *)type deviceClass:(NSString *)deviceClass;
 
 /// deletes a remote user client for a user
