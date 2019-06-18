@@ -50,6 +50,12 @@
         <relationship name="team" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Team" inverseName="members" inverseEntity="Team" syncable="YES"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="memberships" inverseEntity="User" syncable="YES"/>
     </entity>
+    <entity name="PendingLegalHoldClient" representedClassName=".MockPendingLegalHoldClient" syncable="YES">
+        <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="lastPrekey" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PreKey" inverseName="lastPrekeyOfPendingLegalHoldClient" inverseEntity="PreKey" syncable="YES"/>
+        <relationship name="prekeys" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PreKey" inverseName="pendingLegalHoldClient" inverseEntity="PreKey" syncable="YES"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="pendingLegalHoldClient" inverseEntity="User" syncable="YES"/>
+    </entity>
     <entity name="PersonalInvitation" representedClassName="MockPersonalInvitation" syncable="YES">
         <attribute name="creationDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
@@ -70,6 +76,8 @@
         <attribute name="value" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="client" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserClient" inverseName="prekeys" inverseEntity="UserClient" syncable="YES"/>
         <relationship name="lastPrekeyOfClient" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserClient" inverseName="lastPrekey" inverseEntity="UserClient" syncable="YES"/>
+        <relationship name="lastPrekeyOfPendingLegalHoldClient" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PendingLegalHoldClient" inverseName="lastPrekey" inverseEntity="PendingLegalHoldClient" syncable="YES"/>
+        <relationship name="pendingLegalHoldClient" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PendingLegalHoldClient" inverseName="prekeys" inverseEntity="PendingLegalHoldClient" syncable="YES"/>
     </entity>
     <entity name="Service" representedClassName=".MockService" syncable="YES">
         <attribute name="accentID" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
@@ -106,7 +114,6 @@
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="isAccountDeleted" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="isEmailValidated" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="legalHoldRequest" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="password" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="phone" optional="YES" attributeType="String" syncable="YES"/>
@@ -124,7 +131,7 @@
         <relationship name="inactiveConversations" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Conversation" syncable="YES"/>
         <relationship name="invitations" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="PersonalInvitation" inverseName="inviter" inverseEntity="PersonalInvitation" syncable="YES"/>
         <relationship name="memberships" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Member" inverseName="user" inverseEntity="Member" syncable="YES"/>
-        <relationship name="pendingLegalHoldClients" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserClient" inverseName="pendingLegalHoldUser" inverseEntity="UserClient" syncable="YES"/>
+        <relationship name="pendingLegalHoldClient" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PendingLegalHoldClient" inverseName="user" inverseEntity="PendingLegalHoldClient" syncable="YES"/>
         <relationship name="pictures" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Picture" inverseName="user" inverseEntity="Picture" syncable="YES"/>
     </entity>
     <entity name="UserClient" representedClassName=".MockUserClient" syncable="YES">
@@ -140,7 +147,7 @@
         <attribute name="time" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="lastPrekey" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PreKey" inverseName="lastPrekeyOfClient" inverseEntity="PreKey" syncable="YES"/>
-        <relationship name="pendingLegalHoldUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="pendingLegalHoldClients" inverseEntity="User" syncable="YES"/>
+        <relationship name="pendingLegalHoldUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" syncable="YES"/>
         <relationship name="prekeys" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PreKey" inverseName="client" inverseEntity="PreKey" syncable="YES"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="clients" inverseEntity="User" syncable="YES"/>
     </entity>
@@ -152,10 +159,11 @@
         <element name="Member" positionX="18" positionY="162" width="128" height="90"/>
         <element name="PersonalInvitation" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Picture" positionX="0" positionY="0" width="128" height="120"/>
-        <element name="PreKey" positionX="0" positionY="0" width="128" height="105"/>
+        <element name="PreKey" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Service" positionX="9" positionY="153" width="128" height="135"/>
         <element name="Team" positionX="9" positionY="153" width="128" height="195"/>
-        <element name="User" positionX="0" positionY="0" width="128" height="450"/>
+        <element name="User" positionX="0" positionY="0" width="128" height="435"/>
         <element name="UserClient" positionX="0" positionY="0" width="128" height="270"/>
+        <element name="PendingLegalHoldClient" positionX="18" positionY="162" width="128" height="105"/>
     </elements>
 </model>

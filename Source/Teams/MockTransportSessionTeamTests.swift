@@ -382,6 +382,7 @@ extension MockTransportSessionTeamTests {
             team = session.insertTeam(withName: "name", isBound: true, users: [user])
             team.pictureAssetKey = "1234-abc"
             team.pictureAssetId = "123-1234-abc"
+
             team.hasLegalHoldService = true
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -390,8 +391,8 @@ extension MockTransportSessionTeamTests {
         let path = "/teams/\(team.identifier)/legalhold/\(user.identifier)/approve"
         let response = self.response(forPayload: ["password": "Ex@mple!"] as NSDictionary, path: path, method: .methodPUT)
         XCTAssertNotNil(response)
-        XCTAssertEqual(response?.httpStatus, 200)
-        XCTAssertNotNil(response?.payload)
+        XCTAssertEqual(response?.httpStatus, 412)
+        XCTAssertEqual(response?.payload as? NSDictionary, ["label": "legalhold-not-pending"])
     }
 
     func testThatItApprovesLegalHoldRequest() {
@@ -405,7 +406,9 @@ extension MockTransportSessionTeamTests {
             team = session.insertTeam(withName: "name", isBound: true, users: [user])
             team.pictureAssetKey = "1234-abc"
             team.pictureAssetId = "123-1234-abc"
+
             team.hasLegalHoldService = true
+            XCTAssertTrue(user.requestLegalHold())
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -414,7 +417,9 @@ extension MockTransportSessionTeamTests {
         let response = self.response(forPayload: ["password": "Ex@mple!"] as NSDictionary, path: path, method: .methodPUT)
         XCTAssertNotNil(response)
         XCTAssertEqual(response?.httpStatus, 200)
-        XCTAssertNotNil(response?.payload)
+        XCTAssertNil(response?.payload)
+        XCTAssertEqual(user.legalHoldState, .enabled)
+        XCTAssertNil(user.pendingLegalHoldClient)
     }
 
 }

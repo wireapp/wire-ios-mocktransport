@@ -181,9 +181,10 @@ extension MockTransportSession {
             return errorResponse(withCode: 412, reason: "legalhold-not-pending")
         case .enabled:
             return errorResponse(withCode: 409, reason: "legalhold-already-enabled")
-        case .pending(let request):
-            member.user.legalHoldRequest = nil
-            #warning("TODO: Add the legal hold client")
+        case .pending(let pendingClient):
+            guard member.user.acceptLegalHold(with: pendingClient) == true else {
+                return errorResponse(withCode: 400, reason: "legalhold-status-bad")
+            }
         }
 
         return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil)
