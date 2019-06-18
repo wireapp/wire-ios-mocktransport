@@ -24,7 +24,10 @@ import CoreData
     
     /// User that owns the client
     @NSManaged public var user : MockUser?
-    
+
+    /// User that will own the client once legal hold is accepted.
+    @NSManaged public var pendingLegalHoldUser: MockUser?
+
     /// Remote identifier
     @NSManaged public var identifier : String?
     
@@ -84,9 +87,19 @@ extension MockUserClient {
     }
 }
 
+// MARK: - Legal Hold
+
+extension MockUserClient {
+
+    public var isLegalHoldDevice: Bool {
+        return type == "legalhold" || deviceClass == "legalhold"
+    }
+
+}
+
 // MARK: - JSON de/serialization
 @objc extension MockUserClient {
-    
+
     /// Creates a new client from JSON payload
     public static func insertClient(payload: [String:Any], context: NSManagedObjectContext) -> MockUserClient? {
         
@@ -136,9 +149,11 @@ extension MockUserClient {
     
     /// Insert a new client, automatically generate prekeys and last key
     @objc(insertClientWithLabel:type:deviceClass:user:context:)
-    public static func insertClient(label: String, type: String = "permanent", deviceClass: String = "phone", for user: MockUser, in context: NSManagedObjectContext) -> MockUserClient?
+    public static func insertClient(label: String, type: String = "permanent", deviceClass: String = "phone", for user: MockUser, isPendignLegalHold: Bool = false, in context: NSManagedObjectContext) -> MockUserClient?
     {
         let newClient = NSEntityDescription.insertNewObject(forEntityName: "UserClient", into: context) as! MockUserClient
+
+        if isPendingLegalHold
     
         newClient.user = user
         newClient.identifier = NSString.createAlphanumerical() as String
@@ -264,5 +279,5 @@ extension MockUserClient {
 }
 
 /// Allowed client types
-private let validClientTypes = Set(["temporary", "permanent"])
+private let validClientTypes = Set(["temporary", "permanent", "legalhold"])
 

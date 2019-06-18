@@ -42,6 +42,8 @@ extension MockTransportSession {
             response = fetchMembersForTeam(with: request.RESTComponents(index: 1))
         case "/teams/*/members/*":
             response = fetchMemberForTeam(withTeamId: request.RESTComponents(index: 1), userId: request.RESTComponents(index: 3))
+        case "/teams/*/legalhold/*/approve":
+            response = approveUserLegalHold(inTeam: request.RESTComponents(index: 1), forUser: request.RESTComponents(index: 3), payload: request.payload, method: request.method)
         default:
             break
         }
@@ -153,5 +155,43 @@ extension MockTransportSession {
         // All good, no error returned
         return nil
     }
-    
+
+    private func approveUserLegalHold(inTeam teamId: String?, forUser userId: String?, payload: ZMTransportData?, method: ZMTransportRequestMethod) -> ZMTransportResponse? {
+        // 1) Assert request contents
+        guard let teamId = teamId, let userId = userId else { return nil }
+        guard method == .methodPUT else { return nil }
+
+        // 2) Check the user in the team
+        let predicate = MockTeam.predicateWithIdentifier(identifier: teamId)
+        guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound }
+        guard let member = team.members.first(where: {$0.user.identifier == userId}) else { return .notTeamMember }
+
+        // 3) Check the password
+        guard let password = payload?.asDictionary()?["password"] as? String, password == member.user.password else {
+            return errorResponse(withCode: 409, reason: "missing-auth")
+        }
+
+        // 4) Check the legal hold state of the team and user
+        guard team.hasLegalHoldService else {
+            return errorResponse(withCode: 403, reason: "legalhold-not-enabled")
+        }
+
+        switch member.user.legalHoldState {
+        case .disabled:
+            return errorResponse(withCode: 412, reason: "legalhold-not-pending")
+        case .enabled:
+            return errorResponse(withCode: 409, reason: "legalhold-already-enabled")
+        case .pending(let request):
+            member.user.legalHoldRequest = nil
+            #warning("TODO: Add the legal hold client")
+        }
+
+        return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil)
+    }
+
+    private func errorResponse(withCode code: Int, reason: String) -> ZMTransportResponse {
+        let payload: NSDictionary = ["label": reason]
+        return ZMTransportResponse(payload: payload, httpStatus: code, transportSessionError: nil)
+    }
+
 }

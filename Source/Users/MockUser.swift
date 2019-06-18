@@ -19,7 +19,62 @@
 import Foundation
 
 @objcMembers public class MockUser: NSManagedObject {
-    
+
+    public enum LegalHoldState {
+        case enabled
+        case pending(LegalHoldRequest)
+        case disabled
+    }
+
+    public struct LegalHoldRequest: Codable, Hashable {
+
+        public struct Prekey: Codable, Hashable {
+            public let id: Int
+            public let key: Data
+
+            public init(id: Int, key: Data) {
+                self.id = id
+                self.key = key
+            }
+        }
+
+        public let requesterIdentifier: UUID
+        public let targetUserIdentifier: UUID
+        public let clientIdentifier: String
+        public let lastPrekey: Prekey
+
+        // MARK: Initialization
+
+        public init(requesterIdentifier: UUID, targetUserIdentifier: UUID, clientIdentifier: String, lastPrekey: Prekey) {
+            self.requesterIdentifier = requesterIdentifier
+            self.targetUserIdentifier = targetUserIdentifier
+            self.clientIdentifier = clientIdentifier
+            self.lastPrekey = lastPrekey
+        }
+
+        // MARK: Codable
+
+        private enum CodingKeys: String, CodingKey {
+            case requesterIdentifier = "requester"
+            case targetUserIdentifier = "target_user"
+            case clientIdentifier = "client_id"
+            case lastPrekey = "last_prekey"
+        }
+
+        static func decode(from data: Data) -> LegalHoldRequest? {
+            let decoder = JSONDecoder()
+            decoder.dataDecodingStrategy = .base64
+            return try? decoder.decode(LegalHoldRequest.self, from: data)
+        }
+
+        func encode() -> Data? {
+            let encoder = JSONEncoder()
+            encoder.dataEncodingStrategy = .base64
+            return try? encoder.encode(self)
+        }
+
+    }
+
     public static let mutualFriendsKey = "mutual_friends"
     public static let totalMutualFriendsKey = "total_mutual_friends"
 
@@ -52,6 +107,10 @@ import Foundation
 
     @NSManaged public var serviceIdentifier: String?
     @NSManaged public var richProfile: NSArray?
+
+    public var userClients: Set<MockUserClient> {
+        return clients as! Set<MockUserClient>
+    }
 
     override public func awakeFromInsert() {
         if accentID == 0 {
@@ -88,6 +147,38 @@ extension MockUser {
         updatedValues.add(value)
         richProfile = updatedValues
     }
+}
+
+// MARK: - Legal Hold
+
+extension MockUser {
+
+    @NSManaged private var primitiveLegalHoldRequest: Data?
+
+    public var legalHoldState: LegalHoldState {
+        if userClients.any(\.isLegalHoldDevice) {
+            return .enabled
+        } else if let request = legalHoldRequest {
+            return .pending(request)
+        } else {
+            return .disabled
+        }
+    }
+
+    public var legalHoldRequest: LegalHoldRequest? {
+        get {
+            willAccessValue(forKey: "legalHoldRequest")
+            let value = primitiveLegalHoldRequest.flatMap(LegalHoldRequest.decode)
+            didAccessValue(forKey: "legalHoldRequest")
+            return value
+        }
+        set {
+            willChangeValue(forKey: "legalHoldRequest")
+            primitiveLegalHoldRequest = newValue.flatMap { $0.encode() }
+            didChangeValue(forKey: "legalHoldRequest")
+        }
+    }
+
 }
 
 // MARK: - Broadcasting
