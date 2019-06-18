@@ -25,9 +25,6 @@ import CoreData
     /// User that owns the client
     @NSManaged public var user : MockUser?
 
-    /// User that will own the client once legal hold is accepted.
-    @NSManaged public var pendingLegalHoldUser: MockUser?
-
     /// Remote identifier
     @NSManaged public var identifier : String?
     

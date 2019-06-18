@@ -68,7 +68,6 @@ extension MockUser {
             generatedLastPrekey = try? session.generateLastPrekey()
         }
 
-
         guard let prekeys = generatedPrekeys, !prekeys.isEmpty, let lastPrekey = generatedLastPrekey else {
             return false
         }

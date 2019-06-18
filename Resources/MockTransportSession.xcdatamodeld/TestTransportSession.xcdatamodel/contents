@@ -147,7 +147,6 @@
         <attribute name="time" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="lastPrekey" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PreKey" inverseName="lastPrekeyOfClient" inverseEntity="PreKey" syncable="YES"/>
-        <relationship name="pendingLegalHoldUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" syncable="YES"/>
         <relationship name="prekeys" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="PreKey" inverseName="client" inverseEntity="PreKey" syncable="YES"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="clients" inverseEntity="User" syncable="YES"/>
     </entity>
@@ -163,7 +162,7 @@
         <element name="Service" positionX="9" positionY="153" width="128" height="135"/>
         <element name="Team" positionX="9" positionY="153" width="128" height="195"/>
         <element name="User" positionX="0" positionY="0" width="128" height="435"/>
-        <element name="UserClient" positionX="0" positionY="0" width="128" height="270"/>
+        <element name="UserClient" positionX="0" positionY="0" width="128" height="255"/>
         <element name="PendingLegalHoldClient" positionX="18" positionY="162" width="128" height="105"/>
     </elements>
 </model>

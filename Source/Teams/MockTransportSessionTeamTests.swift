@@ -395,7 +395,7 @@ extension MockTransportSessionTeamTests {
         XCTAssertEqual(response?.payload as? NSDictionary, ["label": "legalhold-not-pending"])
     }
 
-    func testThatItApprovesLegalHoldRequest() {
+    func testThatItApprovesLegalHoldRequestForUser() {
         var user: MockUser!
         var team: MockTeam!
 
