@@ -156,6 +156,8 @@ extension MockTransportSession {
         return nil
     }
 
+    // MARK: - Legal Hold
+
     private func approveUserLegalHold(inTeam teamId: String?, forUser userId: String?, payload: ZMTransportData?, method: ZMTransportRequestMethod) -> ZMTransportResponse? {
         // 1) Assert request contents
         guard let teamId = teamId, let userId = userId else { return nil }
@@ -193,6 +195,32 @@ extension MockTransportSession {
     private func errorResponse(withCode code: Int, reason: String) -> ZMTransportResponse {
         let payload: NSDictionary = ["label": reason]
         return ZMTransportResponse(payload: payload, httpStatus: code, transportSessionError: nil)
+    }
+
+    @objc(pushEventsForLegalHoldWithInserted:updated:deleted:shouldSendEventsToSelfUser:)
+    public func pushEventsForLegalHold(inserted: Set<NSManagedObject>, updated: Set<NSManagedObject>, deleted: Set<NSManagedObject>, shouldSendEventsToSelfUser: Bool) -> [MockPushEvent] {
+
+        guard shouldSendEventsToSelfUser else { return [] }
+
+        return inserted
+            .lazy
+            .compactMap { $0 as? MockPendingLegalHoldClient }
+            .map(pushEventForPendingLegalHoldDevice)
+    }
+
+    private func pushEventForPendingLegalHoldDevice(_ device: MockPendingLegalHoldClient) -> MockPushEvent {
+        let payload: NSDictionary = [
+            "type": "user.client-legal-hold-request",
+            "requester": UUID().transportString(),
+            "target_user": device.user!.identifier,
+            "client_id": device.identifier!,
+            "last_prekey": [
+                "id": device.lastPrekey.identifier,
+                "key": device.lastPrekey.value
+            ]
+        ]
+
+        return MockPushEvent(with: payload, uuid: UUID(), isTransient: false, isSilent: false)
     }
 
 }
