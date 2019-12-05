@@ -229,12 +229,25 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     }
     
     NSString *conversationRole = [payload optionalStringForKey:@"conversation_role"];
-    MockUser *user = [self fetchUserWithIdentifier:memberId];
-    if (conversationRole != nil && user!= nil) {
-        user.role = conversationRole;
+    if (conversationRole == nil) {
+        return [ZMTransportResponse responseWithPayload:@{@"error":@"no conversation_role in payload"} HTTPStatus:400 transportSessionError:nil];
     }
     
-     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
+    MockUser *user = [self fetchUserWithIdentifier:memberId];
+    if(user == nil) {
+        return [ZMTransportResponse responseWithPayload:@{
+                                                          @"code" : @403,
+                                                          @"message": @"Unknown user",
+                                                          @"label": @""
+                                                          } HTTPStatus:403 transportSessionError:nil];
+    }
+    
+    if (![conversation.activeUsers containsObject:user]) {
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:403 transportSessionError:nil];
+    }
+    user.role = conversationRole;
+
+    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
 }
 
 
