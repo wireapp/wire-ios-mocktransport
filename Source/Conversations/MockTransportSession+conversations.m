@@ -74,6 +74,10 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     {
         return [self processPutConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary]];
     }
+    else if ([request matchesWithPath:@"/conversations/*/members/*" method:ZMMethodPUT])
+    {
+        return [self processPutMembersInConversation:[request RESTComponentAtIndex:1] member:[request RESTComponentAtIndex:3] payload:[request.payload asDictionary]];
+    }
     else if ([request matchesWithPath:@"/conversations/*/self" method:ZMMethodPUT])
     {
         return [self processPutConversationSelf:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary]];
@@ -215,6 +219,22 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     
     MockEvent *event = [conversation changeNameByUser:self.selfUser name:newName];
     return [ZMTransportResponse responseWithPayload:event.transportData HTTPStatus:200 transportSessionError:nil];
+}
+
+- (ZMTransportResponse *)processPutMembersInConversation:(NSString *)conversationId member:(NSString *)memberId payload:(NSDictionary *)payload;
+{
+    MockConversation *conversation = [self conversationByIdentifier:conversationId];
+    if (conversation == nil) {
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
+    }
+    
+    NSString *conversationRole = [payload optionalStringForKey:@"conversation_role"];
+    MockUser *user = [self fetchUserWithIdentifier:memberId];
+    if (conversationRole != nil && user!= nil) {
+        user.role = conversationRole;
+    }
+    
+     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
 }
 
 

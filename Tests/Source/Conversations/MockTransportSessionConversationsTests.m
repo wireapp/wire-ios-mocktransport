@@ -1197,6 +1197,50 @@
     }];
 }
 
+- (void)testThatWeCanChangeAParticipantGroupRoleInAConversation
+{
+    // GIVEN
+    __block MockUser *selfUser;
+    __block MockUser *user1;
+    __block MockUser *user2;
+    
+    __block MockConversation *groupConversation;
+    __block NSString *groupConversationID;
+    __block NSString *user1ID;
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        selfUser = [session insertSelfUserWithName:@"Me Myself"];
+        user1 = [session insertUserWithName:@"Foo"];
+        user1ID = user1.identifier;
+        user2 = [session insertUserWithName:@"Bar"];
+        
+        groupConversation = [session insertGroupConversationWithSelfUser:selfUser otherUsers:@[user1, user2]];
+        groupConversation.creator = user2;
+        groupConversationID = groupConversation.identifier;
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSString *path = [NSString pathWithComponents:@[@"/", @"conversations", groupConversationID, @"members", user1ID]];
+    NSDictionary *payload = @{
+                              @"conversation_role": MockConversation.member
+                              };
+    
+    //WHEN
+    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPUT];
+    
+    // THEN
+    XCTAssertNotNil(response);
+    if (!response) {
+        return;
+    }
+    XCTAssertEqual(response.HTTPStatus, 200);
+    XCTAssertNil(response.transportSessionError);
+    
+    [self.sut.managedObjectContext performBlockAndWait:^{
+        XCTAssertEqualObjects(user1.role, MockConversation.member);
+        XCTAssertEqualObjects(user2.role, MockConversation.admin);
+    }];
+}
+
 
 - (void)testThatWeCanAddParticipantsToAConversation
 {
