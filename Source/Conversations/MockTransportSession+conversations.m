@@ -312,6 +312,8 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
 {
     NSArray *participantIDs = request.payload.asDictionary[@"users"];
     NSString *name = request.payload.asDictionary[@"name"];
+    NSString *groupRole = request.payload.asDictionary[@"conversation_role"];
+
     
     NSMutableArray *otherUsers = [NSMutableArray array];
     
@@ -323,6 +325,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
         
         if (results.count == 1) {
             MockUser *user = results[0];
+            user.role = groupRole;
             [otherUsers addObject:user];
         }
     }
@@ -331,6 +334,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     if(name != nil) {
         [conversation changeNameByUser:self.selfUser name:name];
     }
+    self.selfUser.role = MockConversation.admin;
     return [ZMTransportResponse responseWithPayload:[conversation transportData] HTTPStatus:200 transportSessionError:nil];
 }
 
@@ -354,12 +358,14 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     MockConversation *conversation = [self fetchConversationWithIdentifier:conversationId];
     
     NSArray *addedUserIDs = payload[@"users"];
+    NSString *groupRole = payload[@"conversation_role"];
     NSMutableArray *addedUsers = [NSMutableArray array];
     MockUser *selfUser = self.selfUser;
     NSAssert(selfUser != nil, @"Self not found");
     
     for (NSString *userID in addedUserIDs) {
         MockUser *user = [self fetchUserWithIdentifier:userID];
+        user.role = groupRole;
         if(user == nil) {
             return [ZMTransportResponse responseWithPayload:@{
                                                               @"code" : @403,
@@ -378,7 +384,6 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
         }
         [addedUsers addObject:user];
     }
-    
     
     MockEvent *event = [conversation addUsersByUser:self.selfUser addedUsers:addedUsers];
     return [ZMTransportResponse responseWithPayload:event.transportData HTTPStatus:200 transportSessionError:nil];
