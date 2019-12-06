@@ -345,7 +345,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
 {
     NSArray *participantIDs = request.payload.asDictionary[@"users"];
     NSString *name = request.payload.asDictionary[@"name"];
-    NSString *groupRole = request.payload.asDictionary[@"conversation_role"];
+    NSString *conversationRole = request.payload.asDictionary[@"conversation_role"];
 
     
     NSMutableArray *otherUsers = [NSMutableArray array];
@@ -358,7 +358,9 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
         
         if (results.count == 1) {
             MockUser *user = results[0];
-            user.role = groupRole;
+            if (conversationRole != nil) {
+                user.role = conversationRole;
+            }
             [otherUsers addObject:user];
         }
     }
@@ -391,14 +393,16 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     MockConversation *conversation = [self fetchConversationWithIdentifier:conversationId];
     
     NSArray *addedUserIDs = payload[@"users"];
-    NSString *groupRole = payload[@"conversation_role"];
+    NSString *conversationRole = payload[@"conversation_role"];
     NSMutableArray *addedUsers = [NSMutableArray array];
     MockUser *selfUser = self.selfUser;
     NSAssert(selfUser != nil, @"Self not found");
     
     for (NSString *userID in addedUserIDs) {
         MockUser *user = [self fetchUserWithIdentifier:userID];
-        user.role = groupRole;
+        if (conversationRole != nil) {
+            user.role = conversationRole;
+        }
         if(user == nil) {
             return [ZMTransportResponse responseWithPayload:@{
                                                               @"code" : @403,
