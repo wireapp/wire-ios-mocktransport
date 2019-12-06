@@ -236,10 +236,10 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     MockUser *user = [self fetchUserWithIdentifier:memberId];
     if(user == nil) {
         return [ZMTransportResponse responseWithPayload:@{
-                                                          @"code" : @403,
+                                                          @"code" : @400,
                                                           @"message": @"Unknown user",
                                                           @"label": @""
-                                                          } HTTPStatus:403 transportSessionError:nil];
+                                                          } HTTPStatus:400 transportSessionError:nil];
     }
     
     if (![conversation.activeUsers containsObject:user]) {
