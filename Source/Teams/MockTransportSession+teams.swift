@@ -165,12 +165,8 @@ extension MockTransportSession {
         let predicate = MockTeam.predicateWithIdentifier(identifier: identifier)
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound }
         
-//        if let permissionError = ensurePermission(.getMemberPermissions, in: team) {
-//            return permissionError
-//        }
-        
         let payload: [String : Any] = [
-            "roles" : team.roles.map { $0.payload }
+            "conversation_roles" : team.roles.map { $0.payload }
         ]
         
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
