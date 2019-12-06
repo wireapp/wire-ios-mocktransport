@@ -22,6 +22,7 @@ import CoreData
 @objc public final class MockTeam: NSManagedObject, EntityNamedProtocol {
     @NSManaged public var conversations: Set<MockConversation>?
     @NSManaged public var members: Set<MockMember>
+    @NSManaged public var roles: Set<MockRole>
     @NSManaged public var creator: MockUser?
     @NSManaged public var name: String?
     @NSManaged public var pictureAssetKey: String?
@@ -58,6 +59,7 @@ extension MockTeam {
         team.pictureAssetId = assetId ?? ""
         team.pictureAssetKey = assetKey
         team.isBound = isBound
+//        team.roles = MockRole.insert(in: context, name: <#T##String#>, actions: <#T##Set<MockAction>#>)
         return team
     }
     
