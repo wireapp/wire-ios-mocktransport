@@ -248,7 +248,13 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     if (![conversation.activeUsers containsObject:user]) {
         return [ZMTransportResponse responseWithPayload:nil HTTPStatus:403 transportSessionError:nil];
     }
-    user.role = conversationRole;
+    MockRole *roleAdmin = [MockRole adminWithManagedObjectContext:self.managedObjectContext];
+    MockRole *roleMember = [MockRole memberWithManagedObjectContext:self.managedObjectContext];
+    MockParticipantRole * participantRoleMember = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:user];
+    participantRoleMember.role = [conversationRole isEqualToString:MockConversation.member] ? roleMember : roleAdmin;
+
+    MockParticipantRole * participantRoleCreator = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:conversation.creator];
+    participantRoleCreator.role = roleAdmin;
 
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
 }
@@ -361,9 +367,6 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
         
         if (results.count == 1) {
             MockUser *user = results[0];
-            if (conversationRole != nil) {
-                user.role = conversationRole;
-            }
             [otherUsers addObject:user];
         }
     }
@@ -372,7 +375,15 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     if(name != nil) {
         [conversation changeNameByUser:self.selfUser name:name];
     }
-    self.selfUser.role = MockConversation.admin;
+    MockRole *roleAdmin = [MockRole adminWithManagedObjectContext:self.managedObjectContext];
+    MockRole *roleMember = [MockRole memberWithManagedObjectContext:self.managedObjectContext];
+    
+    for (MockUser *user in otherUsers) {
+        MockParticipantRole * participantRoleMember = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:user];
+        participantRoleMember.role = [conversationRole isEqualToString:MockConversation.member] ? roleMember : roleAdmin;
+    }
+    MockParticipantRole * participantRole = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:self.selfUser];
+    participantRole.role = roleAdmin;
     return [ZMTransportResponse responseWithPayload:[conversation transportData] HTTPStatus:200 transportSessionError:nil];
 }
 
@@ -400,18 +411,29 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     NSMutableArray *addedUsers = [NSMutableArray array];
     MockUser *selfUser = self.selfUser;
     NSAssert(selfUser != nil, @"Self not found");
+    MockRole *role = [MockRole existingRoleWithName:conversationRole team:nil conversation:conversation managedObjectContext:self.managedObjectContext];
     
     for (NSString *userID in addedUserIDs) {
         MockUser *user = [self fetchUserWithIdentifier:userID];
-        if (conversationRole != nil) {
-            user.role = conversationRole;
-        }
         if(user == nil) {
             return [ZMTransportResponse responseWithPayload:@{
                                                               @"code" : @403,
                                                               @"message": @"Unknown user",
                                                               @"label": @""
                                                               } HTTPStatus:403 transportSessionError:nil];
+        }
+        
+        if (role != nil) {
+            MockParticipantRole * participantRole = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:user];
+            participantRole.role = role;
+        } else {
+            MockRole *roleAdmin = [MockRole adminWithManagedObjectContext:self.managedObjectContext];
+            MockRole *roleMember = [MockRole memberWithManagedObjectContext:self.managedObjectContext];
+            MockParticipantRole * participantRoleMember = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:user];
+            participantRoleMember.role = [conversationRole isEqualToString:MockConversation.member] ? roleMember : roleAdmin;
+            
+            MockParticipantRole * participantRoleCreator = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:user];
+            participantRoleCreator.role = roleAdmin;
         }
         
         MockConnection *connection = [self fetchConnectionFrom:selfUser to:user];

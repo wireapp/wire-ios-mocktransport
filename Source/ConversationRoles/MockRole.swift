@@ -20,9 +20,15 @@ import Foundation
 import CoreData
 
 @objc public final class MockRole: NSManagedObject, EntityNamedProtocol {
+    public static let nameKey = #keyPath(MockRole.name)
+    public static let teamKey = #keyPath(MockRole.team)
+    public static let conversationKey = #keyPath(MockRole.conversation)
+    
     @NSManaged public var name: String
     @NSManaged public var actions: Set<MockAction>
-    @NSManaged public var team: MockTeam
+    @NSManaged public var team: MockTeam?
+    @NSManaged public var conversation: MockConversation?
+    @NSManaged public var participantRoles: Set<MockParticipantRole>
     
     public static var entityName = "Role"
 }
@@ -46,5 +52,37 @@ extension MockRole {
     
     var payload: ZMTransportData {
         return payloadValues as NSDictionary
+    }
+}
+
+extension MockRole {
+    @objc(existingRoleWithName:team:conversation:managedObjectContext:)
+    public static func existingRole(with name: String,
+                                    team: MockTeam?,
+                                    conversation: MockConversation?,
+                             managedObjectContext: NSManagedObjectContext) -> MockRole? {
+        let namePredicate = NSPredicate(format: "%K == %@", #keyPath(MockRole.name), name)
+        let teamOrConvoPredicate: NSPredicate
+       
+        teamOrConvoPredicate = (team != nil) ? NSPredicate(format: "%K == %@", MockRole.teamKey, team!) :
+                                                    NSPredicate(format: "%K == %@", MockRole.conversationKey, conversation!)
+        let rolePredicate: NSPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            namePredicate,
+            teamOrConvoPredicate
+            ])
+        
+        return MockRole.fetch(in: managedObjectContext, withPredicate: rolePredicate)
+    }
+}
+
+extension MockRole {
+    @objc
+    public static func admin(managedObjectContext: NSManagedObjectContext) -> MockRole {
+        return self.insert(in: managedObjectContext, name: MockConversation.admin, actions: MockTeam.createAdminActions(context: managedObjectContext))
+    }
+    
+    @objc
+    public static func member(managedObjectContext: NSManagedObjectContext) -> MockRole {
+        return self.insert(in: managedObjectContext, name: MockConversation.member, actions: MockTeam.createMemberActions(context: managedObjectContext))
     }
 }

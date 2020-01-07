@@ -54,7 +54,8 @@
 @dynamic accessMode;
 @dynamic link;
 @dynamic receiptMode;
-@dynamic roles;
+@dynamic nonTeamRoles;
+@dynamic participantRoles;
 
 + (instancetype)insertConversationIntoContext:(NSManagedObjectContext *)moc withSelfUser:(MockUser *)selfUser creator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)type
 {
@@ -186,8 +187,12 @@
         if([activeUser.identifier isEqualToString:self.selfIdentifier]) { // self user should not be in others
             continue;
         }
-        [others addObject:@{ @"id": activeUser.identifier,
-                             @"conversation_role": activeUser.role }];
+        MockRole *role = [activeUser roleIn:self];
+        if (role != nil) {
+            [others addObject:@{ @"id": activeUser.identifier,
+                                 @"conversation_role": role.name}];
+        }
+
     }
     
     members[@"others"] = others;
