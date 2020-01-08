@@ -25,7 +25,7 @@ class MockUserTests: MockTransportSessionTests {
         let user = sut.insertUser(withName: "some")
         
         // WHEN
-        var pictures = sut.addProfilePicture(to: user)
+        let pictures = sut.addProfilePicture(to: user)
         
         // THEN
         XCTAssertEqual(user.mediumImage, pictures["medium"])
@@ -39,7 +39,7 @@ class MockUserTests: MockTransportSessionTests {
         let user = sut.insertUser(withName: "some")
         
         // WHEN
-        var pictures = sut.addV3ProfilePicture(to: user)
+        let pictures = sut.addV3ProfilePicture(to: user)
 
         // THEN
         XCTAssertEqual(user.previewProfileAssetIdentifier, pictures["preview"]?.identifier)
