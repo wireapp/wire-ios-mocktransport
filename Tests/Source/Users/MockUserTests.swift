@@ -20,6 +20,22 @@ import Foundation
 @testable import WireMockTransport
 
 class MockUserTests: MockTransportSessionTests {
+    
+    var team: MockTeam!
+    var selfUser: MockUser!
+    var conversation: MockConversation!
+    
+    override func setUp() {
+        super.setUp()
+        sut.performRemoteChanges { session in
+            self.selfUser = session.insertSelfUser(withName: "me")
+            self.team = session.insertTeam(withName: "A Team", isBound: true)
+            self.conversation = session.insertTeamConversation(to: self.team, with: [session.insertUser(withName: "some")], creator: self.selfUser)
+            
+        }
+        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
     func testImageAccessorsReturnsCorrectImages() {
         // GIVEN
         let user = sut.insertUser(withName: "some")
@@ -45,5 +61,18 @@ class MockUserTests: MockTransportSessionTests {
         XCTAssertEqual(user.previewProfileAssetIdentifier, pictures["preview"]?.identifier)
         XCTAssertEqual(user.completeProfileAssetIdentifier, pictures["complete"]?.identifier)
 
+    }
+    
+    func testThatUserReturnsCorrectRole() {
+        // GIVEN
+        let user = sut.insertUser(withName: "some")
+        
+        // WHEN
+        let roleMember: MockRole = MockRole.member(managedObjectContext: sut.managedObjectContext)
+        let participantRoleMember: MockParticipantRole = MockParticipantRole.insert(in: sut.managedObjectContext, conversation: conversation, user: user)
+        participantRoleMember.role = roleMember
+        
+        // THEN
+        XCTAssertEqual(user.role(in: conversation)?.name, MockConversation.member)
     }
 }
