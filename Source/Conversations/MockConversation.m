@@ -71,9 +71,9 @@
     conversation.accessMode = [MockConversation defaultAccessModeWithConversationType:type team:nil];
     conversation.accessRole = [MockConversation defaultAccessRoleWithConversationType:type team:nil];
     [conversation.mutableActiveUsers addObject:creator];
-    MockRole *roleAdmin = [MockRole adminWithManagedObjectContext:moc];
-    MockParticipantRole * participantRoleCreator = [MockParticipantRole insertIn:moc conversation:conversation user:conversation.creator];
-    participantRoleCreator.role = roleAdmin;
+//    MockRole *roleAdmin = [MockRole adminWithManagedObjectContext:moc];
+//    MockParticipantRole * participantRoleCreator = [MockParticipantRole insertIn:moc conversation:conversation user:conversation.creator];
+//    participantRoleCreator.role = roleAdmin;
     return conversation;
 }
 

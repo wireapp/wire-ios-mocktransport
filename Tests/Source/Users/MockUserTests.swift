@@ -62,18 +62,4 @@ class MockUserTests: MockTransportSessionTests {
         XCTAssertEqual(user.completeProfileAssetIdentifier, pictures["complete"]?.identifier)
 
     }
-    
-    func testThatUserReturnsCorrectRole() {
-        // GIVEN
-        let user = sut.insertUser(withName: "some")
-        
-        // WHEN
-        let roleMember: MockRole = MockRole.member(managedObjectContext: sut.managedObjectContext)
-        let participantRoleMember: MockParticipantRole = MockParticipantRole.insert(in: sut.managedObjectContext, conversation: conversation, user: user)
-        participantRoleMember.role = roleMember
-        
-        // THEN
-        XCTAssertEqual(user.role(in: conversation)?.name, MockConversation.member)
-        XCTAssertEqual(conversation.participantRoles?.count, 1)
-    }
 }

@@ -54,35 +54,3 @@ extension MockRole {
         return payloadValues as NSDictionary
     }
 }
-
-extension MockRole {
-    @objc(existingRoleWithName:team:conversation:managedObjectContext:)
-    public static func existingRole(with name: String,
-                                    team: MockTeam?,
-                                    conversation: MockConversation?,
-                             managedObjectContext: NSManagedObjectContext) -> MockRole? {
-        let namePredicate = NSPredicate(format: "%K == %@", #keyPath(MockRole.name), name)
-        let teamOrConvoPredicate: NSPredicate
-       
-        teamOrConvoPredicate = (team != nil) ? NSPredicate(format: "%K == %@", MockRole.teamKey, team!) :
-                                                    NSPredicate(format: "%K == %@", MockRole.conversationKey, conversation!)
-        let rolePredicate: NSPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-            namePredicate,
-            teamOrConvoPredicate
-            ])
-        
-        return MockRole.fetch(in: managedObjectContext, withPredicate: rolePredicate)
-    }
-}
-
-extension MockRole {
-    @objc
-    public static func admin(managedObjectContext: NSManagedObjectContext) -> MockRole {
-        return self.insert(in: managedObjectContext, name: MockConversation.admin, actions: MockTeam.createAdminActions(context: managedObjectContext))
-    }
-    
-    @objc
-    public static func member(managedObjectContext: NSManagedObjectContext) -> MockRole {
-        return self.insert(in: managedObjectContext, name: MockConversation.member, actions: MockTeam.createMemberActions(context: managedObjectContext))
-    }
-}
