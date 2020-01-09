@@ -1220,7 +1220,6 @@
         user2 = [session insertUserWithName:@"Bar"];
         
         groupConversation = [session insertGroupConversationWithSelfUser:selfUser otherUsers:@[user1, user2]];
-        groupConversation.creator = user2;
         groupConversationID = groupConversation.identifier;
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -1243,7 +1242,7 @@
     
     [self.sut.managedObjectContext performBlockAndWait:^{
         XCTAssertEqualObjects([user1 roleIn:groupConversation].name, MockConversation.member);
-        XCTAssertEqualObjects([user2 roleIn:groupConversation].name, MockConversation.admin);
+        XCTAssertEqualObjects([selfUser roleIn:groupConversation].name, MockConversation.admin);
     }];
 }
 

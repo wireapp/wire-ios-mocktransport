@@ -253,9 +253,6 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     MockParticipantRole * participantRoleMember = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:user];
     participantRoleMember.role = [conversationRole isEqualToString:MockConversation.member] ? roleMember : roleAdmin;
 
-    MockParticipantRole * participantRoleCreator = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:conversation.creator];
-    participantRoleCreator.role = roleAdmin;
-
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
 }
 
