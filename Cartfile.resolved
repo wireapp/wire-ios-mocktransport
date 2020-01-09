@@ -1,6 +1,6 @@
 github "wireapp/ocmock" "v3.4.3"
 github "wireapp/protobuf-objc" "1.9.14"
-github "wireapp/swift-protobuf" "fork-update"
+github "wireapp/swift-protobuf" "1.7.0"
 github "wireapp/wire-ios-cryptobox" "chore/xcode11.3"
 github "wireapp/wire-ios-protos" "chore/xcode11.3"
 github "wireapp/wire-ios-system" "chore/xcode11.3"
