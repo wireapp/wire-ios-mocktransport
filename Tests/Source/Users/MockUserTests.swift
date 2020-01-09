@@ -74,5 +74,6 @@ class MockUserTests: MockTransportSessionTests {
         
         // THEN
         XCTAssertEqual(user.role(in: conversation)?.name, MockConversation.member)
+        XCTAssertEqual(conversation.participantRoles?.count, 1)
     }
 }
