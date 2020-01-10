@@ -249,8 +249,11 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
         return [ZMTransportResponse responseWithPayload:nil HTTPStatus:403 transportSessionError:nil];
     }
     MockParticipantRole * participantRoleMember = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:user];
-    participantRoleMember.role = [conversationRole isEqualToString:MockConversation.member] ? self.adminRole : self.memberRole;
-
+    participantRoleMember.role = [conversationRole isEqualToString:MockConversation.member] ? self.memberRole : self.adminRole;
+    
+    MockParticipantRole * participantRoleSelfUser = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:self.selfUser];
+    participantRoleSelfUser.role = self.adminRole;
+    
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
 }
 
@@ -369,16 +372,14 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     MockConversation *conversation = [self insertGroupConversationWithSelfUser:self.selfUser otherUsers:otherUsers];
     if(name != nil) {
         [conversation changeNameByUser:self.selfUser name:name];
-    }
-//    MockRole *roleAdmin = [MockRole adminWithManagedObjectContext:self.managedObjectContext];
-//    MockRole *roleMember = [MockRole memberWithManagedObjectContext:self.managedObjectContext];
-    
+    }    
     for (MockUser *user in otherUsers) {
         MockParticipantRole * participantRoleMember = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:user];
         participantRoleMember.role = [conversationRole isEqualToString:MockConversation.member] ? self.memberRole : self.adminRole;
     }
     MockParticipantRole * participantRole = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:self.selfUser];
     participantRole.role = self.adminRole;
+    
     return [ZMTransportResponse responseWithPayload:[conversation transportData] HTTPStatus:200 transportSessionError:nil];
 }
 

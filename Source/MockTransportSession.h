@@ -66,6 +66,9 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 @property (nonatomic) BOOL disableEnqueueRequests;
 @property (nonatomic) BOOL doNotRespondToRequests; //to simulate offline
 
+@property (nonatomic) MockRole *adminRole;
+@property (nonatomic) MockRole *memberRole;
+
 @property (nonatomic, readonly) NSArray *updateEvents;
 
 @property (nonatomic, readwrite) id<ReachabilityProvider, TearDownCapable> reachability;

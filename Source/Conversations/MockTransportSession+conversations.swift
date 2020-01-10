@@ -171,16 +171,3 @@ extension MockTransportSession {
         }
     }
 }
-
-extension MockTransportSession {
-    @objc
-    public var adminRole: MockRole {
-        return MockRole.insert(in: managedObjectContext, name: MockConversation.admin, actions: MockTeam.createAdminActions(context: managedObjectContext))
-    }
-    
-    @objc
-    public var memberRole: MockRole {
-        
-        return MockRole.insert(in: managedObjectContext, name: MockConversation.member, actions: MockTeam.createMemberActions(context: managedObjectContext))
-    }
-}
