@@ -377,8 +377,8 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
         MockParticipantRole * participantRoleMember = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:user];
         participantRoleMember.role = [conversationRole isEqualToString:MockConversation.member] ? self.memberRole : self.adminRole;
     }
-    MockParticipantRole * participantRole = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:self.selfUser];
-    participantRole.role = self.adminRole;
+    MockParticipantRole * participantRoleSelfUser = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:self.selfUser];
+    participantRoleSelfUser.role = self.adminRole;
     
     return [ZMTransportResponse responseWithPayload:[conversation transportData] HTTPStatus:200 transportSessionError:nil];
 }
@@ -418,9 +418,6 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
         }
         MockParticipantRole * participantRoleMember = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:user];
         participantRoleMember.role = [conversationRole isEqualToString:MockConversation.member] ? self.memberRole : self.adminRole;
-        
-        MockParticipantRole * participantRoleCreator = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:user];
-        participantRoleCreator.role = self.adminRole;
         
         MockConnection *connection = [self fetchConnectionFrom:selfUser to:user];
         if (connection == nil) {
