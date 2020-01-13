@@ -188,11 +188,10 @@
             continue;
         }
         MockRole *role = [activeUser roleIn:self];
-        if (role != nil) {
-            [others addObject:@{ @"id": activeUser.identifier,
-                                 @"conversation_role": role.name}];
-        }
-
+        NSString *roleName = role != nil ? role.name : MockRole.adminRole.name;
+        [others addObject:@{ @"id": activeUser.identifier,
+                             @"conversation_role": roleName}];
+        
     }
     
     members[@"others"] = others;

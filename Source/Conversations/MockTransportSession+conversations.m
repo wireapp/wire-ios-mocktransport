@@ -249,10 +249,10 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
         return [ZMTransportResponse responseWithPayload:nil HTTPStatus:403 transportSessionError:nil];
     }
     MockParticipantRole * participantRoleMember = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:user];
-    participantRoleMember.role = [conversationRole isEqualToString:MockConversation.member] ? self.memberRole : self.adminRole;
+    participantRoleMember.role = [conversationRole isEqualToString:MockConversation.member] ? MockRole.memberRole : MockRole.adminRole;
     
     MockParticipantRole * participantRoleSelfUser = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:self.selfUser];
-    participantRoleSelfUser.role = self.adminRole;
+    participantRoleSelfUser.role = MockRole.adminRole;
     
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
 }
@@ -375,10 +375,10 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     }    
     for (MockUser *user in otherUsers) {
         MockParticipantRole * participantRoleMember = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:user];
-        participantRoleMember.role = [conversationRole isEqualToString:MockConversation.member] ? self.memberRole : self.adminRole;
+        participantRoleMember.role = [conversationRole isEqualToString:MockConversation.member] ? MockRole.memberRole : MockRole.adminRole;
     }
     MockParticipantRole * participantRoleSelfUser = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:self.selfUser];
-    participantRoleSelfUser.role = self.adminRole;
+    participantRoleSelfUser.role = MockRole.adminRole;
     
     return [ZMTransportResponse responseWithPayload:[conversation transportData] HTTPStatus:200 transportSessionError:nil];
 }
@@ -417,7 +417,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
                                                               } HTTPStatus:403 transportSessionError:nil];
         }
         MockParticipantRole * participantRoleMember = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:user];
-        participantRoleMember.role = [conversationRole isEqualToString:MockConversation.member] ? self.memberRole : self.adminRole;
+        participantRoleMember.role = [conversationRole isEqualToString:MockConversation.member] ? MockRole.memberRole : MockRole.adminRole;
         
         MockConnection *connection = [self fetchConnectionFrom:selfUser to:user];
         if (connection == nil) {

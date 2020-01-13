@@ -30,6 +30,9 @@ import CoreData
     @NSManaged public var conversation: MockConversation?
     @NSManaged public var participantRoles: Set<MockParticipantRole>
     
+    @objc public static var adminRole: MockRole?
+    @objc public static var memberRole: MockRole?
+    
     public static var entityName = "Role"
 }
 
@@ -52,5 +55,13 @@ extension MockRole {
     
     var payload: ZMTransportData {
         return payloadValues as NSDictionary
+    }
+}
+
+extension MockRole {
+    @objc
+    public static func createConversationRoles (context: NSManagedObjectContext) {
+        adminRole = MockRole.insert(in: context, name: MockConversation.admin, actions: MockTeam.createAdminActions(context: context))
+        memberRole = MockRole.insert(in: context, name: MockConversation.member, actions: MockTeam.createMemberActions(context: context))
     }
 }

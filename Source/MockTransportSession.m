@@ -133,17 +133,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         self.reachability = [[MockReachability alloc] init];
         self.pushTokens = [NSMutableDictionary dictionary];
         _nonCompletedRequests = [NSMutableArray array];
-        [self createConversationRoles];
+        [MockRole createConversationRolesWithContext:self.managedObjectContext];
     }
     return self;
 }
 
-- (void)createConversationRoles
-{
-    self.adminRole = [MockRole insertIn:self.managedObjectContext name:[MockConversation admin] actions: [MockTeam createAdminActionsWithContext:self.managedObjectContext]];
-    self.memberRole = [MockRole insertIn:self.managedObjectContext name:[MockConversation member] actions: [MockTeam createAdminActionsWithContext:self.managedObjectContext]];
-}
-    
 - (void)enterBackground
 {
     
