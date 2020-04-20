@@ -158,7 +158,8 @@ extension MockTransportSession {
         }
         
         let payload: [String : Any] = [
-            "members" : team.members.map { $0.payload }
+            "members" : team.members.map { $0.payload },
+            "hasMore" : false
         ]
 
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
@@ -174,7 +175,8 @@ extension MockTransportSession {
         }
         
         let payload: [String : Any] = [
-            "members" : members.map { $0.payload }
+            "members" : members.map { $0.payload },
+            "hasMore" : false
         ]
         
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
