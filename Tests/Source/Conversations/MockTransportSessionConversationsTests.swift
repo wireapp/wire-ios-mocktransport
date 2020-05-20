@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireProtos
 
 @testable import WireMockTransport
 
@@ -250,4 +251,51 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         XCTAssertEqual(member?["actions"] as? [String], ["leave_conversation"])
     }
     
+    func testThatItDecodesOTRMessageProtobufOnReceivingClient() {
+        // GIVEN
+        var selfClient: MockUserClient?
+        
+        var otherUser: MockUser?
+        var otherUserClient: MockUserClient?
+        
+        var conversation: MockConversation?
+        
+        self.sut.performRemoteChanges { (session) in
+            session.registerClient(for: self.selfUser!, label: "self user", type: "permanent", deviceClass: "phone")
+    
+            otherUser = session.insertUser(withName: "bar")
+            conversation = session.insertConversation(withCreator: self.selfUser, otherUsers: [otherUser!], type: ZMTConversationType.oneOnOne)
+            
+            selfClient = self.selfUser?.clients.anyObject() as? MockUserClient
+            otherUserClient = otherUser?.clients.anyObject() as? MockUserClient
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        let messageText = "Fofooof"
+        let text = Text.with {
+            $0.content = messageText
+        }
+
+        let messageID = UUID.create().transportString()
+        let message = GenericMessage.with {
+            $0.text = text
+            $0.messageID = messageID
+        }
+        
+        let builder = selfClient!.otrMessageBuilderWithRecipients(for: [otherUserClient!], plainText: try! message.serializedData())
+        let messageData = builder.build()?.data()
+        
+        // WHEN
+        let requestPath = "/conversations/\(conversation!.identifier)/otr/messages"
+        let response = self.response(forProtobufData: messageData, path: requestPath, method: ZMTransportRequestMethod.methodPOST)
+        
+        // THEN
+        XCTAssertEqual(response!.httpStatus, 201)
+        let lastEvent = conversation!.events.lastObject as! MockEvent
+        XCTAssertNotNil(lastEvent)
+        XCTAssertEqual(lastEvent.eventType, ZMUpdateEventType.conversationOtrMessageAdd)
+        XCTAssertNotNil(lastEvent.decryptedOTRData)
+        let decryptedMessage = try! GenericMessage(serializedData: lastEvent.decryptedOTRData!)
+        XCTAssertEqual(decryptedMessage.text.content, messageText)
+    }
 }

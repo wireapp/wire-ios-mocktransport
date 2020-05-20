@@ -661,55 +661,6 @@
     XCTAssertEqual(self.sut.generatedPushEvents.count, previousNotificationsCount);
 }
 
-- (void)testThatItDecodesOTRMessageProtobufOnReceivingClient
-{
-    // GIVEN
-    __block MockUser *selfUser;
-    __block MockUserClient *selfClient;
-    
-    __block MockUser *otherUser;
-    __block MockUserClient *otherUserClient;
-    
-    __block MockConversation *conversation;
-    
-    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
-        selfUser = [session insertSelfUserWithName:@"foo"];
-        [session registerClientForUser:selfUser label:@"self user" type:@"permanent" deviceClass:@"phone"];
-        
-        otherUser = [session insertUserWithName:@"bar"];
-        conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
-        
-        selfClient = [selfUser.clients anyObject];
-        otherUserClient = [otherUser.clients anyObject];
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    NSString *messageText = @"Fofooof";
-    ZMText *text = [[[ZMText builder] setContent:messageText] build];
-
-    NSString *messageID = [NSUUID createUUID].transportString;
-    ZMGenericMessageBuilder *messageBuilder = [[ZMGenericMessageBuilder alloc] init];
-    [messageBuilder setText:text];
-    [messageBuilder setMessageId:messageID];
-    ZMGenericMessage *message = [messageBuilder build];
-
-    ZMNewOtrMessageBuilder *builder = [selfClient OTRMessageBuilderWithRecipientsForClients:@[otherUserClient] plainText:message.data];
-    NSData *messageData = [[builder build] data];
-    
-    // WHEN
-    NSString *requestPath = [NSString pathWithComponents:@[@"/", @"conversations", conversation.identifier, @"otr", @"messages"]];
-    ZMTransportResponse *response = [self responseForProtobufData:messageData path:requestPath method:ZMMethodPOST];
-    
-    // THEN
-    XCTAssertEqual(response.HTTPStatus, 201);
-    MockEvent *lastEvent = conversation.events.lastObject;
-    XCTAssertNotNil(lastEvent);
-    XCTAssertEqual(lastEvent.eventType, ZMUpdateEventTypeConversationOtrMessageAdd);
-    XCTAssertNotNil(lastEvent.decryptedOTRData);
-    ZMGenericMessage *decryptedMessage = (ZMGenericMessage *)[[[[ZMGenericMessageBuilder alloc] init] mergeFromData:lastEvent.decryptedOTRData] build];
-    XCTAssertEqualObjects(decryptedMessage.text.content, messageText);
-}
-
 - (void)testThatItCreatesPushEventsWhenReceivingOTRMessageWithoutMissedClients
 {
     // GIVEN
