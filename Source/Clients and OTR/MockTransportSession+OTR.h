@@ -21,11 +21,11 @@
 
 @import WireProtos;
 
-@protocol OtrMessage <NSObject>
-
-- (ZMClientId *)sender;
-
-@end
+//@protocol OtrMessage <NSObject>
+//
+//- (ClientId *)sender;
+//
+//@end
 
 
 @interface MockTransportSession (OTR)

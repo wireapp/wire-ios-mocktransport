@@ -243,8 +243,8 @@
 @end
 
 
-@implementation ZMNewOtrMessage (OtrMessage)
-@end
-
-@implementation ZMOtrAssetMeta (OtrMessage)
-@end
+//@implementation ZMNewOtrMessage (OtrMessage)
+//@end
+//
+//@implementation ZMOtrAssetMeta (OtrMessage)
+//@end

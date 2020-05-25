@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireProtos
 
 extension MockTransportSession {
 
@@ -170,4 +171,13 @@ extension MockTransportSession {
             return ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil)
         }
     }
+    
+    
+}
+
+extension MockTransportSession {
+    func otrMessageSenderFrom(sender: ClientId) -> MockUserClient? {
+            return nil
+        }
+    //    - (MockUserClient *)otrMessageSenderFromClientId:(ClientId *)sender;
 }
