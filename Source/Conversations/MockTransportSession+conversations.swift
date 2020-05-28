@@ -198,7 +198,7 @@ extension MockTransportSession {
         ]
         
         var statusCode = 412
-        if missedClients.count == 0 {
+        if missedClients.isEmpty {
             statusCode = 201
             insertOTRMessageEvents(
                 toConversation: conversation,

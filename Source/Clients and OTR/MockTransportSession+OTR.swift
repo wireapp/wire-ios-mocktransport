@@ -52,14 +52,15 @@ extension MockTransportSession {
             if let id = onlyForUserId, UUID(uuidString: user.identifier) != UUID(uuidString: id) {
                 continue
             }
-            let userEntry = recipients.filter { recipient in
+            
+            let userEntry = recipients.first { recipient in
                 guard
                     let uuid = UUID(data: recipient.user.uuid),
                     let userId = UUID(uuidString: user.identifier) else {
                         return false
                 }
                 return uuid == userId && (onlyForUserId == nil || UUID(uuidString: onlyForUserId!) == userId)
-            }.first
+            }
             
             let recipientClients = userEntry?.clients.map { entry in
                 return String(format: "%llx", CUnsignedLongLong(entry.client.client))
@@ -76,7 +77,7 @@ extension MockTransportSession {
                 userClients.subtract(recipientClients)
             }
             
-            if userClients.count > 0 {
+            if !userClients.isEmpty {
                 missedClients[user.identifier] = Array(userClients)
             }
         }
@@ -101,14 +102,14 @@ extension MockTransportSession {
         var deletedClients = [String: [String]]()
         
         for user in users {
-            guard let userEntry = recipients.filter({ recipient in
+            guard let userEntry = recipients.first(where: { recipient in
                 guard
                     let uuid = UUID(data: recipient.user.uuid),
                     let userId = UUID(uuidString: user.identifier) else {
                         return false
                 }
                 return uuid == userId
-            }).first else {
+            }) else {
                 continue
             }
             
@@ -123,7 +124,7 @@ extension MockTransportSession {
             var deletedUserClients = Set(recipientClients)
             deletedUserClients.subtract(userClients)
             
-            if deletedUserClients.count > 0 {
+            if !deletedUserClients.isEmpty {
                 deletedClients[user.identifier] = Array(deletedUserClients)
             }
         }
@@ -151,15 +152,15 @@ extension MockTransportSession {
         let clientsEntries = recipients.flatMap { return $0.clients }
         
         for entry in clientsEntries {
-            let client = allClients?.filter { client in
+            guard let client = allClients?.first(where: { client in
                 let clientId = String(format: "%llx", CUnsignedLongLong(entry.client.client))
                 return client.identifier == clientId
-            }.first
-            
-            if let client = client {
-                let decryptedData = MockUserClient.decryptMessage(data: entry.text, from: senderClient, to: client)
-                _ = createEventBlock(client, entry.text, decryptedData)
+            }) else {
+                return
             }
+            
+            let decryptedData = MockUserClient.decryptMessage(data: entry.text, from: senderClient, to: client)
+            _ = createEventBlock(client, entry.text, decryptedData)
         }
     }
 }

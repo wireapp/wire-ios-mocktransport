@@ -39,7 +39,7 @@ extension MockTransportSession {
             "time": Date().transportString()
         ]
         
-        let statusCode = missedClients.count == 0 ? 201 : 412
+        let statusCode = missedClients.isEmpty ? 201 : 412
         
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: statusCode, transportSessionError: nil)
     }
