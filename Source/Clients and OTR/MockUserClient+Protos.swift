@@ -20,107 +20,66 @@ import Foundation
 import WireProtos
 
 public protocol OtrMessage {
-
     var sender: ClientId { get }
 }
 
-
 extension MockUserClient {
     
-    /// Returns an OTR message builder with the recipients correctly set
-//    @objc(OTRMessageBuilderWithRecipientsForClients:plainText:)
-//    public func otrMessageBuilderWithRecipients(for clients: [MockUserClient], plainText: Data) -> ZMNewOtrMessageBuilder {
-//
-//        let messageBuilder = ZMNewOtrMessage.builder()!
-//        let senderBuilder = ZMClientId.builder()!
-//
-//        senderBuilder.setClient(self.identifier!.asHexEncodedUInt)
-//        messageBuilder.setSender(senderBuilder)
-//        messageBuilder.setRecipientsArray(self.userEntries(for: clients, plainText: plainText))
-//        return messageBuilder
-//    }
-    
-    public func otrMessageBuilderWithRecipients(for clients: [MockUserClient], plainText: Data) -> NewOtrMessage {
-        
-        var message = NewOtrMessage()
-        var sender = ClientId()
-        
-        sender.client = self.identifier!.asHexEncodedUInt
-        message.sender = sender
-        message.recipients = self.userEntries(for: clients, plainText: plainText)
+    /// Returns an OTR message with the recipients correctly set
+    /// - Parameters:
+    ///   - clients: clients needed to create recipients
+    ///   - plainText: plain text
+    /// - Returns: OTR message
+    public func newOtrMessageWithRecipients(for clients: [MockUserClient], plainText: Data) -> NewOtrMessage {
+        let sender = ClientId.with {
+            $0.client = identifier!.asHexEncodedUInt
+        }
+        let message = NewOtrMessage.with {
+            $0.sender = sender
+            $0.recipients = userEntries(for: clients, plainText: plainText)
+        }
         return message
     }
     
     /// Returns an OTR asset message builder with the recipients correctly set
-//    @objc(OTRAssetMessageBuilderWithRecipientsForClients:plainText:)
-//    public func otrAssetMessageBuilderWithRecipients(for clients: [MockUserClient], plainText: Data) -> ZMOtrAssetMetaBuilder {
-//
-//        let messageBuilder = ZMOtrAssetMeta.builder()!
-//        let senderBuilder = ZMClientId.builder()!
-//
-//        senderBuilder.setClient(self.identifier!.asHexEncodedUInt)
-//        messageBuilder.setSender(senderBuilder)
-//        messageBuilder.setRecipientsArray(self.userEntries(for: clients, plainText: plainText))
-//        return messageBuilder
-//    }
-    
+    /// - Parameters:
+    ///   - clients: clients needed to create recipients
+    ///   - plainText: plain text
+    /// - Returns: OTR asset message
     public func otrAssetMessageBuilderWithRecipients(for clients: [MockUserClient], plainText: Data) -> OtrAssetMeta {
         
         var message = OtrAssetMeta()
         var sender = ClientId()
         
-        sender.client = self.identifier!.asHexEncodedUInt
+        sender.client = identifier!.asHexEncodedUInt
         message.sender = sender
-        message.recipients = self.userEntries(for: clients, plainText: plainText)
+        message.recipients = userEntries(for: clients, plainText: plainText)
 
         return message
     }
     
     /// Create user entries for all received of a message
-//    private func userEntries(for clients: [MockUserClient], plainText: Data) -> [ZMUserEntry] {
-//        return MockUserClient.createUserToClientMapping(for: clients).map { (user: MockUser, clients: [MockUserClient]) -> ZMUserEntry in
-//            let userEntryBuilder = ZMUserEntry.builder()!
-//            let userIdBuilder = ZMUserId.builder()!
-//            userIdBuilder.setUuid((UUID(uuidString: user.identifier)! as NSUUID).data())
-//            userEntryBuilder.setUser(userIdBuilder.build())
-//
-//            let clientEntries = clients.map { client -> ZMClientEntry in
-//                let clientIdBuilder = ZMClientId.builder()!
-//                clientIdBuilder.setClient(client.identifier!.asHexEncodedUInt)
-//                let clientEntryBuilder = ZMClientEntry.builder()!
-//                clientEntryBuilder.setClient(clientIdBuilder.build())
-//                let encrypted = MockUserClient.encrypted(data: plainText, from: self, to: client)
-//                clientEntryBuilder.setText(encrypted)
-//
-//                return clientEntryBuilder.build()
-//            }
-//
-//            userEntryBuilder.setClientsArray(clientEntries)
-//            return userEntryBuilder.build()
-//        }
-//    }
-    
     private func userEntries(for clients: [MockUserClient], plainText: Data) -> [UserEntry] {
         return MockUserClient.createUserToClientMapping(for: clients).map { (user: MockUser, clients: [MockUserClient]) -> UserEntry in
-            var userEntry = UserEntry()
-            var userId = UserId()
-            
-            userId.uuid = (UUID(uuidString: user.identifier)! as NSUUID).data()
-            userEntry.user = userId
             
             let clientEntries = clients.map { client -> ClientEntry in
-                var clientId = ClientId()
-                clientId.client = client.identifier!.asHexEncodedUInt
-                var clientEntry = ClientEntry()
-                clientEntry.client = clientId
-                let encrypted = MockUserClient.encrypted(data: plainText, from: self, to: client)
-                clientEntry.text = encrypted
-                
-                return clientEntry
+                let clientId = ClientId.with {
+                    $0.client = client.identifier!.asHexEncodedUInt
+                }
+                return ClientEntry.with {
+                    $0.client = clientId
+                    $0.text = MockUserClient.encrypted(data: plainText, from: self, to: client)
+                }
             }
             
-            userEntry.clients = clientEntries
-            return userEntry
+            let userId = UserId.with {
+                $0.uuid = UUID(uuidString: user.identifier)!.uuidData
+            }
+            
+            return UserEntry.with {
+                $0.user = userId
+                $0.clients = clientEntries
+            }
         }
     }
     
@@ -147,10 +106,6 @@ extension String {
     }
 }
 
-extension NewOtrMessage: OtrMessage {
-    
-}
+extension NewOtrMessage: OtrMessage {}
 
-extension OtrAssetMeta: OtrMessage {
-    
-}
+extension OtrAssetMeta: OtrMessage {}
