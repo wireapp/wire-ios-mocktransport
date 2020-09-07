@@ -54,10 +54,7 @@ extension MockTransportSession {
     }
 
     func processPostPushToken(_ payload: ZMTransportData?) -> ZMTransportResponse {
-        var transportType = "APNS_VOIP"
-        if #available(iOS 13.0, *) {
-            transportType = "APNS"
-        }
+        let transportType = "APNS"
         if let payload = payload?.asDictionary() as? [String : String],
             let token = payload["token"],
             let _ = payload["app"],
