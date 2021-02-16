@@ -20,6 +20,34 @@ import WireProtos
 
 extension MockTransportSession {
     
+    @objc(missedClients:users:sender:onlyForUserId:)
+    public func missedClients(_ recipients: [AnyHashable : Any]?,
+                       users: Set<MockUser>,
+                       sender: MockUserClient?,
+                       onlyForUserId: String?) -> [AnyHashable : Any]? {
+        var missedClients: [AnyHashable : Any] = [:]
+        for user in users {
+            if let onlyForUserId = onlyForUserId,
+               NSUUID(transport: user.identifier) != NSUUID(transport: onlyForUserId) {
+                continue
+            }
+            let recipientClients = (recipients?[user.identifier] as AnyObject).keys
+            let userClients = user.clients.map({ client in
+                if client as? MockUserClient != sender {
+                    return (client as? MockUserClient)?.identifier
+                }
+                return nil
+            })
+    
+            var userMissedClients = userClients
+            userMissedClients?.subtract(Set<AnyHashable>(arrayLiteral: recipientClients))
+            if userMissedClients?.isEmpty == false {
+                missedClients[user.identifier] = Array(arrayLiteral: userMissedClients)
+            }
+        }
+        return missedClients
+    }
+    
     func otrMessageSender(fromClientId sender: ClientId) -> MockUserClient? {
         let senderClientId = String(format: "%llx", CLongLong(sender.client))
         
