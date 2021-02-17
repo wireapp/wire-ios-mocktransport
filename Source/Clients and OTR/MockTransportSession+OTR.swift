@@ -32,16 +32,18 @@ extension MockTransportSession {
                 continue
             }
             let recipientClients = (recipients?[user.identifier] as AnyObject).keys
-            let userClients = user.clients.map({ client in
-                if client as? MockUserClient != sender {
-                    return (client as? MockUserClient)?.identifier
+            let clients: Set<MockUserClient> = user.userClients
+            let userClients = clients.compactMap { (client) -> String? in
+                if client != sender {
+                    return client.identifier
                 }
+
                 return nil
-            })
-    
-            var userMissedClients = userClients
-            userMissedClients?.subtract(Set<AnyHashable>(arrayLiteral: recipientClients))
-            if userMissedClients?.isEmpty == false {
+            }
+                
+            var userMissedClients = Set<AnyHashable>(userClients)
+            userMissedClients.subtract(Set<AnyHashable>(arrayLiteral: recipientClients))
+            if userMissedClients.isEmpty == false {
                 missedClients[user.identifier] = Array(arrayLiteral: userMissedClients)
             }
         }
