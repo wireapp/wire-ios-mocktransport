@@ -70,6 +70,7 @@
 		7C52BFF82033225500297DDA /* MockReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C52BFF62033225500297DDA /* MockReachability.m */; };
 		872A2EE01FFE761B00900B22 /* MockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872A2EDF1FFE761B00900B22 /* MockService.swift */; };
 		872A2EE21FFE7EE700900B22 /* MockTransportSession+Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872A2EE11FFE7EE700900B22 /* MockTransportSession+Services.swift */; };
+		A95197B825DD5C38003BDF8B /* MockTransportSessionPushChannelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A95197B725DD5C38003BDF8B /* MockTransportSessionPushChannelTests.swift */; };
 		BF0F77831E93AC550060494E /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF0F777B1E93AC550060494E /* WireCryptobox.framework */; };
 		BF0F77841E93AC550060494E /* WireProtos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF0F777C1E93AC550060494E /* WireProtos.framework */; };
 		BF0F77851E93AC550060494E /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF0F777D1E93AC550060494E /* WireTransport.framework */; };
@@ -248,6 +249,7 @@
 		872A2EDF1FFE761B00900B22 /* MockService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockService.swift; sourceTree = "<group>"; };
 		872A2EE11FFE7EE700900B22 /* MockTransportSession+Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+Services.swift"; sourceTree = "<group>"; };
 		872A2EE31FFE85D000900B22 /* MockServicesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockServicesTests.swift; sourceTree = "<group>"; };
+		A95197B725DD5C38003BDF8B /* MockTransportSessionPushChannelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTransportSessionPushChannelTests.swift; sourceTree = "<group>"; };
 		BF0F777B1E93AC550060494E /* WireCryptobox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireCryptobox.framework; path = Carthage/Build/iOS/WireCryptobox.framework; sourceTree = "<group>"; };
 		BF0F777C1E93AC550060494E /* WireProtos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireProtos.framework; path = Carthage/Build/iOS/WireProtos.framework; sourceTree = "<group>"; };
 		BF0F777D1E93AC550060494E /* WireTransport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireTransport.framework; path = Carthage/Build/iOS/WireTransport.framework; sourceTree = "<group>"; };
@@ -330,6 +332,7 @@
 				F157FE9D2060053500BC25F1 /* MockTransportSessionTests.h */,
 				54AE5A9F1B78FA62002757E9 /* MockTransportSessionTests.m */,
 				54AE5A9A1B78FA62002757E9 /* MockTransportSessionPushChannelTests.m */,
+				A95197B725DD5C38003BDF8B /* MockTransportSessionPushChannelTests.swift */,
 				F1519B5D1EC0A30100AD4E33 /* MockTransportSessionTests.swift */,
 				541797641CE1F86500C7646D /* MockTransportSessionCancelationTests.swift */,
 				54FAE6801E3A01F000E6DE42 /* MockTransportSessionObjectCreationTests.swift */,
@@ -960,6 +963,7 @@
 				F157FE95206000AC00BC25F1 /* MockTransportSessionBroadcastTests.swift in Sources */,
 				F157FE89205FFF7900BC25F1 /* MockTransportSessionLoginTests.m in Sources */,
 				541797651CE1F86500C7646D /* MockTransportSessionCancelationTests.swift in Sources */,
+				A95197B825DD5C38003BDF8B /* MockTransportSessionPushChannelTests.swift in Sources */,
 				F119FC1C2044551200969615 /* MockTransportSessionConversationAccessTests.swift in Sources */,
 				54FAE6821E3A025500E6DE42 /* MockTransportSessionObjectCreationTests.swift in Sources */,
 				F190E0951E8C0286003E81F8 /* MockUserTests.swift in Sources */,

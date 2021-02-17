@@ -847,7 +847,7 @@
 
 @implementation MockTransportSessionUsersTests (OTR)
 
-- (void)testThatItReturnsUserClientsKeys
+/*- (void)testThatItReturnsUserClientsKeys
 {
     __block MockUser *selfUser;
     __block MockUser *otherUser;
@@ -877,7 +877,7 @@
     AssertDictionaryHasKeys(response.payload.asDictionary[selfUser.identifier], expectedClients);
     expectedClients = @[otherUserClient.identifier, secondOtherUserClient.identifier];
     AssertDictionaryHasKeys(response.payload.asDictionary[otherUser.identifier], expectedClients);
-}
+}*/
 
 @end
 

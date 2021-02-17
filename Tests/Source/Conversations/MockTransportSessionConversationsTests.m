@@ -762,7 +762,7 @@
     XCTAssertNotEqualObjects(lastEventPayload[@"data"][@"key"], base64Content);
 }
 
-- (void)testThatInsertingArbitraryEventWithBlock:(MockEvent *(^)(id<MockTransportSessionObjectCreation> session, MockConversation *conversation))eventBlock expectedPayloadData:(id)expectedPayloadData
+/*- (void)testThatInsertingArbitraryEventWithBlock:(MockEvent *(^)(id<MockTransportSessionObjectCreation> session, MockConversation *conversation))eventBlock expectedPayloadData:(id)expectedPayloadData
 {
     // GIVEN
     __block MockUser *selfUser;
@@ -1425,6 +1425,6 @@
         XCTAssertEqualObjects(conversation.otrMutedRef, mutedDate.transportString);
     }];
     
-}
+}*/
 
 @end
