@@ -58,7 +58,6 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         let dict = response.payload!.asDictionary()! as NSDictionary
         assertDictionaryHasKeys(a1: dict, a2: exepctedUsers)
         
-//        assertDictionaryHasKeys(a1: response?.payload.asDictionary, a2: exepctedUsers)
         var expectedClients = [selfClient?.identifier]
         if let identifier = selfUser?.identifier {
             assertDictionaryHasKeys(a1: response.payload?.asDictionary()?[identifier] as! NSDictionary, a2: expectedClients as NSArray)
