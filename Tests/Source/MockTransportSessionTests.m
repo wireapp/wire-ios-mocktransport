@@ -400,6 +400,10 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     if (team != nil) {
         keys = [keys arrayByAddingObjectsFromArray:@[@"team"]];
     }
+
+    if (user.domain != nil) {
+        keys = [keys arrayByAddingObjectsFromArray:@[@"qualified_id"]];
+    }
     
     AssertDictionaryHasKeys(dict, keys);
     
