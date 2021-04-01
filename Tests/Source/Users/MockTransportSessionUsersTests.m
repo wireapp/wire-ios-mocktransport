@@ -754,12 +754,13 @@
     XCTAssertEqualObjects(response.rawResponse.URL.path, path);
 }
 
-- (void)testThatItFindsAnExistingFederatedUserByHandle_GET
+- (void)testThatItFindsAnExistingFederatedUser_UsersByHandle_GET
 {
     // GIVEN
     NSString *handle = @"john";
     NSString *domain = @"example.com";
     __block MockUser *user;
+    self.sut.federatedDomains = @[domain];
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         user = [session insertUserWithName:@"The other"];
         user.handle = handle;
@@ -767,7 +768,7 @@
     }];
 
     // WHEN
-    NSString *path = [[@"/users/by-handle/" stringByAppendingPathComponent:handle] stringByAppendingPathComponent:domain];
+    NSString *path = [[@"/users/by-handle/" stringByAppendingPathComponent:domain] stringByAppendingPathComponent:handle];
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
 
     // THEN
@@ -775,18 +776,34 @@
     [self checkThatTransportData:response.payload matchesUser:user isSelfUser:NO failureRecorder:NewFailureRecorder()];
 }
 
-- (void)testThatItDoesNotFindAnNonExistingFederatedUserByHandle_GET
+- (void)testThatItDoesNotFindAnNonExistingFederatedUser_UsersByHandle_GET
+{
+    // GIVEN
+    NSString *handle = @"john";
+    NSString *domain = @"example.com";
+    self.sut.federatedDomains = @[domain];
+
+    // WHEN
+    NSString *path = [[@"/users/by-handle/" stringByAppendingPathComponent:domain] stringByAppendingPathComponent:handle];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+
+    // THEN
+    XCTAssertEqual(response.HTTPStatus, 404);
+    XCTAssertEqualObjects(response.rawResponse.URL.path, path);
+}
+
+- (void)testThatItDoesReturnErrorForNonFederatedDomain_UsersByHandle_GET
 {
     // GIVEN
     NSString *handle = @"john";
     NSString *domain = @"example.com";
 
     // WHEN
-    NSString *path = [[@"/users/by-handle/" stringByAppendingPathComponent:handle] stringByAppendingPathComponent:domain];
+    NSString *path = [[@"/users/by-handle/" stringByAppendingPathComponent:domain] stringByAppendingPathComponent:handle];
     ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
 
     // THEN
-    XCTAssertEqual(response.HTTPStatus, 404);
+    XCTAssertEqual(response.HTTPStatus, 422);
     XCTAssertEqualObjects(response.rawResponse.URL.path, path);
 }
 

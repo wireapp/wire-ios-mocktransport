@@ -70,7 +70,7 @@
     }
     else if ([request matchesWithPath:@"/users/by-handle/*/*" method:ZMMethodGET]) {
         return [self processFederatedUserHandleRequest:[request RESTComponentAtIndex:2]
-                                                domain:[request RESTComponentAtIndex:3]
+                                                handle:[request RESTComponentAtIndex:3]
                                                   path:request.path];
     }
     else if ([request matchesWithPath:@"/users/*/prekeys" method:ZMMethodGET]) {
@@ -440,8 +440,8 @@
     return [[ZMTransportResponse alloc] initWithHTTPURLResponse:urlResponse data:payloadData error:nil];;
 }
 
-- (ZMTransportResponse *)processFederatedUserHandleRequest:(NSString *)handle
-                                                    domain:(NSString *)domain
+- (ZMTransportResponse *)processFederatedUserHandleRequest:(NSString *)domain
+                                                    handle:(NSString *)handle
                                                       path:(NSString *)path;
 {
     NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
@@ -450,7 +450,10 @@
     NSData *payloadData;
     NSInteger statusCode;
 
-    if (users.count > 0) {
+    if (![self.federatedDomains containsObject:domain]) {
+        statusCode = 422;
+    }
+    else if (users.count > 0) {
         statusCode = 200;
         MockUser *user = users[0];
         id <ZMTransportData> payload = [user transportData];
