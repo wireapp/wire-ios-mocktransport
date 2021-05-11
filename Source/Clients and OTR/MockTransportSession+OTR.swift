@@ -20,12 +20,38 @@ import WireProtos
 
 extension MockTransportSession {
     
+    @objc(missedClients:users:sender:onlyForUserId:)
+    public func missedClients(_ recipients: [AnyHashable : Any]?,
+                       users: Set<MockUser>,
+                       sender: MockUserClient?,
+                       onlyForUserId: String?) -> [AnyHashable : Any]? {
+        var missedClients: [AnyHashable : Any] = [:]
+        for user in users {
+            if let onlyForUserId = onlyForUserId,
+               NSUUID(transport: user.identifier) != NSUUID(transport: onlyForUserId) {
+                continue
+            }
+            let recipientClients = (recipients?[user.identifier] as? [String: Any] ?? [:]).keys
+            let clients: Set<MockUserClient> = user.userClients
+            let userClients = clients
+                .filter { $0 != sender }
+                .compactMap(\.identifier)
+
+            var userMissedClients = Set(userClients)
+            userMissedClients.subtract(recipientClients)
+            if userMissedClients.isEmpty == false {
+                missedClients[user.identifier] = Array(userMissedClients)
+            }
+        }
+        return missedClients
+    }
+    
     func otrMessageSender(fromClientId sender: ClientId) -> MockUserClient? {
         let senderClientId = String(format: "%llx", CLongLong(sender.client))
         
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "UserClient")
         request.predicate = NSPredicate(format: "identifier == %@", senderClientId)
-        let client = managedObjectContext.executeFetchRequestOrAssert(request)?.first as? MockUserClient
+        let client = managedObjectContext.executeFetchRequestOrAssert(request).first as? MockUserClient
         return client
     }
     

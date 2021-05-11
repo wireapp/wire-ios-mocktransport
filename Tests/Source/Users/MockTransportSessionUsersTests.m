@@ -701,7 +701,7 @@
 
 }
 
-- (void)testThatItFindsAnExhistingHandle_GET
+- (void)testThatItFindsAnExistingHandle_GET
 {
     // GIVEN
     NSString *handle = @"foobar22222";
@@ -720,7 +720,7 @@
     [self checkThatTransportData:response.payload matchesUser:user isSelfUser:NO failureRecorder:NewFailureRecorder()];
 }
 
-- (void)testThatItFindsAnExhistingHandle_HEAD
+- (void)testThatItFindsAnExistingHandle_HEAD
 {
     // GIVEN
     NSString *handle = @"foobar22222";
@@ -740,7 +740,7 @@
     [self checkThatTransportData:response.payload matchesUser:user isSelfUser:NO failureRecorder:NewFailureRecorder()];
 }
 
-- (void)testThatItDoesNotFindANonExhistingHandle
+- (void)testThatItDoesNotFindANonExistingHandle
 {
     // GIVEN
     NSString *handle = @"foobar22222";
@@ -751,6 +751,59 @@
     
     // THEN
     XCTAssertEqual(response.HTTPStatus, 404);
+    XCTAssertEqualObjects(response.rawResponse.URL.path, path);
+}
+
+- (void)testThatItFindsAnExistingFederatedUser_UsersByHandle_GET
+{
+    // GIVEN
+    NSString *handle = @"john";
+    NSString *domain = @"example.com";
+    __block MockUser *user;
+    self.sut.federatedDomains = @[domain];
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        user = [session insertUserWithName:@"The other"];
+        user.handle = handle;
+        user.domain = domain;
+    }];
+
+    // WHEN
+    NSString *path = [[@"/users/by-handle/" stringByAppendingPathComponent:domain] stringByAppendingPathComponent:handle];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+
+    // THEN
+    XCTAssertEqual(response.HTTPStatus, 200);
+    [self checkThatTransportData:response.payload matchesUser:user isSelfUser:NO failureRecorder:NewFailureRecorder()];
+}
+
+- (void)testThatItDoesNotFindAnNonExistingFederatedUser_UsersByHandle_GET
+{
+    // GIVEN
+    NSString *handle = @"john";
+    NSString *domain = @"example.com";
+    self.sut.federatedDomains = @[domain];
+
+    // WHEN
+    NSString *path = [[@"/users/by-handle/" stringByAppendingPathComponent:domain] stringByAppendingPathComponent:handle];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+
+    // THEN
+    XCTAssertEqual(response.HTTPStatus, 404);
+    XCTAssertEqualObjects(response.rawResponse.URL.path, path);
+}
+
+- (void)testThatItDoesReturnErrorForNonFederatedDomain_UsersByHandle_GET
+{
+    // GIVEN
+    NSString *handle = @"john";
+    NSString *domain = @"example.com";
+
+    // WHEN
+    NSString *path = [[@"/users/by-handle/" stringByAppendingPathComponent:domain] stringByAppendingPathComponent:handle];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+
+    // THEN
+    XCTAssertEqual(response.HTTPStatus, 422);
     XCTAssertEqualObjects(response.rawResponse.URL.path, path);
 }
 
@@ -844,40 +897,3 @@
 
 
 @end
-
-@implementation MockTransportSessionUsersTests (OTR)
-
-- (void)testThatItReturnsUserClientsKeys
-{
-    __block MockUser *selfUser;
-    __block MockUser *otherUser;
-    __block MockUser *thirdUser;
-    __block MockUserClient *selfClient;
-    __block MockUserClient *otherUserClient;
-    __block MockUserClient *secondOtherUserClient;
-    
-    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
-        selfUser = [session insertSelfUserWithName:@"foo"];
-        otherUser = [session insertUserWithName:@"bar"];
-        thirdUser = [session insertUserWithName:@"foobar"];
-        selfClient = [session registerClientForUser:selfUser label:@"self1" type:@"permanent" deviceClass:@"phone"];
-        otherUserClient = [session registerClientForUser:otherUser label:@"other1" type:@"permanent" deviceClass:@"phone"];
-        secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent" deviceClass:@"phone"];
-    }];
-    
-    NSString *redunduntClientId = [NSString createAlphanumericalString];
-    NSDictionary *payload = @{selfUser.identifier: @[selfClient.identifier, redunduntClientId], otherUser.identifier: @[otherUserClient.identifier, secondOtherUserClient.identifier], thirdUser.identifier: @[redunduntClientId]};
-    
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/users/prekeys" method:ZMMethodPOST];
-    XCTAssertEqual(response.HTTPStatus, 200);
-
-    NSArray *exepctedUsers = @[selfUser.identifier, otherUser.identifier];
-    AssertDictionaryHasKeys(response.payload.asDictionary, exepctedUsers);
-    NSArray *expectedClients = @[selfClient.identifier];
-    AssertDictionaryHasKeys(response.payload.asDictionary[selfUser.identifier], expectedClients);
-    expectedClients = @[otherUserClient.identifier, secondOtherUserClient.identifier];
-    AssertDictionaryHasKeys(response.payload.asDictionary[otherUser.identifier], expectedClients);
-}
-
-@end
-
