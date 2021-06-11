@@ -171,7 +171,38 @@ extension MockTransportSession {
             return ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil)
         }
     }
-    
+
+    @objc(processJoinConversationWithPayload:)
+    public func processJoinConversation(with payload: [String: AnyHashable]) -> ZMTransportResponse {
+        guard let code = payload["code"] as? String,
+              code == "test-code" else {
+            let payload = ["label" : "no-conversation-code"] as ZMTransportData
+            return ZMTransportResponse(payload: payload, httpStatus: 404, transportSessionError: nil)
+        }
+
+        let creator = MockUser.insertUserWith(name: "Bob", in: managedObjectContext)
+        let conversation = MockConversation.insert(into: managedObjectContext, creator: creator, otherUsers: [], type: .group)
+
+        let responsePayload = [
+            "conversation" : conversation.identifier,
+            "type" : "conversation.member-join",
+            "time" : NSDate().transportString(),
+            "data": [
+                "users" : [
+                    [
+                        "conversation_role": "wire_member",
+                        "id": selfUser.identifier
+                    ]
+                ],
+                "user_ids": [
+                    selfUser.identifier
+                ]
+            ],
+            "from" : selfUser.identifier] as ZMTransportData
+
+        return ZMTransportResponse(payload: responsePayload, httpStatus: 200, transportSessionError: nil)
+    }
+
     @objc
     public func processAddOTRMessage(toConversation conversationID: String,
                                      withProtobuffData data: Data,
