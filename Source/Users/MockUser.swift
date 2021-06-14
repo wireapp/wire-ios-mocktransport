@@ -308,25 +308,3 @@ extension MockUser {
         return participantRoles.first(where: { $0.conversation == conversation })?.role
     }
 }
-
-// MARK: - Add user
-extension MockUser {
-
-    @objc
-    public static func insertUserWith(name: String, in context: NSManagedObjectContext) -> MockUser {
-        let user = NSEntityDescription.insertNewObject(forEntityName: "User", into: context) as! MockUser
-        user.name = name
-        user.identifier = UUID.create().transportString()
-        user.handle = UUID.create().transportString()
-
-        let client = MockUserClient.insertClient(label: user.identifier,
-                                                 type: "permanent",
-                                                 deviceClass: "phone",
-                                                 for: user,
-                                                 in: context)
-        user.clients = NSMutableSet(array: [client!])
-
-        return user
-    }
-
-}

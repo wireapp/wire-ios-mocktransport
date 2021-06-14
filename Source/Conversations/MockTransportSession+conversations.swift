@@ -180,7 +180,7 @@ extension MockTransportSession {
             return ZMTransportResponse(payload: payload, httpStatus: 404, transportSessionError: nil)
         }
 
-        let creator = MockUser.insertUserWith(name: "Bob", in: managedObjectContext)
+        let creator = insertUserWithName(name: "Bob")
         let conversation = MockConversation.insert(into: managedObjectContext, creator: creator, otherUsers: [], type: .group)
 
         let responsePayload = [
