@@ -175,30 +175,49 @@ extension MockTransportSession {
     @objc(processJoinConversationWithPayload:)
     public func processJoinConversation(with payload: [String: AnyHashable]) -> ZMTransportResponse {
         guard let code = payload["code"] as? String,
-              code == "test-code" else {
+              code.isOne(of: "test-code", "existing-conversation-code") else {
             let payload = ["label" : "no-conversation-code"] as ZMTransportData
             return ZMTransportResponse(payload: payload, httpStatus: 404, transportSessionError: nil)
         }
 
-        let creator = insertUserWithName(name: "Bob")
-        let conversation = MockConversation.insert(into: managedObjectContext, creator: creator, otherUsers: [], type: .group)
+        if code == "existing-conversation-code" {
+            return ZMTransportResponse(payload: nil, httpStatus: 204, transportSessionError: nil)
+        } else {
+            let creator = insertUserWithName(name: "Bob")
+            let conversation = MockConversation.insert(into: managedObjectContext, creator: creator, otherUsers: [], type: .group)
 
-        let responsePayload = [
-            "conversation" : conversation.identifier,
-            "type" : "conversation.member-join",
-            "time" : NSDate().transportString(),
-            "data": [
-                "users" : [
-                    [
-                        "conversation_role": "wire_member",
-                        "id": selfUser.identifier
+            let responsePayload = [
+                "conversation" : conversation.identifier,
+                "type" : "conversation.member-join",
+                "time" : NSDate().transportString(),
+                "data": [
+                    "users" : [
+                        [
+                            "conversation_role": "wire_member",
+                            "id": selfUser.identifier
+                        ]
+                    ],
+                    "user_ids": [
+                        selfUser.identifier
                     ]
                 ],
-                "user_ids": [
-                    selfUser.identifier
-                ]
-            ],
-            "from" : selfUser.identifier] as ZMTransportData
+                "from" : selfUser.identifier] as ZMTransportData
+
+            return ZMTransportResponse(payload: responsePayload, httpStatus: 200, transportSessionError: nil)
+        }
+    }
+
+    @objc(processFetchConversationWithPayload:)
+    public func processFetchConversation(with payload: [String: AnyHashable]) -> ZMTransportResponse {
+        guard let code = payload["code"] as? String,
+              code == "existing-conversation-code" else {
+            let payload = ["label" : "no-conversation-code"] as ZMTransportData
+            return ZMTransportResponse(payload: payload, httpStatus: 403, transportSessionError: nil)
+        }
+        let conversation = fetchConversation(selfUserIdentifier: selfUser.identifier)
+        let responsePayload = [
+            "conversation" : conversation!.identifier,
+            "name" : conversation!.name] as ZMTransportData
 
         return ZMTransportResponse(payload: responsePayload, httpStatus: 200, transportSessionError: nil)
     }
@@ -243,5 +262,12 @@ extension MockTransportSession {
         }
         
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: statusCode, transportSessionError: nil)
+    }
+
+    private func fetchConversation(selfUserIdentifier: String) -> MockConversation? {
+        let request = MockConversation.sortedFetchRequest()
+        request.predicate = NSPredicate(format: "selfIdentifier == %@", selfUserIdentifier.lowercased())
+        let conversations = managedObjectContext.executeFetchRequestOrAssert(request) as? [MockConversation]
+        return conversations?.first
     }
 }
