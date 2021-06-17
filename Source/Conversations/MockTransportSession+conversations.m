@@ -47,7 +47,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     }
     else if ([request matchesWithPath:@"/conversations/join" method:ZMMethodGET])
     {
-        return [self processFetchConversationWithPayload:[request.payload asDictionary]];
+        return [self processFetchConversationIdAndNameWith:request.queryParameters];
     }
     else if ([request matchesWithPath:@"/conversations/*" method:ZMMethodGET])
     {
