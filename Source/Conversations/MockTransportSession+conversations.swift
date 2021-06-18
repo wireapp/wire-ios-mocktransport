@@ -174,18 +174,19 @@ extension MockTransportSession {
 
     @objc(processJoinConversationWithPayload:)
     public func processJoinConversation(with payload: [String: AnyHashable]) -> ZMTransportResponse {
-        guard let code = payload["code"] as? String,
-              code.isOne(of: "test-code", "existing-conversation-code") else {
+        guard let code = payload["code"] as? String else {
             let payload = ["label" : "no-conversation-code"] as ZMTransportData
             return ZMTransportResponse(payload: payload, httpStatus: 404, transportSessionError: nil)
         }
-        
-        if code == "existing-conversation-code" {
+
+        switch code {
+        case "existing-conversation-code":
             return ZMTransportResponse(payload: nil, httpStatus: 204, transportSessionError: nil)
-        } else {
+
+        case "test-code":
             let creator = insertUserWithName(name: "Bob")
             let conversation = MockConversation.insert(into: managedObjectContext, creator: creator, otherUsers: [], type: .group)
-            
+
             let responsePayload = [
                 "conversation" : conversation.identifier,
                 "type" : "conversation.member-join",
@@ -202,17 +203,24 @@ extension MockTransportSession {
                     ]
                 ],
                 "from" : selfUser.identifier] as ZMTransportData
-            
+
             return ZMTransportResponse(payload: responsePayload, httpStatus: 200, transportSessionError: nil)
+
+        default:
+            let payload = ["label" : "no-conversation-code"] as ZMTransportData
+            return ZMTransportResponse(payload: payload, httpStatus: 404, transportSessionError: nil)
         }
     }
 
+
+    /// Returns a response for the GET "/conversations/join" request
+    /// - Parameter query: request query
+    /// - Returns: response payload containing conversation ID and name depending on code value:
+    /// - "existing-conversation-code" -  response payload should contain an existing conversation with a selfUser
+    /// - "test-code" -  response payload should contain a new conversation ID
+    /// - "wrong-code" - there should be an error in the response payload
     @objc(processFetchConversationIdAndNameWith:)
     public func processFetchConversationIdAndName(with query: [String: AnyHashable]) -> ZMTransportResponse {
-        /// Depending on these codes we should generate a response payload:
-        /// - "existing-conversation-code" - we should send a conversation with a selfUser in the response payload
-        /// - "test-code" - we should send a new conversation ID in the response payload
-        /// - "wrong-code" - there should be an error in the response payload
         guard let code = query["code"] as? String,
               code.isOne(of: "test-code", "existing-conversation-code") else {
             let payload = ["label" : "no-conversation-code"] as ZMTransportData
