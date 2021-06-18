@@ -203,7 +203,6 @@ extension MockTransportSession {
                     ]
                 ],
                 "from" : selfUser.identifier] as ZMTransportData
-
             return ZMTransportResponse(payload: responsePayload, httpStatus: 200, transportSessionError: nil)
 
         default:
@@ -221,24 +220,29 @@ extension MockTransportSession {
     /// - "wrong-code" - there should be an error in the response payload
     @objc(processFetchConversationIdAndNameWith:)
     public func processFetchConversationIdAndName(with query: [String: AnyHashable]) -> ZMTransportResponse {
-        guard let code = query["code"] as? String,
-              code.isOne(of: "test-code", "existing-conversation-code") else {
+        guard let code = query["code"] as? String else {
             let payload = ["label" : "no-conversation-code"] as ZMTransportData
             return ZMTransportResponse(payload: payload, httpStatus: 404, transportSessionError: nil)
         }
-        var responsePayload: ZMTransportData
-        if code == "existing-conversation-code" {
+
+        switch code {
+        case "existing-conversation-code":
             let conversation = fetchConversation(selfUserIdentifier: selfUser.identifier)
-            responsePayload = [
+            let responsePayload = [
                 "id" : conversation!.identifier,
                 "name" : "Test"] as ZMTransportData
-        } else {
-            responsePayload = [
+            return ZMTransportResponse(payload: responsePayload, httpStatus: 200, transportSessionError: nil)
+
+        case "test-code":
+            let responsePayload = [
                 "id" : UUID.create().transportString(),
                 "name" : "Test"] as ZMTransportData
-        }
-        return ZMTransportResponse(payload: responsePayload, httpStatus: 200, transportSessionError: nil)
+            return ZMTransportResponse(payload: responsePayload, httpStatus: 200, transportSessionError: nil)
 
+        default:
+            let payload = ["label" : "no-conversation-code"] as ZMTransportData
+            return ZMTransportResponse(payload: payload, httpStatus: 404, transportSessionError: nil)
+        }
     }
 
     @objc
