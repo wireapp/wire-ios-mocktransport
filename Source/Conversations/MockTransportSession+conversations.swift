@@ -172,6 +172,12 @@ extension MockTransportSession {
         }
     }
 
+    /// Returns a response for the POST "/conversations/join" request
+    /// - Parameter query: payload
+    /// - Returns: response payload depending on code value:
+    /// - "existing-conversation-code" -  response payload should have a httpStatus 204
+    /// - "test-code" -  response payload should contain a new conversation
+    /// - "wrong-code" - there should be an error in the response payload
     @objc(processJoinConversationWithPayload:)
     public func processJoinConversation(with payload: [String: AnyHashable]) -> ZMTransportResponse {
         guard let code = payload["code"] as? String else {
