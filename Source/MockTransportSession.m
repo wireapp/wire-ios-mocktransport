@@ -503,7 +503,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         }
     } else {
         LogNetwork(@"<--- Response to %@: 404 (request not handled)", request.path);
-        response = [self errorResponseWithCode:404 reason:@"not implemented"];
+        response = [self errorResponseWithCode:404 reason:@"no-endpoint"];
         if(completionHandler) {
             completionHandler(response);
         }
@@ -624,28 +624,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     RequireString(self.selfUser == nil, "SelfUser already exists!");
     self.selfUser = [self insertUserWithName:name includeClient:NO];
     return self.selfUser;
-}
-
-- (MockUser *)insertUserWithName:(NSString *)name;
-{
-    return [self insertUserWithName:name includeClient:YES];
-}
-
-- (MockUser *)insertUserWithName:(NSString *)name includeClient:(BOOL)shouldIncludeClient;
-{
-    MockUser *user = (id) [NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:self.managedObjectContext];
-    user.name = name;
-    user.identifier = [self createUUIDString];
-    user.handle = [self createUUIDString];
-    
-    if (shouldIncludeClient) {
-        
-        MockUserClient *client = [MockUserClient insertClientWithLabel:user.identifier type:@"permanent" deviceClass:@"phone" user:user context:self.managedObjectContext];
-        
-        NSMutableSet *clients = [NSMutableSet setWithObject:client];
-        user.clients = clients;
-    }
-    return user;
 }
 
 - (NSDictionary<NSString *, MockPicture *> *)addProfilePictureToUser:(MockUser *)user
