@@ -20,6 +20,13 @@
 #include "../version.xcconfig"
 #include "../../../Carthage/Checkouts/wire-ios-system/Resources/Configurations/zmc-config/ios.xcconfig"
 
+// Code Signing
+//
+CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Developer
+
+// Search Paths
+//
+ENABLE_TESTING_SEARCH_PATHS = YES
 
 // info.plist
 INFOPLIST_PREPROCESS = YES
