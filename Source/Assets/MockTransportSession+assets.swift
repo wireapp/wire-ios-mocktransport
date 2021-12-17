@@ -32,15 +32,13 @@ extension MockTransportSession {
         }
     }
 
-    // V4
-
-    @objc(processAssetV4PostWithDomain:multipart:)
-    public func processAssetV4Post(with domain: String, multipart: [ZMMultipartBodyItem]) -> ZMTransportResponse {
+    @objc(processAssetV3PostWithMultipartData:domain:)
+    public func processAssetV3Post(with multipartData: [ZMMultipartBodyItem], domain: String?) -> ZMTransportResponse {
         guard
-            multipart.count == 2,
-            let jsonObject = multipart.first,
+            multipartData.count == 2,
+            let jsonObject = multipartData.first,
             let json = (try? JSONSerialization.jsonObject(with: jsonObject.data, options: .allowFragments)) as? [String: Any] ,
-            let imageData = multipart.last,
+            let imageData = multipartData.last,
             let mimeType = imageData.contentType
         else {
             return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil)
@@ -62,12 +60,14 @@ extension MockTransportSession {
             "token": asset.token
         ].compactMapValues { $0 } as ZMTransportData
 
-        let location = String(format: "/asset/v4/%@", arguments: [asset.identifier])
+        let location = String(format: "/asset/v3/%@", arguments: [asset.identifier])
         return ZMTransportResponse(payload: payload,
                                    httpStatus: 201,
                                    transportSessionError: nil,
                                    headers: ["Location": location])
     }
+
+    // V4
 
     @objc(processAssetV4GetWithDomain:key:)
     public func processAssetV4Get(with domain: String, key: String) -> ZMTransportResponse {

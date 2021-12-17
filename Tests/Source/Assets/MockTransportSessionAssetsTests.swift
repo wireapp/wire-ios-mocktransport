@@ -119,13 +119,13 @@ class MockTransportSessionAssetsTests : MockTransportSessionTests {
         XCTAssertNil(MockAsset(in: sut.managedObjectContext, forID: asset!.identifier))
     }
 
-    func testUploadingAssetRequestV4() {
+    func testUploadingAssetRequestV3WithDomain() {
         // given
         let data = self.verySmallJPEGData()
 
         // when
         let domain = UUID.create().transportString()
-        let response = self.response(forAssetData: data, contentType: "application/octet-stream", path: "/assets/v4/\(domain)")
+        let response = self.response(forAssetData: data, contentType: "application/octet-stream", path: "/assets/v3/\(domain)")
         XCTAssertNotNil(response)
 
         // then

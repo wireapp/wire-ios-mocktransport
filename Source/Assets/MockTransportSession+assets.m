@@ -67,7 +67,9 @@
 
 - (ZMTransportResponse *)processAssetV3Request:(ZMTransportRequest *)request
 {
-    if ([request matchesWithPath:@"/assets/v3" method:ZMMethodPOST]) {
+    if ([request matchesWithPath:@"/assets/v3/*" method:ZMMethodPOST]) {
+        return [self processAssetV3PostWithMultipartData:[request multipartBodyItemsFromRequestOrFile] domain: [request RESTComponentAtIndex:2]];
+    } else if ([request matchesWithPath:@"/assets/v3" method:ZMMethodPOST]) {
         return [self processAssetV3PostWithMultipartData:[request multipartBodyItemsFromRequestOrFile]];
     } else if ([request matchesWithPath:@"/assets/v3/*" method:ZMMethodGET]) {
         return [self processAssetV3GetWithKey:[request RESTComponentAtIndex:2]];
@@ -78,35 +80,8 @@
 }
 
 - (ZMTransportResponse *)processAssetV3PostWithMultipartData:(NSArray *)multipart;
-{    
-    if (multipart.count == 2) {
-        
-        ZMMultipartBodyItem *jsonObject = [multipart firstObject];
-        ZMMultipartBodyItem *imageData  = [multipart lastObject];
-        
-        NSDictionary *json = [NSJSONSerialization JSONObjectWithData:jsonObject.data options:NSJSONReadingAllowFragments error:nil];
-        BOOL isPublic = [json[@"public"] boolValue];
-        
-        NSData *data        = imageData.data;
-        NSString *mimeType  = imageData.contentType;
-        
-        MockAsset *asset = [MockAsset insertIntoManagedObjectContext:self.managedObjectContext];
-        asset.data = data;
-        asset.contentType = mimeType;
-        asset.identifier = [NSUUID createUUID].transportString;
-        if (!isPublic) {
-            asset.token = [NSUUID createUUID].transportString;
-        }
-        
-        NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:@{@"key" : asset.identifier, @"expires" : [[NSDate date] dateByAddingTimeInterval:1000000].transportString}];
-        if (asset.token) {
-            payload[@"token"] = asset.token;
-        }
-        
-        return [[ZMTransportResponse alloc] initWithPayload:[payload copy] HTTPStatus:201 transportSessionError:nil headers:@{@"Location" : [NSString stringWithFormat:@"/asset/v3/%@", asset.identifier]}];
-    }
-    
-    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:400 transportSessionError:nil];
+{
+    return [self processAssetV3PostWithMultipartData:multipart domain:nil];
 }
 
 - (ZMTransportResponse *)processAssetV3GetWithKey:(NSString *)key;
@@ -123,9 +98,7 @@
 
 - (ZMTransportResponse *)processAssetV4Request:(ZMTransportRequest *)request
 {
-    if ([request matchesWithPath:@"/assets/v4/*" method:ZMMethodPOST]) {
-        return [self processAssetV4PostWithDomain:[request RESTComponentAtIndex:2] multipart:[request multipartBodyItemsFromRequestOrFile]];
-    } else if ([request matchesWithPath:@"/assets/v4/*/*" method:ZMMethodGET]) {
+    if ([request matchesWithPath:@"/assets/v4/*/*" method:ZMMethodGET]) {
         return [self processAssetV4GetWithDomain:[request RESTComponentAtIndex:2] key:[request RESTComponentAtIndex:3]];
     } else if ([request matchesWithPath:@"/assets/v4/*/*" method:ZMMethodDELETE]) {
         return [self processAssetV4DeleteWithDomain:[request RESTComponentAtIndex:2] key:[request RESTComponentAtIndex:3]];
