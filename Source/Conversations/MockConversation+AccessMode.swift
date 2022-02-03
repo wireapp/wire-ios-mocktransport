@@ -40,7 +40,24 @@ public enum MockConversationAccessRoleV2: String {
     case guest = "guest"
     /// A service pseudo-user, aka a non-human bot.
     case service = "service"
+
+    public static func value(forAllowGuests allowGuests: Bool, forAllowServices allowServices: Bool) -> [String] {
+        switch (allowGuests, allowServices) {
+        case (true, true):
+            return [teamMember.rawValue, nonTeamMember.rawValue, guest.rawValue, service.rawValue]
+        case (false, false):
+            return [teamMember.rawValue]
+        case (true, false):
+            return [teamMember.rawValue, nonTeamMember.rawValue, guest.rawValue]
+        case (false, true):
+            return [teamMember.rawValue, service.rawValue]
+        }
+
+    }
+
+
 }
+
 
 public struct MockConversationAccessMode: OptionSet {
     public let rawValue: Int

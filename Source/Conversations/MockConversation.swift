@@ -64,7 +64,6 @@ extension MockConversation {
         let (_, _, accessRoleV2) = defaultAccess(conversationType: conversationType, team: team)
         return accessRoleV2
     }
-
     public static func defaultAccess(conversationType: ZMTConversationType, team: MockTeam?) -> ([String], String, [String]) {
         switch (team, conversationType) {
         case (.some, .group):
@@ -82,9 +81,9 @@ extension MockConversation {
         guard type == .group, team != nil else {
              return
         }
-    //TODO: ASK KATERINA
-        accessRole = MockConversationAccessRole.value(forAllowGuests: allowGuests).rawValue
 
+        accessRole = MockConversationAccessRole.value(forAllowGuests: allowGuests).rawValue
+        accessRoleV2 = MockConversationAccessRoleV2.value(forAllowGuests: allowGuests, forAllowServices: allowServices)
         accessMode = MockConversationAccessMode.value(forAllowGuests: allowGuests).stringValue
     }
 
