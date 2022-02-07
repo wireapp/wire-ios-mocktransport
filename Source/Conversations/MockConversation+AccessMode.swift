@@ -52,9 +52,7 @@ public enum MockConversationAccessRoleV2: String {
         case (false, true):
             return [teamMember.rawValue, service.rawValue]
         }
-
     }
-
 
 }
 
