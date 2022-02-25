@@ -45,12 +45,12 @@
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil apiVersion:request.apiVersion];
 }
 
-- (ZMTransportResponse *)sampleImageResponseWithApiVersion:(int)apiVersion {
+- (ZMTransportResponse *)sampleImageResponseWithApiVersion:(ZMAPIVersion)apiVersion {
     NSData *data =  [NSData dataWithContentsOfURL:[[NSBundle bundleForClass:self.class] URLForResource:@"medium"withExtension:@"jpg"]];
     return [[ZMTransportResponse alloc ] initWithImageData:data HTTPStatus:200 transportSessionError:nil headers:nil apiVersion:apiVersion];
 }
 
-- (ZMTransportResponse *)processAssetGetRequestInConversation:(NSString *)conversationID asset:(NSString *)identifier apiVersion:(int)apiVersion
+- (ZMTransportResponse *)processAssetGetRequestInConversation:(NSString *)conversationID asset:(NSString *)identifier apiVersion:(ZMAPIVersion)apiVersion
 {
     MockAsset *asset = [MockAsset assetInContext:self.managedObjectContext forID:identifier];
     if([asset.conversation isEqualToString:conversationID]) {
@@ -77,7 +77,7 @@
     return nil;
 }
 
-- (ZMTransportResponse *)processAssetV3PostWithMultipartData:(NSArray *)multipart apiVersion:(int)apiVersion;
+- (ZMTransportResponse *)processAssetV3PostWithMultipartData:(NSArray *)multipart apiVersion:(ZMAPIVersion)apiVersion;
 {    
     if (multipart.count == 2) {
         
@@ -109,7 +109,7 @@
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:400 transportSessionError:nil apiVersion:apiVersion];
 }
 
-- (ZMTransportResponse *)processAssetV3GetWithKey:(NSString *)key apiVersion:(int)apiVersion;
+- (ZMTransportResponse *)processAssetV3GetWithKey:(NSString *)key apiVersion:(ZMAPIVersion)apiVersion;
 {
     MockAsset *asset = [MockAsset assetInContext:self.managedObjectContext forID:key];
     if (asset != nil) {

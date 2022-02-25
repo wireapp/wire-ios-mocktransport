@@ -44,7 +44,7 @@
 }
 
 // POST /broadcast/otr/messages
-- (ZMTransportResponse *)processBroadcastOTRMessageWithPayload:(NSDictionary *)payload query:(NSDictionary *)query apiVersion:(int)apiVersion
+- (ZMTransportResponse *)processBroadcastOTRMessageWithPayload:(NSDictionary *)payload query:(NSDictionary *)query apiVersion:(ZMAPIVersion)apiVersion
 {
     NSAssert(self.selfUser != nil, @"No self user in mock transport session");
     

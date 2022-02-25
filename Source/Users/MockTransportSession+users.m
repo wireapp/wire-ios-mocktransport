@@ -90,7 +90,7 @@
     return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
 }
 
-- (ZMTransportResponse *)getUserClient:(NSString *)clientID forUser:(NSString *)userID apiVersion:(int)apiVersion {
+- (ZMTransportResponse *)getUserClient:(NSString *)clientID forUser:(NSString *)userID apiVersion:(ZMAPIVersion)apiVersion {
     
     NSFetchRequest *request = [MockUser sortedFetchRequest];
     request.predicate = [NSPredicate predicateWithFormat: @"identifier == %@", userID];
@@ -113,7 +113,7 @@
     }
 }
 
-- (ZMTransportResponse *)getUserClientsForUser:(NSString *)userID apiVersion:(int)apiVersion {
+- (ZMTransportResponse *)getUserClientsForUser:(NSString *)userID apiVersion:(ZMAPIVersion)apiVersion {
     
     NSFetchRequest *request = [MockUser sortedFetchRequest];
     request.predicate = [NSPredicate predicateWithFormat: @"identifier == %@", userID];
@@ -132,7 +132,7 @@
     }
 }
 
-- (ZMTransportResponse *)processUserIDRequest:(NSString *)userID apiVersion:(int)apiVersion {
+- (ZMTransportResponse *)processUserIDRequest:(NSString *)userID apiVersion:(ZMAPIVersion)apiVersion {
     
     NSFetchRequest *request = [MockUser sortedFetchRequest];
     request.predicate = [NSPredicate predicateWithFormat: @"identifier == %@", userID];
@@ -149,7 +149,7 @@
     }
 }
 
-- (ZMTransportResponse *)processUsersRequestWithHandles:(NSString *)handles orIDs:(NSString *)IDs  apiVersion:(int)apiVersion {
+- (ZMTransportResponse *)processUsersRequestWithHandles:(NSString *)handles orIDs:(NSString *)IDs  apiVersion:(ZMAPIVersion)apiVersion {
     
     // The 'ids' and 'handles' parameters are mutually exclusive, so we want to ensure at least
     // one of these parameters exist
@@ -160,7 +160,7 @@
     }
 }
 
-- (ZMTransportResponse *)processUsersHandlesRequest:(NSString *)handles apiVersion:(int)apiVersion {
+- (ZMTransportResponse *)processUsersHandlesRequest:(NSString *)handles apiVersion:(ZMAPIVersion)apiVersion {
 
     RequireString(handles.length > 0, "Malformed query");
     
@@ -187,7 +187,7 @@
     return [ZMTransportResponse responseWithPayload:resultArray HTTPStatus:200 transportSessionError:nil apiVersion:apiVersion];
 }
 
-- (ZMTransportResponse *)processUsersIDsRequest:(NSString *)IDs apiVersion:(int)apiVersion {
+- (ZMTransportResponse *)processUsersIDsRequest:(NSString *)IDs apiVersion:(ZMAPIVersion)apiVersion {
     
     // If we had a query like "ids=", justIDs would be "" and userIDs would become [""], i.e. contain
     // one empty element. The assert makes sure that that doesn't happen, because it would be Very Bad™
@@ -242,13 +242,13 @@
     return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
 }
 
-- (ZMTransportResponse *)getSelfUserWithApiVersion:(int)apiVersion
+- (ZMTransportResponse *)getSelfUserWithApiVersion:(ZMAPIVersion)apiVersion
 {
     NSMutableDictionary *payload = [NSMutableDictionary dictionaryWithDictionary:(id) [self.selfUser selfUserTransportData]];
     return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil apiVersion:apiVersion];
 }
 
-- (ZMTransportResponse *)putSelfPhoneWithPayload:(NSDictionary *)payload apiVersion:(int)apiVersion
+- (ZMTransportResponse *)putSelfPhoneWithPayload:(NSDictionary *)payload apiVersion:(ZMAPIVersion)apiVersion
 {
     NSString *phone = [payload asDictionary][@"phone"];
     if(phone == nil) {
@@ -268,7 +268,7 @@
     }
 }
 
-- (ZMTransportResponse *)putSelfEmailWithPayload:(NSDictionary *)payload apiVersion:(int)apiVersion
+- (ZMTransportResponse *)putSelfEmailWithPayload:(NSDictionary *)payload apiVersion:(ZMAPIVersion)apiVersion
 {
     NSString *email = [payload asDictionary][@"email"];
     if(email == nil) {
@@ -288,7 +288,7 @@
     
 }
 
-- (ZMTransportResponse *)putSelfPasswordWithPayload:(NSDictionary *)payload apiVersion:(int)apiVersion
+- (ZMTransportResponse *)putSelfPasswordWithPayload:(NSDictionary *)payload apiVersion:(ZMAPIVersion)apiVersion
 {
     NSString *old_password = [payload asDictionary][@"old_password"];
     NSString *new_password = [payload asDictionary][@"new_password"];
@@ -306,7 +306,7 @@
     }
 }
 
-- (ZMTransportResponse *)putSelfHandleWithPayload:(NSDictionary *)payload apiVersion:(int)apiVersion
+- (ZMTransportResponse *)putSelfHandleWithPayload:(NSDictionary *)payload apiVersion:(ZMAPIVersion)apiVersion
 {
     NSString *handle = [payload asDictionary][@"handle"];
     if(handle == nil) {
@@ -327,7 +327,7 @@
     
 }
 
-- (ZMTransportResponse *)putSelfResponseWithPayload:(NSDictionary *)changedFields apiVersion:(int)apiVersion
+- (ZMTransportResponse *)putSelfResponseWithPayload:(NSDictionary *)changedFields apiVersion:(ZMAPIVersion)apiVersion
 {
     if(changedFields == nil) {
         return [self errorResponseWithCode:400 reason:@"missing-key" apiVersion:apiVersion];
@@ -355,7 +355,7 @@
 
 // MARK: - /users/prekeys
 
-- (ZMTransportResponse *)processUsersPreKeysRequestWithPayload:(NSDictionary *)clientsMap apiVersion:(int)apiVersion;
+- (ZMTransportResponse *)processUsersPreKeysRequestWithPayload:(NSDictionary *)clientsMap apiVersion:(ZMAPIVersion)apiVersion;
 {
     NSFetchRequest *usersRequest = [NSFetchRequest fetchRequestWithEntityName:@"User"];
     usersRequest.predicate = [NSPredicate predicateWithFormat:@"identifier IN %@", clientsMap.allKeys];
@@ -413,19 +413,19 @@
     return userClientsKeys;
 }
 
-- (ZMTransportResponse *)processSingleUserPreKeysRequest:(NSString *__unused)userID apiVersion:(int)apiVersion;
+- (ZMTransportResponse *)processSingleUserPreKeysRequest:(NSString *__unused)userID apiVersion:(ZMAPIVersion)apiVersion;
 {
     return [self errorResponseWithCode:400 reason:@"invalid method" apiVersion:apiVersion];
 }
 
-- (ZMTransportResponse *)processUserPreKeysRequest:(NSString *__unused)userID client:(NSString *__unused)clientID apiVersion:(int)apiVersion;
+- (ZMTransportResponse *)processUserPreKeysRequest:(NSString *__unused)userID client:(NSString *__unused)clientID apiVersion:(ZMAPIVersion)apiVersion;
 {
     return [self errorResponseWithCode:400 reason:@"invalid method" apiVersion:apiVersion];
 }
 
 // MARK: - Handles
 
-- (ZMTransportResponse *)processUserHandleRequest:(NSString *)handle path:(NSString *)path  apiVersion:(int)apiVersion;
+- (ZMTransportResponse *)processUserHandleRequest:(NSString *)handle path:(NSString *)path  apiVersion:(ZMAPIVersion)apiVersion;
 {
     NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"handle == %@", handle];
@@ -450,7 +450,7 @@
 - (ZMTransportResponse *)processFederatedUserHandleRequest:(NSString *)domain
                                                     handle:(NSString *)handle
                                                       path:(NSString *)path
-                                                apiVersion:(int)apiVersion;
+                                                apiVersion:(ZMAPIVersion)apiVersion;
 {
     NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"handle == %@ AND domain == %@", handle, domain];
@@ -475,7 +475,7 @@
     return [[ZMTransportResponse alloc] initWithHTTPURLResponse:urlResponse data:payloadData error:nil apiVersion:apiVersion];
 }
 
-- (ZMTransportResponse *)processUserHandleAvailabilityRequest:(id<ZMTransportData>)payload apiVersion:(int)apiVersion
+- (ZMTransportResponse *)processUserHandleAvailabilityRequest:(id<ZMTransportData>)payload apiVersion:(ZMAPIVersion)apiVersion
 {
     NSDictionary *dictionary = [payload asDictionary];
     if (dictionary == nil) {

@@ -112,7 +112,7 @@
 }
 
 /// GET /connections
-- (ZMTransportResponse *)processGetConnections:(NSDictionary *)queryParameters apiVersion:(int)apiVersion
+- (ZMTransportResponse *)processGetConnections:(NSDictionary *)queryParameters apiVersion:(ZMAPIVersion)apiVersion
 {
     NSString *sizeString = [queryParameters optionalStringForKey:@"size"];
     NSUUID *start = [queryParameters optionalUuidForKey:@"start"];

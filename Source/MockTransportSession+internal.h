@@ -29,7 +29,7 @@
 @property (nonatomic) MockUser* selfUser;
 
 - (MockConnection *)fetchConnectionFrom:(MockUser *)userID to:(MockUser *)otherUserID;
-- (ZMTransportResponse *)errorResponseWithCode:(NSInteger)code reason:(NSString *)reason apiVersion:(int)apiVersion;
+- (ZMTransportResponse *)errorResponseWithCode:(NSInteger)code reason:(NSString *)reason apiVersion:(ZMAPIVersion)apiVersion;
 - (MockEvent *)eventIfNeededByUser:(MockUser *)byUser type:(ZMUpdateEventType)type data:(id<ZMTransportData>)data;
 
 - (MockConnection *)connectionFromUserIdentifier:(NSString *)fromUserIdentifier toUserIdentifier:(NSString *)toUserIdentifier;

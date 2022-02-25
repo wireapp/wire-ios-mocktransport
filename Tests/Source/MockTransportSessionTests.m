@@ -217,7 +217,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 }
 
 
-- (ZMTransportResponse *)responseForImageData:(NSData *)imageData contentDisposition:(NSDictionary *)contentDisposition path:(NSString *)path apiVersion:(int)apiVersion;
+- (ZMTransportResponse *)responseForImageData:(NSData *)imageData contentDisposition:(NSDictionary *)contentDisposition path:(NSString *)path apiVersion:(ZMAPIVersion)apiVersion;
 {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Got an image response"];
     
@@ -245,7 +245,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     return response;
 }
 
-- (ZMTransportResponse *)responseForFileData:(NSData *)fileData path:(NSString *)path metadata:(NSData *)metadata contentType:(NSString *)contentType apiVersion:(int)apiVersion;
+- (ZMTransportResponse *)responseForFileData:(NSData *)fileData path:(NSString *)path metadata:(NSData *)metadata contentType:(NSString *)contentType apiVersion:(ZMAPIVersion)apiVersion;
 {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Got a file upload response"];
     __block ZMTransportResponse *response;
@@ -289,7 +289,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     return response;
 }
 
-- (ZMTransportResponse *)responseForImageData:(NSData *)imageData metaData:(NSData *)metaData imageMediaType:(NSString *)imageMediaType path:(NSString *)path apiVersion:(int)apiVersion;
+- (ZMTransportResponse *)responseForImageData:(NSData *)imageData metaData:(NSData *)metaData imageMediaType:(NSString *)imageMediaType path:(NSString *)path apiVersion:(ZMAPIVersion)apiVersion;
 {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Got an image response"];
     
@@ -311,7 +311,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     return response;
 }
 
-- (ZMTransportResponse *)responseForPayload:(id<ZMTransportData>)payload path:(NSString *)path method:(ZMTransportRequestMethod)method apiVersion:(int)apiVersion
+- (ZMTransportResponse *)responseForPayload:(id<ZMTransportData>)payload path:(NSString *)path method:(ZMTransportRequestMethod)method apiVersion:(ZMAPIVersion)apiVersion
 {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Got a response"];
     
@@ -334,7 +334,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     return response;
 }
 
-- (ZMTransportResponse *)responseForProtobufData:(NSData *)data path:(NSString *)path method:(ZMTransportRequestMethod)method apiVersion:(int)apiVersion
+- (ZMTransportResponse *)responseForProtobufData:(NSData *)data path:(NSString *)path method:(ZMTransportRequestMethod)method apiVersion:(ZMAPIVersion)apiVersion
 {
     XCTestExpectation *expectation = [self expectationWithDescription:@"Got a response"];
     
@@ -357,7 +357,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     return response;
 }
 
-- (ZMTransportRequestGenerator)createGeneratorForPayload:(id<ZMTransportData>)payload path:(NSString *)path method:(ZMTransportRequestMethod)method apiVersion:(int)apiVersion handler:(ZMCompletionHandler *)handler
+- (ZMTransportRequestGenerator)createGeneratorForPayload:(id<ZMTransportData>)payload path:(NSString *)path method:(ZMTransportRequestMethod)method apiVersion:(ZMAPIVersion)apiVersion handler:(ZMCompletionHandler *)handler
 {
     switch (method) {
         case ZMMethodGET:
@@ -377,7 +377,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     return generator;
 }
 
-- (ZMTransportRequestGenerator)createGeneratorForProtobufData:(NSData *)data path:(NSString *)path method:(ZMTransportRequestMethod)method apiVersion:(int)apiVersion handler:(ZMCompletionHandler *)handler
+- (ZMTransportRequestGenerator)createGeneratorForProtobufData:(NSData *)data path:(NSString *)path method:(ZMTransportRequestMethod)method apiVersion:(ZMAPIVersion)apiVersion handler:(ZMCompletionHandler *)handler
 {
     ZMTransportRequestGenerator generator = ^ZMTransportRequest*(void) {
         ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:path method:method binaryData:data type:@"application/x-protobuf" contentDisposition:nil apiVersion:apiVersion];
