@@ -38,7 +38,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         NSString *code = [request.payload.asDictionary optionalStringForKey:@"code"];
         
         if((password == nil || email == nil) && (code == nil || phone == nil)) {
-            return [self errorResponseWithCode:400 reason:@"missing-key"];
+            return [self errorResponseWithCode:400 reason:@"missing-key" apiVersion:request.apiVersion];
         }
         
         if(phone != nil
@@ -48,7 +48,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
                )
            )
         {
-            return [self errorResponseWithCode:404 reason:@"invalid-key"];
+            return [self errorResponseWithCode:404 reason:@"invalid-key" apiVersion:request.apiVersion];
         }
         
         NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
@@ -62,13 +62,13 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
         
         if (users.count < 1) {
-            return [self errorResponseWithCode:403 reason:@"invalid-credentials"];
+            return [self errorResponseWithCode:403 reason:@"invalid-credentials" apiVersion:request.apiVersion];
         }
         
         
         MockUser *user = users[0];
         if(!user.isEmailValidated) {
-            return [self errorResponseWithCode:403 reason:@"pending-activation"];
+            return [self errorResponseWithCode:403 reason:@"pending-activation" apiVersion:request.apiVersion];
         }
         
         if(phone != nil) {
@@ -92,9 +92,9 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
                                           };
 
         NSDictionary *headers = @{ @"Set-Cookie": [NSString stringWithFormat:@"zuid=%@", cookiesValue] };
-        return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil headers:headers];
+        return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil headers:headers apiVersion:request.apiVersion];
     }
-    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
+    return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
 }
 
 /// handles /login/send
@@ -104,7 +104,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         NSString *phone = [request.payload.asDictionary optionalStringForKey:@"phone"];
         
         if(phone == nil) {
-            [self errorResponseWithCode:400 reason:@"missing-key"];
+            [self errorResponseWithCode:400 reason:@"missing-key" apiVersion:request.apiVersion];
         }
         
         NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
@@ -112,15 +112,15 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
         
         if (users.count < 1) {
-            return [self errorResponseWithCode:404 reason:@"not-found"];
+            return [self errorResponseWithCode:404 reason:@"not-found" apiVersion:request.apiVersion];
         }
         else {
             [self.phoneNumbersWaitingForVerificationForLogin addObject:phone];
-            return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
+            return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil apiVersion:request.apiVersion];
         }
         
     }
-    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
+    return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
 }
 
 
