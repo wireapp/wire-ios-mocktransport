@@ -53,7 +53,7 @@
 
 static NSInteger const MaxUserClientsAllowed = 2;
 
-- (ZMTransportResponse *)processRegisterClientWithPayload:(NSDictionary *)payload apiVersion:(ZMAPIVersion)apiVersion
+- (ZMTransportResponse *)processRegisterClientWithPayload:(NSDictionary *)payload apiVersion:(APIVersion)apiVersion
 {
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"UserClient"];
     NSArray *existingClients = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
@@ -91,7 +91,7 @@ static NSInteger const MaxUserClientsAllowed = 2;
     return userClients.firstObject;
 }
 
-- (ZMTransportResponse *)processGetClientsListRequestWithApiVersion:(ZMAPIVersion)apiVersion
+- (ZMTransportResponse *)processGetClientsListRequestWithApiVersion:(APIVersion)apiVersion
 {
     NSArray *payload = [self.selfUser.clients mapWithBlock:^id(MockUserClient *client) {
         return [client transportData];
@@ -99,7 +99,7 @@ static NSInteger const MaxUserClientsAllowed = 2;
     return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil apiVersion:apiVersion];
 }
 
-- (ZMTransportResponse *)processGetClientById:(NSString *)clientId apiVersion:(ZMAPIVersion)apiVersion
+- (ZMTransportResponse *)processGetClientById:(NSString *)clientId apiVersion:(APIVersion)apiVersion
 {
     MockUserClient *userClient = [self userClientByIdentifier:clientId];
     if (userClient == nil) {
@@ -109,17 +109,17 @@ static NSInteger const MaxUserClientsAllowed = 2;
     return [ZMTransportResponse responseWithPayload:userClient.transportData HTTPStatus:200 transportSessionError:nil apiVersion:apiVersion];
 }
 
-- (ZMTransportResponse *)processClientPreKeysForClient:(NSString *__unused)clientId apiVersion:(ZMAPIVersion)apiVersion
+- (ZMTransportResponse *)processClientPreKeysForClient:(NSString *__unused)clientId apiVersion:(APIVersion)apiVersion
 {
     return [self errorResponseWithCode:418 reason:@"Not implemented" apiVersion:apiVersion];
 }
 
-- (ZMTransportResponse *)processUpdateClient:(NSString *__unused)clientId payload:(NSDictionary *__unused)payload apiVersion:(ZMAPIVersion)apiVersion;
+- (ZMTransportResponse *)processUpdateClient:(NSString *__unused)clientId payload:(NSDictionary *__unused)payload apiVersion:(APIVersion)apiVersion;
 {
     return [self errorResponseWithCode:418 reason:@"Not implemented" apiVersion:apiVersion];
 }
 
-- (ZMTransportResponse *)processDeleteClientRequest:(NSString *)clientId apiVersion:(ZMAPIVersion)apiVersion;
+- (ZMTransportResponse *)processDeleteClientRequest:(NSString *)clientId apiVersion:(APIVersion)apiVersion;
 {
     MockUserClient *userClient = [self userClientByIdentifier:clientId];
     if (userClient == nil) {

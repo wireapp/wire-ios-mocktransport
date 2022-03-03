@@ -29,7 +29,7 @@ extension MockTransportSession {
     }
     
     @objc(processRichProfileFetchForUser:apiVersion:)
-    public func processRichProfileFetchFor(user userID: String, apiVersion: ZMAPIVersion) -> ZMTransportResponse {
+    public func processRichProfileFetchFor(user userID: String, apiVersion: Int32) -> ZMTransportResponse {
         guard let user = fetchUser(withIdentifier: userID) else { return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion) }
         if let members = self.selfUser.currentTeamMembers {
             guard members.contains(user) else {

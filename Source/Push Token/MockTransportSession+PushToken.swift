@@ -34,14 +34,14 @@ extension MockTransportSession {
         }
     }
 
-    func processGetPushTokens(apiVersion: ZMAPIVersion) -> ZMTransportResponse {
+    func processGetPushTokens(apiVersion: Int32) -> ZMTransportResponse {
         let payload = [
             "tokens" : Array(pushTokens.values)
         ] as NSDictionary
         return ZMTransportResponse(payload: payload, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion)
     }
 
-    func processDeletePushToken(_ token: String?, apiVersion: ZMAPIVersion) -> ZMTransportResponse {
+    func processDeletePushToken(_ token: String?, apiVersion: Int32) -> ZMTransportResponse {
         if let token = token {
             if pushTokens[token] != nil {
                 removePushToken(token)
@@ -53,7 +53,7 @@ extension MockTransportSession {
         return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: apiVersion)
     }
 
-    func processPostPushToken(_ payload: ZMTransportData?, apiVersion: ZMAPIVersion) -> ZMTransportResponse {
+    func processPostPushToken(_ payload: ZMTransportData?, apiVersion: Int32) -> ZMTransportResponse {
         if let payload = payload?.asDictionary() as? [String : String],
             let token = payload["token"],
             let _ = payload["app"],

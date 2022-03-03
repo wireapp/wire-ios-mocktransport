@@ -82,7 +82,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
 @property (nonatomic, weak) id <ZMNetworkStateDelegate> networkStateDelegate;
 
-- (ZMTransportResponse *)errorResponseWithCode:(NSInteger)code reason:(NSString *)reason apiVersion:(ZMAPIVersion)apiVersion;
+- (ZMTransportResponse *)errorResponseWithCode:(NSInteger)code reason:(NSString *)reason apiVersion:(APIVersion)apiVersion;
 
 /// Completes a request and removes from all pending requests lists
 - (void)completeRequestAndRemoveFromLists:(ZMTransportRequest *)request response:(ZMTransportResponse *)response;
@@ -274,7 +274,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return self.generatedPushEvents;
 }
 
-- (ZMTransportResponse *)errorResponseWithCode:(NSInteger)code reason:(NSString *)reason apiVersion:(ZMAPIVersion)apiVersion;
+- (ZMTransportResponse *)errorResponseWithCode:(NSInteger)code reason:(NSString *)reason apiVersion:(APIVersion)apiVersion;
 {
     NSDictionary *payload = @{
                               @"label":reason

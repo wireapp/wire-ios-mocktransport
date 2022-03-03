@@ -28,7 +28,7 @@ import Foundation
         payload: ["label":"This will prevent the response from being completed. The completion handler won't be called at all."] as ZMTransportData,
         httpStatus: 500,
         transportSessionError: nil,
-        apiVersion: .v0
+        apiVersion: 0
     )
 
 }

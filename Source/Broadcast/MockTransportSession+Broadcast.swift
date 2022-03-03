@@ -22,7 +22,7 @@ import WireProtos
 extension MockTransportSession {
 
     // POST /broadcast/otr/messages
-    @objc public func processBroascastOTRMessageToConversation(protobuffData data: Data, query: [String: Any], apiVersion: ZMAPIVersion) -> ZMTransportResponse {
+    @objc public func processBroascastOTRMessageToConversation(protobuffData data: Data, query: [String: Any], apiVersion: Int32) -> ZMTransportResponse {
         guard
             let otrMetaData = try? Proteus_NewOtrMessage(serializedData: data),
             let senderClient = otrMessageSender(fromClientId: otrMetaData.sender) else {

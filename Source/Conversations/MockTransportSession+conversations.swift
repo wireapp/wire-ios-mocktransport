@@ -30,7 +30,7 @@ extension MockTransportSession {
     }
     
     @objc(processReceiptModeUpdateForConversation:payload:apiVersion:)
-    public func processReceiptModeUpdate(for conversationId: String, payload: [String:  AnyHashable], apiVersion: ZMAPIVersion) -> ZMTransportResponse {
+    public func processReceiptModeUpdate(for conversationId: String, payload: [String:  AnyHashable], apiVersion: Int32) -> ZMTransportResponse {
         guard let conversation = fetchConversation(with: conversationId) else {
             return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion)
         }
@@ -54,7 +54,7 @@ extension MockTransportSession {
     }
 
     @objc(processAccessModeUpdateForConversation:payload:apiVersion:)
-    public func processAccessModeUpdate(for conversationId: String, payload: [String : AnyHashable], apiVersion: ZMAPIVersion) -> ZMTransportResponse {
+    public func processAccessModeUpdate(for conversationId: String, payload: [String : AnyHashable], apiVersion: Int32) -> ZMTransportResponse {
         guard let conversation = fetchConversation(with: conversationId) else {
             return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion)
         }
@@ -82,7 +82,7 @@ extension MockTransportSession {
     }
     
     @objc(processFetchLinkForConversation:payload:apiVersion:)
-    public func processFetchLink(for conversationId: String, payload: [String: AnyHashable], apiVersion: ZMAPIVersion) -> ZMTransportResponse {
+    public func processFetchLink(for conversationId: String, payload: [String: AnyHashable], apiVersion: Int32) -> ZMTransportResponse {
         guard let conversation = fetchConversation(with: conversationId) else {
             return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion)
         }
@@ -101,7 +101,7 @@ extension MockTransportSession {
     }
     
     @objc(processFetchRolesForConversation:payload:apiVersion:)
-    public func processFetchRoles(for conversationId: String, payload: [String: AnyHashable], apiVersion: ZMAPIVersion) -> ZMTransportResponse {
+    public func processFetchRoles(for conversationId: String, payload: [String: AnyHashable], apiVersion: Int32) -> ZMTransportResponse {
         guard let conversation = fetchConversation(with: conversationId) else {
             return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion)
         }
@@ -114,7 +114,7 @@ extension MockTransportSession {
     }
     
     @objc(processCreateLinkForConversation:payload:apiVersion:)
-    public func processCreateLink(for conversationId: String, payload: [String: AnyHashable], apiVersion: ZMAPIVersion) -> ZMTransportResponse {
+    public func processCreateLink(for conversationId: String, payload: [String: AnyHashable], apiVersion: Int32) -> ZMTransportResponse {
         guard let conversation = fetchConversation(with: conversationId) else {
             return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion)
         }
@@ -152,7 +152,7 @@ extension MockTransportSession {
     }
     
     @objc(processDeleteLinkForConversation:payload:apiVersion:)
-    public func processDeleteLink(for conversationId: String, payload: [String: AnyHashable], apiVersion: ZMAPIVersion) -> ZMTransportResponse {
+    public func processDeleteLink(for conversationId: String, payload: [String: AnyHashable], apiVersion: Int32) -> ZMTransportResponse {
         guard let conversation = fetchConversation(with: conversationId) else {
             return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion)
         }
@@ -179,7 +179,7 @@ extension MockTransportSession {
     /// - "test-code" -  response payload should contain a new conversation
     /// - "wrong-code" - there should be an error in the response payload
     @objc(processJoinConversationWithPayload:apiVersion:)
-    public func processJoinConversation(with payload: [String: AnyHashable], apiVersion: ZMAPIVersion) -> ZMTransportResponse {
+    public func processJoinConversation(with payload: [String: AnyHashable], apiVersion: Int32) -> ZMTransportResponse {
         guard let code = payload["code"] as? String else {
             let payload = ["label" : "no-conversation-code"] as ZMTransportData
             return ZMTransportResponse(payload: payload, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion)
@@ -225,7 +225,7 @@ extension MockTransportSession {
     /// - "test-code" -  response payload should contain a new conversation ID
     /// - "wrong-code" - there should be an error in the response payload
     @objc(processFetchConversationIdAndNameWith:apiVersion:)
-    public func processFetchConversationIdAndName(with query: [String: AnyHashable], apiVersion: ZMAPIVersion) -> ZMTransportResponse {
+    public func processFetchConversationIdAndName(with query: [String: AnyHashable], apiVersion: Int32) -> ZMTransportResponse {
         guard let code = query["code"] as? String else {
             let payload = ["label" : "no-conversation-code"] as ZMTransportData
             return ZMTransportResponse(payload: payload, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion)
@@ -255,7 +255,7 @@ extension MockTransportSession {
     public func processAddOTRMessage(toConversation conversationID: String,
                                      withProtobuffData data: Data,
                                      query: [String: Any],
-                                     apiVersion: ZMAPIVersion) -> ZMTransportResponse {
+                                     apiVersion: Int32) -> ZMTransportResponse {
         guard
             let conversation = fetchConversation(with: conversationID),
             let otrMetaData = try? Proteus_NewOtrMessage(serializedData: data),
