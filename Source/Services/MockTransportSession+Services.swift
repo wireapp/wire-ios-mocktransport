@@ -20,7 +20,7 @@ import Foundation
 
 extension MockTransportSession {
 
-    func fetchWhitelistedServicesForTeam(with identifier: String?, query: [String : Any], apiVersion: Int32) -> ZMTransportResponse? {
+    func fetchWhitelistedServicesForTeam(with identifier: String?, query: [String : Any], apiVersion: APIVersion) -> ZMTransportResponse? {
         var predicate: NSPredicate? = nil
         if let prefix = query["prefix"] as? String {
             predicate = NSPredicate(format: "%K beginswith[c] %@", #keyPath(MockService.name), prefix)
@@ -32,24 +32,27 @@ extension MockTransportSession {
             "services" : services.map { $0.payload },
             "has_more" : false
         ]
-        return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion)
+        return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
     
     @objc(processServicesProvidersRequest:)
     public func processServicesProvidersRequest(_ request: ZMTransportRequest) -> ZMTransportResponse {
-        guard let providerId = request.RESTComponents(index: 1) else {
+        guard
+            let providerId = request.RESTComponents(index: 1),
+            let apiVersion = APIVersion(rawValue: request.apiVersion)
+        else {
             return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: request.apiVersion)
         }
         
         if let serviceId = request.RESTComponents(index: 3) {
-            return self.processServiceByIdRequest(provider: providerId, service: serviceId, apiVersion: request.apiVersion)
+            return self.processServiceByIdRequest(provider: providerId, service: serviceId, apiVersion: apiVersion)
         }
         else {
-            return self.processProviderByIdRequest(provider: providerId, apiVersion: request.apiVersion)
+            return self.processProviderByIdRequest(provider: providerId, apiVersion: apiVersion)
         }
     }
     
-    func processServiceByIdRequest(provider: String, service: String, apiVersion: Int32) -> ZMTransportResponse {
+    func processServiceByIdRequest(provider: String, service: String, apiVersion: APIVersion) -> ZMTransportResponse {
         
         let predicate = NSPredicate(format: "%K = %@ AND %K = %@",
                                     #keyPath(MockService.identifier), service,
@@ -59,14 +62,14 @@ extension MockTransportSession {
         
         if let service = services.last {
             let payload = service.payload
-            return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion)
+            return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
         }
         else {
-            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion)
+            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
         }
     }
     
-    func processProviderByIdRequest(provider: String, apiVersion: Int32) -> ZMTransportResponse {
+    func processProviderByIdRequest(provider: String, apiVersion: APIVersion) -> ZMTransportResponse {
 
         let predicate = NSPredicate(format: "%K = %@",
                                     #keyPath(MockService.provider), provider)
@@ -80,10 +83,10 @@ extension MockTransportSession {
                            "url": service.providerURL,
                            "description": service.providerDescription]
             
-            return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion)
+            return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
         }
         else {
-            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion)
+            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
         }
     }
     

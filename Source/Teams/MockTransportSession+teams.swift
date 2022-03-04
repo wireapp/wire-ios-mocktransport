@@ -20,20 +20,20 @@ import Foundation
 
 extension ZMTransportResponse {
 
-    static func teamNotFound(apiVersion: Int32) -> ZMTransportResponse {
-        return ZMTransportResponse(payload: ["label" : "no-team"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion)
+    static func teamNotFound(apiVersion: APIVersion) -> ZMTransportResponse {
+        return ZMTransportResponse(payload: ["label" : "no-team"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
 
-    static func notTeamMember(apiVersion: Int32) -> ZMTransportResponse {
-        return ZMTransportResponse(payload: ["label" : "no-team-member"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: apiVersion)
+    static func notTeamMember(apiVersion: APIVersion) -> ZMTransportResponse {
+        return ZMTransportResponse(payload: ["label" : "no-team-member"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
 
-    static func operationDenied(apiVersion: Int32) -> ZMTransportResponse {
-        return ZMTransportResponse(payload: ["label" : "operation-denied"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: apiVersion)
+    static func operationDenied(apiVersion: APIVersion) -> ZMTransportResponse {
+        return ZMTransportResponse(payload: ["label" : "operation-denied"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
 
-    static func conversationNotFound(apiVersion: Int32) -> ZMTransportResponse {
-        return ZMTransportResponse(payload: ["label" : "no-convo"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion)
+    static func conversationNotFound(apiVersion: APIVersion) -> ZMTransportResponse {
+        return ZMTransportResponse(payload: ["label" : "no-convo"] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
 
 }
@@ -42,30 +42,34 @@ extension MockTransportSession {
     @objc(processTeamsRequest:)
     public func processTeamsRequest(_ request: ZMTransportRequest) -> ZMTransportResponse {
         var response: ZMTransportResponse?
+
+        guard let apiVersion = APIVersion(rawValue: request.apiVersion) else {
+            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: request.apiVersion)
+        }
         
         switch request {
         case "/teams":
-            response = fetchAllTeams(query: request.queryParameters, apiVersion: request.apiVersion)
+            response = fetchAllTeams(query: request.queryParameters, apiVersion: apiVersion)
         case "/teams/*":
-            response = fetchTeam(with: request.RESTComponents(index: 1), apiVersion: request.apiVersion)
+            response = fetchTeam(with: request.RESTComponents(index: 1), apiVersion: apiVersion)
         case "/teams/*/conversations/*" where request.method == .methodDELETE:
-            response = deleteTeamConversation(teamId: request.RESTComponents(index: 1), conversationId: request.RESTComponents(index: 3), apiVersion: request.apiVersion)
+            response = deleteTeamConversation(teamId: request.RESTComponents(index: 1), conversationId: request.RESTComponents(index: 3), apiVersion: apiVersion)
         case "/teams/*/conversations/roles"/* where request.method == .methodGET*/:
-            response = fetchRolesForTeam(with: request.RESTComponents(index: 1), apiVersion: request.apiVersion)
+            response = fetchRolesForTeam(with: request.RESTComponents(index: 1), apiVersion: apiVersion)
         case "/teams/*/services/whitelisted":
-            response = fetchWhitelistedServicesForTeam(with: request.RESTComponents(index: 1), query: request.queryParameters, apiVersion: request.apiVersion)
+            response = fetchWhitelistedServicesForTeam(with: request.RESTComponents(index: 1), query: request.queryParameters, apiVersion: apiVersion)
         case "/teams/*/invitations":
-            response = sendTeamInvitation(with: request.RESTComponents(index: 1), apiVersion: request.apiVersion)
+            response = sendTeamInvitation(with: request.RESTComponents(index: 1), apiVersion: apiVersion)
         case "/teams/*/members":
-            response = fetchMembersForTeam(with: request.RESTComponents(index: 1), apiVersion: request.apiVersion)
+            response = fetchMembersForTeam(with: request.RESTComponents(index: 1), apiVersion: apiVersion)
         case "/teams/*/members/*":
-            response = fetchMemberForTeam(withTeamId: request.RESTComponents(index: 1), userId: request.RESTComponents(index: 3), apiVersion: request.apiVersion)
+            response = fetchMemberForTeam(withTeamId: request.RESTComponents(index: 1), userId: request.RESTComponents(index: 3), apiVersion: apiVersion)
         case "/teams/*/get-members-by-ids-using-post" where request.method == .methodPOST:
             let payload = request.payload?.asDictionary()
             let userIDs = payload?["user_ids"] as? [String]
-            response = fetchMembersForTeam(with: request.RESTComponents(index: 1), userIds: userIDs, apiVersion: request.apiVersion)
+            response = fetchMembersForTeam(with: request.RESTComponents(index: 1), userIds: userIDs, apiVersion: apiVersion)
         case "/teams/*/legalhold/*/approve":
-            response = approveUserLegalHold(inTeam: request.RESTComponents(index: 1), forUser: request.RESTComponents(index: 3), payload: request.payload, method: request.method, apiVersion: request.apiVersion)
+            response = approveUserLegalHold(inTeam: request.RESTComponents(index: 1), forUser: request.RESTComponents(index: 3), payload: request.payload, method: request.method, apiVersion: apiVersion)
         default:
             break
         }
@@ -77,7 +81,7 @@ extension MockTransportSession {
         }
     }
     
-    private func fetchTeam(with identifier: String?, apiVersion: Int32) -> ZMTransportResponse? {
+    private func fetchTeam(with identifier: String?, apiVersion: APIVersion) -> ZMTransportResponse? {
         guard let identifier = identifier else { return nil }
         let predicate = MockTeam.predicateWithIdentifier(identifier: identifier)
         guard let team : MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate),
@@ -88,16 +92,16 @@ extension MockTransportSession {
         if let permissionError = ensurePermission([], in: team, apiVersion: apiVersion) {
             return permissionError
         }
-        return ZMTransportResponse(payload: team.payload, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion)
+        return ZMTransportResponse(payload: team.payload, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
     
-    private func fetchAllTeams(query: [String : Any], apiVersion: Int32) -> ZMTransportResponse? {
+    private func fetchAllTeams(query: [String : Any], apiVersion: APIVersion) -> ZMTransportResponse? {
         let teams = selfUser.memberships?.map{$0.team} ?? []
         let payload: [String : Any] = [
             "teams" : teams.map { $0.payload },
             "has_more" : false
         ]
-        return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion)
+        return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
     
     private func paginate(teams: [MockTeam], start: String?, size: Int?) -> ([MockTeam], Bool) {
@@ -127,7 +131,7 @@ extension MockTransportSession {
         return (Array(paginatedTeams), hasMore)
     }
     
-    private func deleteTeamConversation(teamId: String?, conversationId: String?, apiVersion: Int32) -> ZMTransportResponse? {
+    private func deleteTeamConversation(teamId: String?, conversationId: String?, apiVersion: APIVersion) -> ZMTransportResponse? {
         guard let teamId = teamId, let conversationId = conversationId  else { return nil }
         
         let predicate = MockTeam.predicateWithIdentifier(identifier: teamId)
@@ -146,10 +150,10 @@ extension MockTransportSession {
         
         managedObjectContext.delete(conversation)
         
-        return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion)
+        return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
     
-    private func sendTeamInvitation(with identifier: String?, apiVersion: Int32) -> ZMTransportResponse? {
+    private func sendTeamInvitation(with identifier: String?, apiVersion: APIVersion) -> ZMTransportResponse? {
         guard let identifier = identifier else { return nil }
         let predicate = MockTeam.predicateWithIdentifier(identifier: identifier)
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound(apiVersion: apiVersion) }
@@ -159,10 +163,10 @@ extension MockTransportSession {
             return permissionError
         }
         
-        return ZMTransportResponse(payload: nil, httpStatus: 201, transportSessionError: nil, apiVersion: apiVersion)
+        return ZMTransportResponse(payload: nil, httpStatus: 201, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
     
-    private func fetchMembersForTeam(with teamId: String?, apiVersion: Int32) -> ZMTransportResponse? {
+    private func fetchMembersForTeam(with teamId: String?, apiVersion: APIVersion) -> ZMTransportResponse? {
         guard let teamId = teamId else { return nil }
         let predicate = MockTeam.predicateWithIdentifier(identifier: teamId)
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound(apiVersion: apiVersion) }
@@ -175,10 +179,10 @@ extension MockTransportSession {
             "hasMore" : false
         ]
 
-        return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion)
+        return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
     
-    private func fetchMembersForTeam(with teamId: String?, userIds: [String]?, apiVersion: Int32) -> ZMTransportResponse? {
+    private func fetchMembersForTeam(with teamId: String?, userIds: [String]?, apiVersion: APIVersion) -> ZMTransportResponse? {
         guard let teamId = teamId, let userIds = userIds else { return nil }
         let predicate = MockTeam.predicateWithIdentifier(identifier: teamId)
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound(apiVersion: apiVersion) }
@@ -192,10 +196,10 @@ extension MockTransportSession {
             "hasMore" : false
         ]
         
-        return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion)
+        return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
     
-    private func fetchRolesForTeam(with identifier: String?, apiVersion: Int32) -> ZMTransportResponse? {
+    private func fetchRolesForTeam(with identifier: String?, apiVersion: APIVersion) -> ZMTransportResponse? {
         guard let identifier = identifier else { return nil }
         let predicate = MockTeam.predicateWithIdentifier(identifier: identifier)
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound(apiVersion: apiVersion) }
@@ -204,10 +208,10 @@ extension MockTransportSession {
             "conversation_roles" : team.roles.map { $0.payload }
         ]
         
-        return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion)
+        return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
     
-    private func fetchMemberForTeam(withTeamId teamId: String?, userId: String?, apiVersion: Int32) -> ZMTransportResponse? {
+    private func fetchMemberForTeam(withTeamId teamId: String?, userId: String?, apiVersion: APIVersion) -> ZMTransportResponse? {
         guard let teamId = teamId, let userId = userId else { return nil }
         let predicate = MockTeam.predicateWithIdentifier(identifier: teamId)
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound(apiVersion: apiVersion) }
@@ -215,10 +219,10 @@ extension MockTransportSession {
         if let permissionError = ensurePermission(.getMemberPermissions, in: team, apiVersion: apiVersion) {
             return permissionError
         }
-        return ZMTransportResponse(payload: member.payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion)
+        return ZMTransportResponse(payload: member.payload as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
     
-    private func ensurePermission(_ permissions: MockPermissions, in team: MockTeam, apiVersion: Int32) -> ZMTransportResponse? {
+    private func ensurePermission(_ permissions: MockPermissions, in team: MockTeam, apiVersion: APIVersion) -> ZMTransportResponse? {
         guard let selfTeams = selfUser.memberships,
             let member = selfTeams.union(team.members).first
             else { return .notTeamMember(apiVersion: apiVersion) }
@@ -232,7 +236,7 @@ extension MockTransportSession {
 
     // MARK: - Legal Hold
 
-    private func approveUserLegalHold(inTeam teamId: String?, forUser userId: String?, payload: ZMTransportData?, method: ZMTransportRequestMethod, apiVersion: Int32) -> ZMTransportResponse? {
+    private func approveUserLegalHold(inTeam teamId: String?, forUser userId: String?, payload: ZMTransportData?, method: ZMTransportRequestMethod, apiVersion: APIVersion) -> ZMTransportResponse? {
         // 1) Assert request contents
         guard let teamId = teamId, let userId = userId else { return nil }
         guard method == .methodPUT else { return nil }
@@ -263,12 +267,12 @@ extension MockTransportSession {
             }
         }
 
-        return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion)
+        return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
 
-    private func errorResponse(withCode code: Int, reason: String, apiVersion: Int32) -> ZMTransportResponse {
+    private func errorResponse(withCode code: Int, reason: String, apiVersion: APIVersion) -> ZMTransportResponse {
         let payload: NSDictionary = ["label": reason]
-        return ZMTransportResponse(payload: payload, httpStatus: code, transportSessionError: nil, apiVersion: apiVersion)
+        return ZMTransportResponse(payload: payload, httpStatus: code, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
 
     @objc(pushEventsForLegalHoldWithInserted:updated:deleted:shouldSendEventsToSelfUser:)

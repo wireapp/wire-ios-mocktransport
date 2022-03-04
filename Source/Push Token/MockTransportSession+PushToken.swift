@@ -22,46 +22,50 @@ import WireTransport
 extension MockTransportSession {
     @objc(processPushTokenRequest:)
     public func processPushTokenRequest(_ request: ZMTransportRequest) -> ZMTransportResponse {
+        guard let apiVersion = APIVersion(rawValue: request.apiVersion) else {
+            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: request.apiVersion)
+        }
+
         switch (request, request.method) {
         case ("/push/tokens", .methodGET):
-            return processGetPushTokens(apiVersion: request.apiVersion)
+            return processGetPushTokens(apiVersion: apiVersion)
         case ("/push/tokens", .methodPOST):
-            return processPostPushToken(request.payload, apiVersion: request.apiVersion)
+            return processPostPushToken(request.payload, apiVersion: apiVersion)
         case ("/push/tokens/*", .methodDELETE):
-            return processDeletePushToken(request.RESTComponents(index: 2), apiVersion: request.apiVersion)
+            return processDeletePushToken(request.RESTComponents(index: 2), apiVersion: apiVersion)
         default:
             return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: request.apiVersion)
         }
     }
 
-    func processGetPushTokens(apiVersion: Int32) -> ZMTransportResponse {
+    func processGetPushTokens(apiVersion: APIVersion) -> ZMTransportResponse {
         let payload = [
             "tokens" : Array(pushTokens.values)
         ] as NSDictionary
-        return ZMTransportResponse(payload: payload, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion)
+        return ZMTransportResponse(payload: payload, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
 
-    func processDeletePushToken(_ token: String?, apiVersion: Int32) -> ZMTransportResponse {
+    func processDeletePushToken(_ token: String?, apiVersion: APIVersion) -> ZMTransportResponse {
         if let token = token {
             if pushTokens[token] != nil {
                 removePushToken(token)
-                return ZMTransportResponse(payload: nil, httpStatus: 204, transportSessionError: nil, apiVersion: apiVersion)
+                return ZMTransportResponse(payload: nil, httpStatus: 204, transportSessionError: nil, apiVersion: apiVersion.rawValue)
             } else {
-                return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion)
+                return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
             }
         }
-        return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: apiVersion)
+        return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
 
-    func processPostPushToken(_ payload: ZMTransportData?, apiVersion: Int32) -> ZMTransportResponse {
+    func processPostPushToken(_ payload: ZMTransportData?, apiVersion: APIVersion) -> ZMTransportResponse {
         if let payload = payload?.asDictionary() as? [String : String],
             let token = payload["token"],
             let _ = payload["app"],
             let transport = payload["transport"], transport == "APNS_VOIP" {
 
             addPushToken(token, payload: payload)
-            return ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 201, transportSessionError: nil, apiVersion: apiVersion)
+            return ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 201, transportSessionError: nil, apiVersion: apiVersion.rawValue)
         }
-        return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: apiVersion)
+        return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
 }

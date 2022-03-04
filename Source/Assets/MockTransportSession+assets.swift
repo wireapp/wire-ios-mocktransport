@@ -23,19 +23,19 @@ extension MockTransportSession {
     // V3
 
     @objc(processAssetV3DeleteWithKey:apiVersion:)
-    public func processAssetV3Delete(withKey key: String, apiVersion: Int32) -> ZMTransportResponse {
+    public func processAssetV3Delete(withKey key: String, apiVersion: APIVersion) -> ZMTransportResponse {
         if let asset = MockAsset(in: managedObjectContext, forID: key) {
             managedObjectContext.delete(asset)
-            return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion)
+            return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
         } else {
-            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion)
+            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
         }
     }
 
     // V4
 
     @objc(processAssetV4PostWithDomain:multipart:apiVersion:)
-    public func processAssetV4Post(with domain: String, multipart: [ZMMultipartBodyItem], apiVersion: Int32) -> ZMTransportResponse {
+    public func processAssetV4Post(with domain: String, multipart: [ZMMultipartBodyItem], apiVersion: APIVersion) -> ZMTransportResponse {
         guard
             multipart.count == 2,
             let jsonObject = multipart.first,
@@ -43,7 +43,7 @@ extension MockTransportSession {
             let imageData = multipart.last,
             let mimeType = imageData.contentType
         else {
-            return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: apiVersion)
+            return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil, apiVersion: apiVersion.rawValue)
         }
 
         let asset = MockAsset.insert(into: managedObjectContext)
@@ -67,24 +67,24 @@ extension MockTransportSession {
                                    httpStatus: 201,
                                    transportSessionError: nil,
                                    headers: ["Location": location],
-                                   apiVersion: apiVersion)
+                                   apiVersion: apiVersion.rawValue)
     }
 
     @objc(processAssetV4GetWithDomain:key:apiVersion:)
-    public func processAssetV4Get(with domain: String, key: String, apiVersion: Int32) -> ZMTransportResponse {
+    public func processAssetV4Get(with domain: String, key: String, apiVersion: APIVersion) -> ZMTransportResponse {
         if let asset = MockAsset(in: managedObjectContext, forID: key, domain: domain) {
-            return ZMTransportResponse(imageData: asset.data, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: apiVersion)
+            return ZMTransportResponse(imageData: asset.data, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: apiVersion.rawValue)
         }
-        return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion)
+        return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
 
     @objc(processAssetV4DeleteWithDomain:key:apiVersion:)
-    public func processAssetV4Delete(with domain: String, key: String, apiVersion: Int32) -> ZMTransportResponse {
+    public func processAssetV4Delete(with domain: String, key: String, apiVersion: APIVersion) -> ZMTransportResponse {
         if let asset = MockAsset(in: managedObjectContext, forID: key, domain: domain) {
             managedObjectContext.delete(asset)
-            return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion)
+            return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
         } else {
-            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion)
+            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue)
         }
     }
 }
