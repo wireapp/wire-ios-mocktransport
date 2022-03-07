@@ -29,16 +29,16 @@ extension MockTransportSession {
     }
     
     @objc(processRichProfileFetchForUser:apiVersion:)
-    public func processRichProfileFetchFor(user userID: String, apiVersion: ZMAPIVersion) -> ZMTransportResponse {
-        guard let user = fetchUser(withIdentifier: userID) else { return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion) }
+    public func processRichProfileFetchFor(user userID: String, apiVersion: APIVersion) -> ZMTransportResponse {
+        guard let user = fetchUser(withIdentifier: userID) else { return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: apiVersion.rawValue) }
         if let members = self.selfUser.currentTeamMembers {
             guard members.contains(user) else {
-                return ZMTransportResponse(payload: ["label": "insufficient-permissions"] as NSDictionary, httpStatus: 403, transportSessionError: nil, apiVersion: apiVersion)
+                return ZMTransportResponse(payload: ["label": "insufficient-permissions"] as NSDictionary, httpStatus: 403, transportSessionError: nil, apiVersion: apiVersion.rawValue)
             }
         }
         
         let fields = user.richProfile ?? []
-        return ZMTransportResponse(payload: ["fields" : fields ] as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion)
+        return ZMTransportResponse(payload: ["fields" : fields ] as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: apiVersion.rawValue)
     }
 
     @objc(insertUserWithName:includeClient:)

@@ -138,7 +138,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
 
 
 // POST /conversations/<id>/otr/messages
-- (ZMTransportResponse *)processAddOTRMessageToConversation:(NSString *)conversationId payload:(NSDictionary *)payload query:(NSDictionary *)query apiVersion:(ZMAPIVersion)apiVersion;
+- (ZMTransportResponse *)processAddOTRMessageToConversation:(NSString *)conversationId payload:(NSDictionary *)payload query:(NSDictionary *)query apiVersion:(APIVersion)apiVersion;
 {
     NSAssert(self.selfUser != nil, @"No self user in mock transport session");
     
@@ -168,7 +168,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:statusCode transportSessionError:nil apiVersion:apiVersion];
 }
 
-- (ZMTransportResponse *)processPutConversation:(NSString *)conversationId payload:(NSDictionary *)payload apiVersion:(ZMAPIVersion)apiVersion;
+- (ZMTransportResponse *)processPutConversation:(NSString *)conversationId payload:(NSDictionary *)payload apiVersion:(APIVersion)apiVersion;
 {
     MockConversation *conversation = [self conversationByIdentifier:conversationId];
     if (conversation == nil) {
@@ -190,7 +190,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     return [ZMTransportResponse responseWithPayload:event.transportData HTTPStatus:200 transportSessionError:nil apiVersion:apiVersion];
 }
 
-- (ZMTransportResponse *)processPutMembersInConversation:(NSString *)conversationId member:(NSString *)memberId payload:(NSDictionary *)payload apiVersion:(ZMAPIVersion)apiVersion;
+- (ZMTransportResponse *)processPutMembersInConversation:(NSString *)conversationId member:(NSString *)memberId payload:(NSDictionary *)payload apiVersion:(APIVersion)apiVersion;
 {
     MockConversation *conversation = [self conversationByIdentifier:conversationId];
     if (conversation == nil) {
@@ -253,7 +253,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     return mutedStatus != nil;
 }
 
-- (ZMTransportResponse *)processPutConversationSelf:(NSString *)conversationId payload:(NSDictionary *)payload apiVersion:(ZMAPIVersion)apiVersion;
+- (ZMTransportResponse *)processPutConversationSelf:(NSString *)conversationId payload:(NSDictionary *)payload apiVersion:(APIVersion)apiVersion;
 {
     MockConversation *conversation = [self conversationByIdentifier:conversationId];
     if (conversation == nil) {
@@ -271,7 +271,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil apiVersion:apiVersion];
 }
 
-- (ZMTransportResponse *)processConversationsGetConversationsIDs:(NSString *)ids apiVersion:(ZMAPIVersion)apiVersion;
+- (ZMTransportResponse *)processConversationsGetConversationsIDs:(NSString *)ids apiVersion:(APIVersion)apiVersion;
 {
     NSFetchRequest *request = [MockConversation sortedFetchRequest];
     NSArray *conversations = [self.managedObjectContext executeFetchRequestOrAssert:request];
@@ -297,7 +297,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
 
 }
 
-- (ZMTransportResponse *)processConversationsGetConversation:(NSString *)conversationId apiVersion:(ZMAPIVersion)apiVersion;
+- (ZMTransportResponse *)processConversationsGetConversation:(NSString *)conversationId apiVersion:(APIVersion)apiVersion;
 {
     MockConversation *conversation = [self conversationByIdentifier:conversationId];
     
@@ -346,7 +346,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
 }
 
 
-- (ZMTransportResponse *)processDeleteConversation:(NSString *)conversationId member:(NSString *)memberId apiVersion:(ZMAPIVersion)apiVersion;
+- (ZMTransportResponse *)processDeleteConversation:(NSString *)conversationId member:(NSString *)memberId apiVersion:(APIVersion)apiVersion;
 {
     MockConversation *conversation = [self fetchConversationWithIdentifier:conversationId];
     if (conversation == nil) {
@@ -360,7 +360,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
 }
 
 
-- (ZMTransportResponse *)processAddMembersToConversation:(NSString *)conversationId payload:(NSDictionary *)payload apiVersion:(ZMAPIVersion)apiVersion;
+- (ZMTransportResponse *)processAddMembersToConversation:(NSString *)conversationId payload:(NSDictionary *)payload apiVersion:(APIVersion)apiVersion;
 {
     MockConversation *conversation = [self fetchConversationWithIdentifier:conversationId];
     
@@ -399,7 +399,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
 }
 
 // POST /conversations/<id>/typing
-- (ZMTransportResponse *)processConversationTyping:(NSString *)conversationId payload:(NSDictionary *)payload apiVersion:(ZMAPIVersion)apiVersion
+- (ZMTransportResponse *)processConversationTyping:(NSString *)conversationId payload:(NSDictionary *)payload apiVersion:(APIVersion)apiVersion
 {
     MockConversation *conversation = [self conversationByIdentifier:conversationId];
     if (conversation == nil) {
@@ -414,7 +414,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
 }
 
 // GET /conversations/ids
-- (ZMTransportResponse *)processConversationIDsQuery:(NSDictionary *)query apiVersion:(ZMAPIVersion)apiVersion
+- (ZMTransportResponse *)processConversationIDsQuery:(NSDictionary *)query apiVersion:(APIVersion)apiVersion
 {
     NSString *sizeString = [query optionalStringForKey:@"size"];
     NSUUID *start = [query optionalUuidForKey:@"start"];
