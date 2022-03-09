@@ -23,7 +23,10 @@ extension MockTransportSession {
     @objc
     public func processAPIVersionGetRequest(_ request: ZMTransportRequest) -> ZMTransportResponse {
         // /api-version is the only unversioned endpoint.
-        guard request.apiVersion == APIVersion.v0.rawValue else {
+        guard
+            isAPIVersionEndpointAvailable,
+            request.apiVersion == APIVersion.v0.rawValue
+        else {
             return ZMTransportResponse(payload: nil,
                                        httpStatus: 404,
                                        transportSessionError: nil,

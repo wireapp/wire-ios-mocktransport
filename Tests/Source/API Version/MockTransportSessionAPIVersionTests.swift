@@ -42,6 +42,21 @@ class MockTransportSessionAPIVersionTests: MockTransportSessionTests {
         XCTAssertEqual(payload?["federation"] as? Bool, true)
     }
 
+    func testThatItReturns404IfAPIVersionEndpointIsUnavailable() {
+        // Given
+        let path = "/api-version"
+        sut.isAPIVersionEndpointAvailable = false
+
+        // Then
+        let response = self.response(forPayload: [:] as ZMTransportData,
+                                     path: path,
+                                     method: .methodGET,
+                                     apiVersion: .v0)
+
+        // Then
+        XCTAssertEqual(response?.httpStatus, 404)
+    }
+
     // TODO: [John] Uncomment when we add API version 1.
 
 //    func testThatItReturns404IfAPIVersionIsNotZero() {

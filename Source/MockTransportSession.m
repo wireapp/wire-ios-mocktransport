@@ -138,6 +138,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         self.supportedAPIVersions = [[NSArray alloc] initWithObjects:@0, @1, nil];
         self.domain = @"wire.com";
         self.federation = false;
+        self.isAPIVersionEndpointAvailable = true;
     }
     return self;
 }

@@ -73,6 +73,7 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 @property (nonatomic) NSArray<NSNumber *> *supportedAPIVersions;
 @property (nonatomic) NSString *domain;
 @property (nonatomic) BOOL federation;
+@property (nonatomic) BOOL isAPIVersionEndpointAvailable;
 
 @property (nonatomic, readonly) NSArray *updateEvents;
 
