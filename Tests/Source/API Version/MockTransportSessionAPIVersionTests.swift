@@ -37,7 +37,7 @@ class MockTransportSessionAPIVersionTests: MockTransportSessionTests {
         XCTAssertEqual(response?.httpStatus, 200)
 
         let payload = response?.payload?.asDictionary()
-        XCTAssertEqual(payload?["supported"] as? [Int32], sut.supportedAPIVersions)
+        XCTAssertEqual(payload?["supported"] as? [Int32], sut.supportedAPIVersions.map(\.int32Value))
         XCTAssertEqual(payload?["domain"] as? String, sut.domain)
         XCTAssertEqual(payload?["federation"] as? Bool, sut.federation)
     }
