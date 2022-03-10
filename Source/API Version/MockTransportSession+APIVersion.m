@@ -23,8 +23,6 @@
 #import "MockTransportSession+APIVersion.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
 
-
-
 @implementation MockTransportSession (APIVersion)
 
 - (ZMTransportResponse *)processAPIVersionRequest:(ZMTransportRequest *)request;
