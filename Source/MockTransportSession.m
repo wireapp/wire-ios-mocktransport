@@ -134,6 +134,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         self.pushTokens = [NSMutableDictionary dictionary];
         _nonCompletedRequests = [NSMutableArray array];
         [MockRole createConversationRolesWithContext:self.managedObjectContext];
+
+        self.supportedAPIVersions = [[NSArray alloc] initWithObjects:@0, @1, nil];
+        self.domain = @"wire.com";
+        self.federation = false;
+        self.isAPIVersionEndpointAvailable = true;
     }
     return self;
 }
@@ -458,7 +463,8 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
              @[@"/invitations", @"processInvitationsRequest:"],
              @[@"/teams", @"processTeamsRequest:"],
              @[@"/broadcast", @"processBroadcastRequest:"],
-             @[@"/providers", @"processServicesProvidersRequest:"]
+             @[@"/providers", @"processServicesProvidersRequest:"],
+             @[@"/api-version", @"processAPIVersionRequest:"]
              ];
 }
 
