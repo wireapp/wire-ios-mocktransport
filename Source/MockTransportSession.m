@@ -87,7 +87,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 /// Completes a request and removes from all pending requests lists
 - (void)completeRequestAndRemoveFromLists:(ZMTransportRequest *)request response:(ZMTransportResponse *)response;
 
-
 @end
 
 
@@ -1118,4 +1117,3 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 }
 
 @end
-

@@ -36,11 +36,20 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         NSString *email = [request.payload.asDictionary optionalStringForKey:@"email"];
         NSString *phone = [request.payload.asDictionary optionalStringForKey:@"phone"];
         NSString *code = [request.payload.asDictionary optionalStringForKey:@"code"];
-        
+        NSString *verificationCode = [request.payload.asDictionary optionalStringForKey:@"verification_code"];
+
         if((password == nil || email == nil) && (code == nil || phone == nil)) {
             return [self errorResponseWithCode:400 reason:@"missing-key"];
         }
-        
+
+        if(self.emailVerificationCodeForLogin != nil) {
+            if (verificationCode == nil) {
+                return [self errorResponseWithCode:403 reason:@"code-authentication-required"];
+            } else if (![self.emailVerificationCodeForLogin isEqualToString:verificationCode]) {
+                return [self errorResponseWithCode:403 reason:@"code-authentication-failed"];
+            }
+        }
+
         if(phone != nil
            && (
                ! [self.phoneNumbersWaitingForVerificationForLogin containsObject:phone] ||
