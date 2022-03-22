@@ -48,8 +48,6 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
             } else if (![self.generatedEmailVerificationCode isEqualToString:verificationCode]) {
                 return [self errorResponseWithCode:403 reason:@"code-authentication-failed"];
             }
-        } else {
-            return [self errorResponseWithCode:403 reason:@"code-authentication-failed"];
         }
 
         if(phone != nil

@@ -141,23 +141,23 @@
     [[(id) self.sut.cookieStorage reject] setAuthenticationCookieData:OCMOCK_ANY];
 
     // WHEN
-    ZMTransportResponse *responseOne = [self responseForPayload:@{@"email":email, @"action":action} path:@"/verification-code/send" method:ZMMethodPOST];
+    ZMTransportResponse *verificationCodeSendResponse = [self responseForPayload:@{@"email":email, @"action":action} path:@"/verification-code/send" method:ZMMethodPOST];
 
     // THEN
-    XCTAssertNotNil(responseOne);
-    XCTAssertEqual(responseOne.HTTPStatus, 200);
+    XCTAssertNotNil(verificationCodeSendResponse);
+    XCTAssertEqual(verificationCodeSendResponse.HTTPStatus, 200);
 
 
     // and when
-    ZMTransportResponse *responseTwo = [self responseForPayload:@{
+    ZMTransportResponse *response = [self responseForPayload:@{
                                                                @"email": email,
                                                                @"password": password,
                                                                @"verification_code": verificationCode,
                                                                } path:@"/login" method:ZMMethodPOST];
 
-    XCTAssertNotNil(responseTwo);
-    XCTAssertEqual(responseTwo.HTTPStatus, 403);
-    XCTAssertEqualObjects([responseTwo payloadLabel], @"code-authentication-failed");
+    XCTAssertNotNil(response);
+    XCTAssertEqual(response.HTTPStatus, 403);
+    XCTAssertEqualObjects([response payloadLabel], @"code-authentication-failed");
     [self verifyMockLater:self.cookieStorage];
 }
 
@@ -302,24 +302,30 @@
     NSString *email = @"doo@example.com";
     NSString *password = @"Bar481516";
     NSString *verificationCode = @"123457";
+    NSString *action = @"login";
 
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Food"];
         selfUser.email = email;
         selfUser.password = password;
+    
     }];
     WaitForAllGroupsToBeEmpty(0.5);
+
+    // WHEN
+    ZMTransportResponse *verificationCodeSendResponse = [self responseForPayload:@{@"email":email, @"action":action} path:@"/verification-code/send" method:ZMMethodPOST];
 
     // WHEN
     NSString *path = @"/login";
     ZMTransportResponse *response = [self responseForPayload:@{
                                                                @"email": email,
                                                                @"password": password,
-                                                               @"verification_code": verificationCode
+                                                               @"verification_code":verificationCode,
                                                                } path:path method:ZMMethodPOST];
 
     // THEN
     XCTAssertNotNil(response);
+    XCTAssertNotNil(verificationCodeSendResponse);
     XCTAssertEqual(response.HTTPStatus, 403);
     XCTAssertEqualObjects([response payloadLabel], @"code-authentication-failed");
 }
