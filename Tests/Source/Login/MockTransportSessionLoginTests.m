@@ -90,6 +90,42 @@
     
 }
 
+- (void)testThatLoginSucceedsAndSetsTheCookieWithEmailAfterRequestingAnEmailVerificationLoginCode
+{
+    // GIVEN
+    __block MockUser *selfUser;
+    NSString *email = @"test@wire.com";
+    NSString *password = @"Bar481516";
+    NSString *action = @"login";
+
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        selfUser = [session insertSelfUserWithName:@"Food"];
+        selfUser.email = email;
+        selfUser.password = password;
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+
+    self.sut.cookieStorage = [OCMockObject mockForClass:[ZMPersistentCookieStorage class]];
+    [[(id) self.sut.cookieStorage expect] setAuthenticationCookieData:OCMOCK_ANY];
+
+    // WHEN
+    ZMTransportResponse *verificationCodeSendResponse = [self responseForPayload:@{@"email":email, @"action":action} path:@"/verification-code/send" method:ZMMethodPOST];
+    [self responseForPayload:@{@"email":email} path:@"/login/send" method:ZMMethodPOST];
+
+    // and when
+    ZMTransportResponse *response = [self responseForPayload:@{
+                                                               @"email": email,
+                                                               @"password": password,
+                                                               @"verification_code": self.sut.generatedEmailVerificationCode
+                                                               } path:@"/login" method:ZMMethodPOST];
+
+    // THEN
+    XCTAssertNotNil(response);
+    XCTAssertNotNil(verificationCodeSendResponse);
+    XCTAssertEqual(response.HTTPStatus, 200);
+    [self verifyMockLater:self.cookieStorage];
+}
+
 - (void)testThatPhoneLoginFailsIfTheLoginCodeIsWrong
 {
     // GIVEN
