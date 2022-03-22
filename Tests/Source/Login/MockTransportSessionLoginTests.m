@@ -90,7 +90,7 @@
     
 }
 
-- (void)testThatLoginSucceedsAndSetsTheCookieWithEmailAfterRequestingAnEmailVerificationLoginCode
+- (void)testThatLoginSucceedsAndSetsTheCookieWithEmailAfterRequestingAnEmailVerificationCode
 {
     // GIVEN
     __block MockUser *selfUser;
