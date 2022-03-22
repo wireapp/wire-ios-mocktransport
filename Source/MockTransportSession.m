@@ -224,6 +224,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     self.shouldKeepPushChannelOpen = NO;
 }
 
+- (void)generateEmailVerificationCode
+{
+    _generatedEmailVerificationCode = @"123456";
+}
+
 - (ZMTransportSession *)mockedTransportSession;
 {
     return (id) self;
@@ -457,7 +462,8 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
              @[@"/invitations", @"processInvitationsRequest:"],
              @[@"/teams", @"processTeamsRequest:"],
              @[@"/broadcast", @"processBroadcastRequest:"],
-             @[@"/providers", @"processServicesProvidersRequest:"]
+             @[@"/providers", @"processServicesProvidersRequest:"],
+             @[@"/verification-code/send", @"processVerificationCodeSendRequest:"]
              ];
 }
 

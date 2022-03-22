@@ -128,8 +128,8 @@
     __block MockUser *selfUser;
     NSString *email = @"doo@example.com";
     NSString *password = @"Bar481516";
-    self.sut.emailVerificationCodeForLogin = @"12345";
-    NSString *verificationCode = self.sut.emailVerificationCodeForLogin;
+    NSString *verificationCode = @"123457";
+    NSString *action = @"login";
 
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Food"];
@@ -141,20 +141,24 @@
     [[(id) self.sut.cookieStorage reject] setAuthenticationCookieData:OCMOCK_ANY];
 
     // WHEN
-    [self responseForPayload:@{@"email":email} path:@"/login/send" method:ZMMethodPOST];
+    ZMTransportResponse *responseOne = [self responseForPayload:@{@"email":email, @"action":action} path:@"/verification-code/send" method:ZMMethodPOST];
+
+    // THEN
+    XCTAssertNotNil(responseOne);
+    XCTAssertEqual(responseOne.HTTPStatus, 200);
+
 
     // and when
-    ZMTransportResponse *response = [self responseForPayload:@{
+    ZMTransportResponse *responseTwo = [self responseForPayload:@{
                                                                @"email": email,
                                                                @"password": password,
                                                                @"verification_code": verificationCode,
                                                                } path:@"/login" method:ZMMethodPOST];
 
-    // THEN
-    XCTAssertNotNil(response);
-    XCTAssertEqual(response.HTTPStatus, 403);
+    XCTAssertNotNil(responseTwo);
+    XCTAssertEqual(responseTwo.HTTPStatus, 403);
+    XCTAssertEqualObjects([responseTwo payloadLabel], @"code-authentication-failed");
     [self verifyMockLater:self.cookieStorage];
-
 }
 
 - (void)testThatPhoneLoginFailsIfThereIsNoUserWithSuchPhone
@@ -297,8 +301,7 @@
     __block MockUser *selfUser;
     NSString *email = @"doo@example.com";
     NSString *password = @"Bar481516";
-    self.sut.emailVerificationCodeForLogin = @"1245656";
-    NSString *verificationCode = self.sut.emailActivationCode;
+    NSString *verificationCode = @"123457";
 
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Food"];

@@ -75,7 +75,7 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 @property (nonatomic) BOOL useLegaclyPushNotifications;
 
-@property (nonatomic, nullable) NSString *emailVerificationCodeForLogin;
+@property (nonatomic,  readonly, nullable) NSString *generatedEmailVerificationCode;
 
 + (NSString *)binaryDataTypeAsMIME:(NSString *)type;
 
