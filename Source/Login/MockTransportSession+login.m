@@ -148,7 +148,6 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
             return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
         } else {
             return [self errorResponseWithCode:400 reason:@"bad-request"];
-
         }
 
     }
