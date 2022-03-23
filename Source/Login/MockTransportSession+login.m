@@ -94,10 +94,10 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         self.clientCompletedLogin = YES;
         
         NSDictionary *responsePayload = @{
-            @"access_token" : HardcodedAccessToken,
-            @"expires_in" : @900,
-            @"token_type" : @"Bearer",
-            @"user": user.identifier
+                                         @"access_token" : HardcodedAccessToken,
+                                         @"expires_in" : @900,
+                                         @"token_type" : @"Bearer",
+                                         @"user": user.identifier
         };
 
         NSDictionary *headers = @{ @"Set-Cookie": [NSString stringWithFormat:@"zuid=%@", cookiesValue] };
