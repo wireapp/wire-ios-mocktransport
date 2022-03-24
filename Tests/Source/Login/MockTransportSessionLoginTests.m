@@ -373,44 +373,6 @@
     XCTAssertEqualObjects([response payloadLabel], @"pending-activation");
 }
 
--(void)testThatItReturns403CodeAuthenticationFailedWhenEmailVerificationCodeIsInvalid
-{
-    // GIVEN
-    __block MockUser *selfUser;
-    NSString *email = @"doo@example.com";
-    NSString *password = @"Bar481516";
-    NSString *verificationCode = @"123457";
-    NSString *action = @"login";
-
-    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
-        selfUser = [session insertSelfUserWithName:@"Food"];
-        selfUser.email = email;
-        selfUser.password = password;
-
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-
-    // WHEN
-    ZMTransportResponse *verificationCodeSendResponse = [self responseForPayload:@{
-                                                                                  @"email":email,
-                                                                                  @"action":action
-                                                                                  } path:@"/verification-code/send" method:ZMMethodPOST];
-
-    // WHEN
-    NSString *path = @"/login";
-    ZMTransportResponse *response = [self responseForPayload:@{
-                                                               @"email": email,
-                                                               @"password": password,
-                                                               @"verification_code":verificationCode,
-                                                               } path:path method:ZMMethodPOST];
-
-    // THEN
-    XCTAssertNotNil(response);
-    XCTAssertNotNil(verificationCodeSendResponse);
-    XCTAssertEqual(response.HTTPStatus, 403);
-    XCTAssertEqualObjects([response payloadLabel], @"code-authentication-failed");
-}
-
 - (void)testThatLoginFailsAndDoesNotSetTheCookie
 {
     // GIVEN
