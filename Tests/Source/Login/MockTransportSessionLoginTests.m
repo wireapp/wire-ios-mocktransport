@@ -90,7 +90,7 @@
 
 }
 
-- (void)testThatLoginSucceedsAndSetsTheCookieWithEmailAfterRequestingAnEmailVerificationCode
+- (void)testThatLoginSucceedsAndSetsTheCookie_WhenLoggingInWithCorrectEmailVerificationCode
 {
     // GIVEN
     __block MockUser *selfUser;
@@ -126,7 +126,8 @@
     [self verifyMockLater:self.cookieStorage];
 }
 
-- (void)testThatLoginFailsWhenVerificationCodeIsGeneratedButNotSent
+- (void)testThatLoginFails_WhenLoggingInWithMissingEmailVerificationCode
+
 {
     // GIVEN
     __block MockUser *selfUser;
@@ -198,7 +199,7 @@
 
 }
 
-- (void)testThatEmailLoginFailsIfTheEmailVerificationCodeIsWrong
+- (void)testThatLoginFails_WhenLoggingInWithIncorrectEmailVerificationCode
 {
     // GIVEN
     __block MockUser *selfUser;
