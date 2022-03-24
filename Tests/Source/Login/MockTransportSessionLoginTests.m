@@ -163,6 +163,7 @@
     // THEN
     XCTAssertNotNil(verificationCodeSendResponse);
     XCTAssertEqual(response.HTTPStatus, 403);
+    XCTAssertEqualObjects([response payloadLabel], @"code-authentication-required");
     [self verifyMockLater:self.cookieStorage];
 }
 
