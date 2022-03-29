@@ -179,6 +179,20 @@ extension MockTransportSession {
         }
     }
 
+    @objc(processGuestLinkFeatureStatusForConversation:payload:)
+    public func guestLinkFeatureStatus(for conversationId: String, payload: [String: AnyHashable]) -> ZMTransportResponse {
+
+        guard let conversation = fetchConversation(with: conversationId) else {
+            return ZMTransportResponse(payload: ["label": "no-conversation"] as ZMTransportData, httpStatus: 404, transportSessionError: nil)
+        }
+
+        let responsePayload = [
+            "status": conversation.guestLinkStatus
+        ] as ZMTransportData
+
+        return ZMTransportResponse(payload: responsePayload, httpStatus: 200, transportSessionError: nil)
+    }
+
     /// Returns a response for the POST "/conversations/join" request
     /// - Parameter query: payload
     /// - Returns: response payload depending on code value:
