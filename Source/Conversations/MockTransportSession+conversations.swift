@@ -187,7 +187,7 @@ extension MockTransportSession {
         }
 
         let responsePayload = [
-            "status": conversation.guestLinkStatus
+            "status": conversation.guestLinkFeatureStatus
         ] as ZMTransportData
 
         return ZMTransportResponse(payload: responsePayload, httpStatus: 200, transportSessionError: nil)

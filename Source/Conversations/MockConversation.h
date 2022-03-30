@@ -51,7 +51,7 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
 @property (nonatomic, nonnull) NSString *accessRole;
 @property (nonatomic, nonnull) NSArray<NSString *> *accessRoleV2;
 @property (nonatomic, nullable) NSString *link;
-@property (nonatomic, nullable) NSString *guestLinkStatus;
+@property (nonatomic, nullable) NSString *guestLinkFeatureStatus;
 @property (nonatomic, nonnull) NSString *identifier;
 @property (nonatomic, nonnull) NSString *selfIdentifier; // Identifier of self user, used to filter out self from participants in the payload
 @property (nonatomic, readonly, nullable) NSString *name;

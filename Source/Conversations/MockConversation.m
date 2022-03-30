@@ -52,7 +52,7 @@
 @dynamic team;
 @dynamic accessRole;
 @dynamic accessRoleV2;
-@dynamic guestLinkStatus;
+@dynamic guestLinkFeatureStatus;
 @dynamic accessMode;
 @dynamic link;
 @dynamic receiptMode;
