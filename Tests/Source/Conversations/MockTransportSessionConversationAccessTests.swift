@@ -152,6 +152,33 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
         XCTAssertNotNil(receivedPayload["code"])
         XCTAssertNotNil(receivedPayload["key"])
     }
+
+    func testThatItFetchesTheGuestLinkStatus() {
+        // GIVEN
+        self.conversation.guestLinkFeatureStatus = "enabled"
+        let status = self.conversation.guestLinkFeatureStatus
+
+        // WHEN
+        let response = self.response(forPayload: [:] as ZMTransportData, path: "/conversations/\(self.conversation.identifier)/features/conversationGuestLinks", method: .methodGET)
+
+        // THEN
+        XCTAssertEqual(response?.httpStatus, 200)
+        guard let receivedPayload = response?.payload as? [String: Any] else { XCTFail(); return }
+
+        XCTAssertEqual(receivedPayload["status"] as! String, status)
+    }
+
+    func testThatItFailToFetchGuestLinkStatusWhenConversationIdMissing() {
+        // GIVEN
+        self.conversation.guestLinkFeatureStatus = "enabled"
+        self.conversation.identifier = ""
+
+        // WHEN
+        let response = self.response(forPayload: [:] as ZMTransportData, path: "/conversations/\(self.conversation.identifier)/features/conversationGuestLinks", method: .methodGET)
+
+        // THEN
+        XCTAssertEqual(response?.httpStatus, 404)
+    }
     
     func testThatItCanFetchTheLink() {
         // given

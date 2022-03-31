@@ -77,7 +77,6 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
 + (nonnull instancetype)insertConversationIntoContext:(nonnull NSManagedObjectContext *)moc withSelfUser:(nonnull MockUser *)selfUser creator:(nonnull MockUser *)creator otherUsers:(nullable NSArray *)otherUsers type:(ZMTConversationType)type;
 + (nonnull instancetype)insertConversationIntoContext:(nonnull NSManagedObjectContext *)moc creator:(nonnull MockUser *)creator otherUsers:(nullable NSArray *)otherUsers type:(ZMTConversationType)type;
 
-
 + (nonnull instancetype)conversationInMoc:(nonnull NSManagedObjectContext *)moc withCreator:(nonnull MockUser *)creator otherUsers:(nullable NSArray *)otherUsers type:(ZMTConversationType)type;
 
 - (nonnull MockEvent *)insertClientMessageFromUser:(nonnull MockUser *)fromUser data:(nonnull NSData *)data;
