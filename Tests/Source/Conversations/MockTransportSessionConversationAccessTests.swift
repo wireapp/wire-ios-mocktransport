@@ -168,7 +168,7 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
         XCTAssertEqual(receivedPayload["status"] as! String, status)
     }
 
-    func testThatItFailToFetchGuestLinkStatusWhenConversationIdMissing() {
+    func testThatItFailToFetchGuestLinkStatusWhenConversationIdIsMissing() {
         // GIVEN
         self.conversation.guestLinkFeatureStatus = "enabled"
         self.conversation.identifier = ""
