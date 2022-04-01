@@ -180,7 +180,7 @@ extension MockTransportSession {
     }
 
     @objc(processGuestLinkFeatureStatusForConversation:)
-    public func guestLinkFeatureStatus(for conversationId: String) -> ZMTransportResponse {
+    public func processGuestLinkFeatureStatusForConversation(for conversationId: String) -> ZMTransportResponse {
 
         guard let conversation = fetchConversation(with: conversationId) else {
             return ZMTransportResponse(payload: ["label": "no-conversation"] as ZMTransportData, httpStatus: 404, transportSessionError: nil)
