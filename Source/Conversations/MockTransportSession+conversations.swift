@@ -179,8 +179,8 @@ extension MockTransportSession {
         }
     }
 
-    @objc(processGuestLinkFeatureStatusForConversation:payload:)
-    public func guestLinkFeatureStatus(for conversationId: String, payload: [String: AnyHashable]) -> ZMTransportResponse {
+    @objc(processGuestLinkFeatureStatusForConversation:)
+    public func guestLinkFeatureStatus(for conversationId: String) -> ZMTransportResponse {
 
         guard let conversation = fetchConversation(with: conversationId) else {
             return ZMTransportResponse(payload: ["label": "no-conversation"] as ZMTransportData, httpStatus: 404, transportSessionError: nil)
