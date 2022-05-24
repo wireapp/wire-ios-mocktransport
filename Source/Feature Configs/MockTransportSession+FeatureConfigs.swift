@@ -31,7 +31,10 @@ extension MockTransportSession {
                 ]
             ],
             "classifiedDomains": [
-                "status": "disabled"
+                "status": "disabled",
+                "config": [
+                    "domains": []
+                ]
             ],
             "conferenceCalling": [
                 "status": "enabled"
