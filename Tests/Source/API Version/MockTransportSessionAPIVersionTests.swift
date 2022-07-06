@@ -59,20 +59,18 @@ class MockTransportSessionAPIVersionTests: MockTransportSessionTests {
         XCTAssertEqual(response?.httpStatus, 404)
     }
 
-    // TODO: [John] Uncomment when we add API version 1.
+    func testThatItReturns404IfAPIVersionIsNotZero() {
+        // Given
+        let path = "/api-version"
 
-//    func testThatItReturns404IfAPIVersionIsNotZero() {
-//        // Given
-//        let path = "/api-version"
-//
-//        // Then
-//        let response = self.response(forPayload: [:] as ZMTransportData,
-//                                     path: path,
-//                                     method: .methodGET,
-//                                     apiVersion: .v1)
-//
-//        // Then
-//        XCTAssertEqual(response?.httpStatus, 404)
-//    }
+        // Then
+        let response = self.response(forPayload: [:] as ZMTransportData,
+                                     path: path,
+                                     method: .methodGET,
+                                     apiVersion: .v1)
+
+        // Then
+        XCTAssertEqual(response?.httpStatus, 404)
+    }
 
 }
