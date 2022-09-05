@@ -173,6 +173,7 @@
     data[@"name"] = self.name ?: [NSNull null];
     data[@"id"] = self.identifier ?: [NSNull null];
     data[@"type"] = self.transportConversationType;
+    data[@"protocol"] = @"proteus";
     data[@"access"] = self.accessMode;
     data[@"access_role"] = self.accessRole;
     data[@"access_role_v2"] = self.accessRoleV2;
