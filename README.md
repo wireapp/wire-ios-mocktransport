@@ -16,6 +16,8 @@ This framework is part of Wire iOS. Additional documentation is available in the
 
 The wire-ios-mocktransport framework helps us mock the requests to our backend during integration tests.
 
+⚠️ **This repository is now part of [wire-ios-mono](https://github.com/wireapp/wire-ios-mono)**
+
 ### How to build
 
 This framework is using Carthage to manage its dependencies. To pull the dependencies binaries, `run carthage bootstrap --use-xcframeworks --platform ios`.
